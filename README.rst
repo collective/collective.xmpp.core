@@ -2,16 +2,13 @@
 Introduction
 ============
 
-``jarn.xmpp.core`` is a Plone add-on providing the following functionality based on XMPP services:
+.. note: collective.xmpp.core is a very recent fork of jarn.xmpp.core. The
+   documentation will be updated soon.
+
+``collective.xmpp.core`` provides XMPP integration for Plone and serves as a
+basis on which XMPP-enabled Plone add-ons can be built.
 
 * Integration of plone user accounts with XMPP accounts and authentication.
-* A microblogging environment similar to twitter/yammer based on XMPP PubSub.
-* Messaging.
-
-It is part of a suite of packages aiming to provide XMPP services to Plone. The other two packages are
-
-* `jarn.xmpp.twisted`_, provides XMPP-specific protocol implementation for twisted.
-* `jarn.xmpp.collaboration`_ provides an XMPP protocol to do real-time collaborative editing as well as a Plone-targeted implementation.
 
 ============
 Installation
@@ -32,7 +29,7 @@ Before setting up the package you need to have a working XMPP server and access 
 --------
 Buildout
 --------
-A sample buildout you can use as a starting point can be found at `jarn.xmpp.buildout`_.
+A sample buildout you can use as a starting point can be found at `collective.xmpp.buildout`_.
 
 -----------------------------
 Setting up ejabberd (>=2.1.5)
@@ -40,8 +37,8 @@ Setting up ejabberd (>=2.1.5)
 
 Automatic configuration
 -----------------------
-* Use the recipe provided in `jarn.xmpp.buildout`_ (in which case you will need to have erlang installed) or download the `ejabberd`_ installer.
-* A minimal configuration for ejabberd can be generated for convenience by the ``ejabberd.cfg`` part of `jarn.xmpp.buildout`_. You will need to copy the ``templates`` directory and modify the recipe configuration accordingly::
+* Use the recipe provided in `collective.xmpp.buildout`_ (in which case you will need to have erlang installed) or download the `ejabberd`_ installer.
+* A minimal configuration for ejabberd can be generated for convenience by the ``ejabberd.cfg`` part of `collective.xmpp.buildout`_. You will need to copy the ``templates`` directory and modify the recipe configuration accordingly::
 
     [ejabberd.cfg]
     recipe = collective.recipe.template
@@ -54,13 +51,13 @@ Automatic configuration
     component_password = secret
 
 
-where ``xmppdomain`` is the domain (or virtual host) running on your XMPP server and ``admin_userid`` is the id the the administrator account that Plone is going to use to interact with the server. The rest of the options are  used by ``jarn.xmpp.collaboration`` for the collaborative editing component connecting to the XMPP server. Here, ``collaboration_allowed_subnet`` specifies from which IPs the XMPP server is going to accept connections and should match the IPs your Plone instances are going to be using. Leaving it to ``0,0,0,0`` will allow all IPs, ``127,0,0,1`` will allow only ``localhost``. Finally ``collaboration_port`` is the port to which the collaboration component is going to connect to and ``component_password`` is the shared password between the component and the XMPP server.
+where ``xmppdomain`` is the domain (or virtual host) running on your XMPP server and ``admin_userid`` is the id the the administrator account that Plone is going to use to interact with the server. The rest of the options are  used by ``collective.xmpp.collaboration`` for the collaborative editing component connecting to the XMPP server. Here, ``collaboration_allowed_subnet`` specifies from which IPs the XMPP server is going to accept connections and should match the IPs your Plone instances are going to be using. Leaving it to ``0,0,0,0`` will allow all IPs, ``127,0,0,1`` will allow only ``localhost``. Finally ``collaboration_port`` is the port to which the collaboration component is going to connect to and ``component_password`` is the shared password between the component and the XMPP server.
 
 Manual configuration
 --------------------
 If you already run an XMPP server here are some hints on how to set it up:
 
-* We assume that your xmpp domain is ``localhost``. There should exist an administrator account ``admin@localhost``. In addition if you intend to run some of the tests in any of the ``jarn.xmpp.*`` packages you will need to be running an additional XMPP node on ``localhost`` if you use some other domain for production. You can safely remove any references to ``localhost`` if you are not interested in doing that.
+* We assume that your xmpp domain is ``localhost``. There should exist an administrator account ``admin@localhost``. In addition if you intend to run some of the tests in any of the ``collective.xmpp.*`` packages you will need to be running an additional XMPP node on ``localhost`` if you use some other domain for production. You can safely remove any references to ``localhost`` if you are not interested in doing that.
 
 * Make sure you have enabled the `http_bind` module, as this is what the javascript clients will use to connect. You should have  something like this in your ejabberd.cfg:
 
@@ -84,7 +81,7 @@ If you already run an XMPP server here are some hints on how to set it up:
         {max_items_node, 1000}
         ]},
 
-* In order to test and run custom XMPP components (for instance the collaborative editing component provided by ``jarn.xmpp.collaboration``) you will need to allow them to connect. This means you should have something similar to this configuration:
+* In order to test and run custom XMPP components (for instance the collaborative editing component provided by ``collective.xmpp.collaboration``) you will need to allow them to connect. This means you should have something similar to this configuration:
 
   ::
 
@@ -143,7 +140,7 @@ Your instances will need to maintain a connection to the administrator account o
         <include package="jarn.xmpp.twisted" file="reactor.zcml" />
       </configure>
 
-Again, it will help you to have a look at the sample buildout provided in `jarn.xmpp.buildout`_.
+Again, it will help you to have a look at the sample buildout provided in `collective.xmpp.buildout`_.
 
 ---------------------------
 Setting up a new Plone site
@@ -151,8 +148,8 @@ Setting up a new Plone site
 * Start ejabberd (if you used the recipe to build ejabberd, ``bin/ejabberd`` will do the job).
 * Start the Nginx frontend. ``bin/frontend start``
 * Start your zope instance.
-* Access Zope directly at ``http://localhost:8081/manage`` and create a new Plone site with ``jarn.xmpp.core`` (or ``jarn.xmpp.collaboration`` if you want that package installed as well).
-* Go to the Plone control panel, into the registry settings. Edit the jarn.xmpp.* settings to reflect your installation, passwords etc.
+* Access Zope directly at ``http://localhost:8081/manage`` and create a new Plone site with ``collective.xmpp.core`` (or ``jarn.xmpp.collaboration`` if you want that package installed as well).
+* Go to the Plone control panel, into the registry settings. Edit the collective.xmpp.* settings to reflect your installation, passwords etc.
 * Restart your Plone instance.
 * Upon the first request the administrator will log to his account. You should see things happening in the logs and if there are any errors something might be wrong with your installation.
 * Setup the users and pubsub nodes. You do this by calling ``@@setup-xmpp`` like ``http://localhost:8080/@@setup-xmpp``. The form will not report any errors as everything will happen asynchronously but you will get the results/failures on the console.
@@ -180,13 +177,13 @@ This is a complex infrastructure so it can be hard to know what goes wrong somet
 
   ::
 
-    2011-09-01 14:45:48 INFO jarn.xmpp.core XMPP admin client has authenticated succesfully.
+    2011-09-01 14:45:48 INFO collective.xmpp.core XMPP admin client has authenticated succesfully.
 
 * After having run ``@@setup-xmpp``, logging-in to the Plone site with a user should also authenticate him with the XMPP server. This is indicated in the logs by:
 
   ::
 
-    2011-09-01 14:45:50 INFO jarn.xmpp.core Pre-binded ggozad@localhost/auto-QravOoyEeE
+    2011-09-01 14:45:50 INFO collective.xmpp.core Pre-binded ggozad@localhost/auto-QravOoyEeE
 
 =============
 Experimenting
@@ -222,7 +219,7 @@ Some of the included tests are functional tests that require a XMPP server runni
 
     ::
 
-    ./bin/test -a 2 -s jarn.xmpp.core
+    ./bin/test -a 2 -s collective.xmpp.core
 
 =======
 Credits
@@ -242,6 +239,6 @@ Credits
 .. _XEP-0049: http://xmpp.org/extensions/xep-0049.html
 .. _ejabberd: http://www.ejabberd.im
 .. _Jarn AS: http://jarn.com
-.. _jarn.xmpp.buildout: http://github.com/ggozad/jarn.xmpp.buildout
+.. _collective.xmpp.buildout: http://github.com/ggozad/jarn.xmpp.buildout
 .. _jarn.xmpp.twisted: http://pypi.python.org/pypi/jarn.xmpp.twisted
-.. _jarn.xmpp.collaboration: http://pypi.python.org/pypi/jarn.xmpp.collaboration
+.. _collective.xmpp.collaboration: http://pypi.python.org/pypi/jarn.xmpp.collaboration
