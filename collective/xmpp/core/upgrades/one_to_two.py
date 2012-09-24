@@ -17,8 +17,8 @@ def cleanJSRegistry(context):
 
 def clearRegistry(context):
     registry = getUtility(IRegistry)
-    if 'jarn.xmpp.boshURL' in registry:
-        del registry.records['jarn.xmpp.boshURL']
+    if 'collective.xmpp.boshURL' in registry:
+        del registry.records['collective.xmpp.boshURL']
 
 
 def updateActions(context):

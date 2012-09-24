@@ -34,10 +34,10 @@ class XMPPCoreNoReactorFixture(PloneSandboxLayer):
         # Install into Plone site using portal_setup
         applyProfile(portal, 'collective.xmpp.core:default')
         registry = getUtility(IRegistry)
-        registry['jarn.xmpp.adminJID'] = 'admin@localhost'
-        registry['jarn.xmpp.pubsubJID'] = 'pubsub.localhost'
-        registry['jarn.xmpp.conferenceJID'] = 'conference.localhost'
-        registry['jarn.xmpp.xmppDomain'] = 'localhost'
+        registry['collective.xmpp.adminJID'] = 'admin@localhost'
+        registry['collective.xmpp.pubsubJID'] = 'pubsub.localhost'
+        registry['collective.xmpp.conferenceJID'] = 'conference.localhost'
+        registry['collective.xmpp.xmppDomain'] = 'localhost'
 
 
 XMPPCORE_NO_REACTOR_FIXTURE = XMPPCoreNoReactorFixture()
@@ -78,10 +78,10 @@ class XMPPCoreFixture(PloneSandboxLayer):
         # Install into Plone site using portal_setup
         applyProfile(portal, 'collective.xmpp.core:default')
         registry = getUtility(IRegistry)
-        registry['jarn.xmpp.adminJID'] = 'admin@localhost'
-        registry['jarn.xmpp.pubsubJID'] = 'pubsub.localhost'
-        registry['jarn.xmpp.conferenceJID'] = 'conference.localhost'
-        registry['jarn.xmpp.xmppDomain'] = 'localhost'
+        registry['collective.xmpp.adminJID'] = 'admin@localhost'
+        registry['collective.xmpp.pubsubJID'] = 'pubsub.localhost'
+        registry['collective.xmpp.conferenceJID'] = 'conference.localhost'
+        registry['collective.xmpp.xmppDomain'] = 'localhost'
         setupAdminClient(None, None)
         client = getUtility(IAdminClient)
         wait_for_client_state(client, 'authenticated')

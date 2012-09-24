@@ -19,9 +19,9 @@ def setupAdminClient(portal, event):
         settings = getUtility(IRegistry)
 
         try:
-            jid = settings['jarn.xmpp.adminJID']
-            jdomain = settings['jarn.xmpp.xmppDomain']
-            password = settings['jarn.xmpp.adminPassword']
+            jid = settings['collective.xmpp.adminJID']
+            jdomain = settings['collective.xmpp.xmppDomain']
+            password = settings['collective.xmpp.adminPassword']
         except KeyError:
             return
 

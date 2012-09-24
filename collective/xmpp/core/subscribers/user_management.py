@@ -32,7 +32,7 @@ def onUserCreation(event):
     principal_pass = pass_storage.set(principal_id)
 
     registry = getUtility(IRegistry)
-    if registry['jarn.xmpp.autoSubscribe']:
+    if registry['collective.xmpp.autoSubscribe']:
         mtool = getToolByName(principal, 'portal_membership')
         members_jids = [xmpp_users.getUserJID(member.getUserId())
                         for member in mtool.listMembers()]

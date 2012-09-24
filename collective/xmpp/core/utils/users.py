@@ -53,7 +53,7 @@ def setupPrincipal(client,
     d = client.admin.addUser(principal_jid.userhost(), principal_password)
 
     registry = getUtility(IRegistry)
-    if registry['jarn.xmpp.autoSubscribe']:
+    if registry['collective.xmpp.autoSubscribe']:
         d.addCallback(subscribeToAllUsers)
 
     return d
