@@ -2,8 +2,8 @@
 <componentregistry>
   <utilities>
     <utility
-       interface="jarn.xmpp.core.interfaces.IXMPPPasswordStorage"
-       factory="jarn.xmpp.core.storage.XMPPPasswordStorage"
+       interface="collective.xmpp.core.interfaces.IXMPPPasswordStorage"
+       factory="collective.xmpp.core.storage.XMPPPasswordStorage"
      />
   </utilities>
 </componentregistry>

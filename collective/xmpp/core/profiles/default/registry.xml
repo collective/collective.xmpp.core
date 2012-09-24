@@ -1,28 +1,28 @@
 <?xml version="1.0"?>
 <registry>
 
-  <record name="jarn.xmpp.xmppDomain">
+  <record name="collective.xmpp.xmppDomain">
     <field type="plone.registry.field.ASCIILine">
       <title>XMPP Domain</title>
     </field>
     <value>localhost</value>
   </record>
 
-  <record name="jarn.xmpp.adminJID">
+  <record name="collective.xmpp.adminJID">
     <field type="plone.registry.field.ASCIILine">
       <title>XMPP Admin JID</title>
     </field>
     <value>admin@localhost</value>
   </record>
 
-  <record name="jarn.xmpp.adminPassword">
+  <record name="collective.xmpp.adminPassword">
     <field type="plone.registry.field.Password">
       <title>XMPP Admin password</title>
     </field>
     <value>admin</value>
   </record>
 
-  <record name="jarn.xmpp.autoSubscribe">
+  <record name="collective.xmpp.autoSubscribe">
     <field type="plone.registry.field.Bool">
       <title>Auto-subscribe XMPP users</title>
       <description>Should XMPP users automatically be subscribed to one another? 
