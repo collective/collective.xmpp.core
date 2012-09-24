@@ -18,7 +18,7 @@ class ISetupXMPP(Interface):
 class SetupXMPPForm(form.Form):
 
     fields = field.Fields(ISetupXMPP)
-    label = _("Setup XMPP")
+    label = _("Set up XMPP")
     description = _("label_setup_warning",
         """
         Warning: This action should ONLY be run after the initial setup. It
