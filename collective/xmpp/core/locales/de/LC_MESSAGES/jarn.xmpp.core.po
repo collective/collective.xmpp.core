@@ -1,0 +1,126 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: jarn.xmpp.core\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2012-09-13 16:39+0200\n"
+"PO-Revision-Date: 2011-11-24 16:39+0100\n"
+"Last-Translator: Christoph Boehner <cb@vorwaerts-werbung.de>\n"
+"Language-Team: VW Language Team <hallo@vorwaerts-werbung.de>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: de\n"
+"Language-Name: German\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: jarn.xmpp.core\n"
+
+#: jarn/xmpp/core/browser/setup.py:21
+msgid "Setup XMPP"
+msgstr "XMPP konfigurieren"
+
+#: jarn/xmpp/core/browser/setup.py:22
+msgid "label_setup_warning"
+msgstr ""
+"Warnung: diese Aktion sollte nur EINMALIG nach dem Setup ausgeführt werden. "
+"Diese Aktion wird die notwendigen \n"
+"Benutzer und Verbindungen auf Basis der Benutzeraccounts in Ihrer Ploneseite "
+"in Ihrem XMPP-Server erstellen. \n"
+"Sie sollten einen guten Grund dafür haben, diese Aktion nochmals ausführen "
+"zu wollen. \n"
+"Bitte überprüfen Sie die Einstellungen für die Verbingung zu Ihrem XMPP-"
+"Server auf Korrektheit vor der Ausführung.\n"
+" "
+
+#: jarn/xmpp/core/browser/setup.py:34
+msgid "Setup"
+msgstr "Konfigurieren"
+
+#~ msgid "A portlet that renders the feed from a PubSub node."
+#~ msgstr "Ein Portlet, das einen Feed aus einer PubSub-Verbindung zeigt."
+
+#~ msgid "Add PubSub feed portlet"
+#~ msgstr "PubSub-Feed Portlet hinzufügen"
+
+#~ msgid "Choose whose updates to receive"
+#~ msgstr "Wählen Sie, von wem Sie Updates erhalten möchten"
+
+#~ msgid "Click to toggle user's details"
+#~ msgstr "Details zu diesem Benutzer zeigen"
+
+#~ msgid "Comment"
+#~ msgstr "Kommentieren"
+
+#~ msgid "Edit PubSub feed portlet"
+#~ msgstr "PubSub-Feed Portlet bearbeiten"
+
+#~ msgid "Follow everybody"
+#~ msgstr "Allen folgen"
+
+#~ msgid "Follow the selected people"
+#~ msgstr "Den ausgewählten Personen folgen"
+
+#~ msgid "Following"
+#~ msgstr "Sie folgen"
+
+#~ msgid "Load more..."
+#~ msgstr "Mehr laden..."
+
+#~ msgid "My stream"
+#~ msgstr "Mein Stream"
+
+#~ msgid "People online:"
+#~ msgstr "Angemeldete Benutzer:"
+
+#~ msgid "Personal message"
+#~ msgstr "Persönliche Mitteilung"
+
+#~ msgid "Personal stream"
+#~ msgstr "Persönlicher Stream"
+
+#~ msgid "Post"
+#~ msgstr "Teilen"
+
+#~ msgid "Post to stream"
+#~ msgstr "Im Stream teilen"
+
+#~ msgid "PubSub feed portlet"
+#~ msgstr "PubSub-Feed Portlet"
+
+#~ msgid "PubSub node"
+#~ msgstr "PubSub-Verbindung"
+
+#~ msgid "Receive updates from everybody."
+#~ msgstr "Updates von allen empfangen"
+
+#~ msgid "Receive updates from the following people only:"
+#~ msgstr "Updates nur von folgenden Personen empfangen:"
+
+#~ msgid "Reply"
+#~ msgstr "Antworten"
+
+#~ msgid "Send"
+#~ msgstr "Senden"
+
+#~ msgid "Share location"
+#~ msgstr "Standort teilen"
+
+#~ msgid ""
+#~ "The name of the PubSub node displayed (typically a user id or 'people' in "
+#~ "order to include all users). Leaving this empty, will populate the "
+#~ "portlet with items from the users the user follows."
+#~ msgstr ""
+#~ "Die Bezeichnung der PubSub-Verbindung, die gezeigt werden soll "
+#~ "(üblicherweise eine Benutzer ID oder 'Personen', um alle Benutzer "
+#~ "einzuschliessen). Das Portlet wird mit Beträgen der Benutzer gefüllt, "
+#~ "denen der jeweilige Benutzer folgt, falls Sie dieses Feld leer lassen."
+
+#~ msgid "Title"
+#~ msgstr "Titel"
+
+#~ msgid "more"
+#~ msgstr "mehr"
+
+#~ msgid "text_or"
+#~ msgstr "oder"

@@ -1,0 +1,31 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="collective.xmpp.core">
+
+  <i18n:registerTranslations directory="locales"/>
+
+  <permission
+    id="collective.xmpp.core.XMPPView"
+    title="collective.xmpp.core: Access XMPP"
+    />
+
+  <include package="plone.app.registry" />
+  <include package=".subscribers" />
+  <include package=".browser" />
+
+  <utility factory=".settings.XMPPUsers" />
+
+  <genericsetup:registerProfile
+    name="default"
+    title="collective.xmpp.core"
+    directory="profiles/default"
+    description="Plone messaging"
+    provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <include package=".upgrades" />
+
+
+</configure>
