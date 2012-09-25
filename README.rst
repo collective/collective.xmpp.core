@@ -2,11 +2,12 @@
 Introduction
 ============
 
-.. note: collective.xmpp.core is a very recent fork of jarn.xmpp.core. The
-   documentation will be updated soon.
+``collective.xmpp.core`` is a fork of `jarn.xmpp.core`_ by Yiorgis Gozadinos (@ggozad). 
 
-``collective.xmpp.core`` provides XMPP integration for Plone and serves as a
-basis on which XMPP-enabled Plone add-ons can be built.
+It removes the PubSub and Messaging features from the original and is intended to instead serve
+only as a base on which Plone add-ons with XMPP-enabled features can depend.
+
+Currently it provides the following features:
 
 * Integration of plone user accounts with XMPP accounts and authentication.
 
@@ -16,20 +17,15 @@ Installation
 
 Before setting up the package you need to have a working XMPP server and access to the administration account on the server. The package has only been tested with ejabberd version 2.1.5 and above which is recommended. In any case the following XMPP extensions need to be supported by the server you are going to use:
 
-* `XEP-0071`_ XHTML-IM.
-* `XEP-0054`_ vCard-temp.
 * `XEP-0144`_ Roster Item Exchange.
-* `XEP-0060`_ Publish-Subscribe.
-* `XEP-0248`_ PubSub Collection Nodes.
 * `XEP-0133`_ Service Administration.
 * `XEP-0124`_ Bidirectional-streams Over Synchronous HTTP (BOSH)
 * `XEP-0206`_ XMPP over BOSH
-* `XEP-0049`_ Private XML Storage
 
---------
-Buildout
---------
-A sample buildout you can use as a starting point can be found at `collective.xmpp.buildout`_.
+.. --------
+.. Buildout
+.. --------
+.. A sample buildout you can use as a starting point can be found at `collective.xmpp.buildout`_.
 
 -----------------------------
 Setting up ejabberd (>=2.1.5)
@@ -67,19 +63,6 @@ If you already run an XMPP server here are some hints on how to set it up:
          http_bind,
          web_admin
          ]}
-
-* Because ejabberd's implementation of XEP-0060 is not standard use of the ejabberd's ``dag`` module is necessary. So, make sure your pubsub module is configured appropriately:
-
-  ::
-
-    {mod_pubsub,   [
-        {access_createnode, pubsub_createnode},
-        {ignore_pep_from_offline, true},
-        {last_item_cache, false},
-        {nodetree, "dag"},
-        {plugins, ["dag", "flat", "hometree", "pep"]},
-        {max_items_node, 1000}
-        ]},
 
 * In order to test and run custom XMPP components (for instance the collaborative editing component provided by ``collective.xmpp.collaboration``) you will need to allow them to connect. This means you should have something similar to this configuration:
 
@@ -148,11 +131,11 @@ Setting up a new Plone site
 * Start ejabberd (if you used the recipe to build ejabberd, ``bin/ejabberd`` will do the job).
 * Start the Nginx frontend. ``bin/frontend start``
 * Start your zope instance.
-* Access Zope directly at ``http://localhost:8081/manage`` and create a new Plone site with ``collective.xmpp.core`` (or ``jarn.xmpp.collaboration`` if you want that package installed as well).
+* Access Zope directly at ``http://localhost:8081/manage`` and create a new Plone site with ``collective.xmpp.core`` (or ``collective.xmpp.collaboration`` if you want that package installed as well).
 * Go to the Plone control panel, into the registry settings. Edit the collective.xmpp.* settings to reflect your installation, passwords etc.
 * Restart your Plone instance.
 * Upon the first request the administrator will log to his account. You should see things happening in the logs and if there are any errors something might be wrong with your installation.
-* Setup the users and pubsub nodes. You do this by calling ``@@setup-xmpp`` like ``http://localhost:8080/@@setup-xmpp``. The form will not report any errors as everything will happen asynchronously but you will get the results/failures on the console.
+* Set up the users. You do this by calling ``@@setup-xmpp`` like ``http://localhost:8080/@@setup-xmpp``. The form will not report any errors as everything will happen asynchronously but you will get the results/failures on the console.
 
 If you are going to use this on an existing site, you only need to perform the last step after making sure that your XMPP admin is connected.
 
@@ -217,28 +200,24 @@ Testing
 
 Some of the included tests are functional tests that require a XMPP server running on ``localhost`` as well as an administrator account setup up on this server with JID ``admin@localhost`` and password ``admin``. If you wish to run those you have to specify a *level* 2 on your testrunner, i.e.
 
+
+=======
+Testing
+=======
+
+* Thanks goes @ggozad for being the first person to properly integrate XMPP with Plone.
+
     ::
 
     ./bin/test -a 2 -s collective.xmpp.core
 
-=======
-Credits
-=======
-
-* The UI was designed and implemented by Denys Mishunov.
-* Most of this work was done using the 10% time available to `Jarn AS`_ employees for the development of open-source projects.
-
-.. _XEP-0071: http://xmpp.org/extensions/xep-0071.html
-.. _XEP-0054: http://xmpp.org/extensions/xep-0054.html
 .. _XEP-0144: http://xmpp.org/extensions/xep-0144.html
-.. _XEP-0060: http://xmpp.org/extensions/xep-0060.html
-.. _XEP-0248: http://xmpp.org/extensions/xep-0248.html
 .. _XEP-0133: http://xmpp.org/extensions/xep-0133.html
 .. _XEP-0124: http://xmpp.org/extensions/xep-0124.html
 .. _XEP-0206: http://xmpp.org/extensions/xep-0206.html
-.. _XEP-0049: http://xmpp.org/extensions/xep-0049.html
 .. _ejabberd: http://www.ejabberd.im
 .. _Jarn AS: http://jarn.com
+.. _collective.xmpp.core: http://github.com/ggozad/jarn.xmpp.core
 .. _collective.xmpp.buildout: http://github.com/ggozad/jarn.xmpp.buildout
 .. _jarn.xmpp.twisted: http://pypi.python.org/pypi/jarn.xmpp.twisted
 .. _collective.xmpp.collaboration: http://pypi.python.org/pypi/jarn.xmpp.collaboration
