@@ -15,6 +15,7 @@
   <include package=".subscribers" />
   <include package=".browser" />
 
+  <utility factory=".client.DeferredXMPPClient" />
   <utility factory=".settings.XMPPUsers" />
 
   <genericsetup:registerProfile
