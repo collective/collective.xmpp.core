@@ -2,13 +2,22 @@
 Introduction
 ============
 
-``collective.xmpp.core`` is a fork of `jarn.xmpp.core`_ by Yiorgis Gozadinos (@ggozad). 
+``collective.xmpp.core`` is a fork/merge of `jarn.xmpp.twisted`_ and `jarn.xmpp.core`_ both written by Yiorgis Gozadinos (@ggozad). 
 
-It removes the PubSub and Messaging features from the original and is intended to instead serve
+It removes the PubSub and Messaging features from the `jarn.xmpp.core`_ and is intended to instead serve
 only as a base on which Plone add-ons with XMPP-enabled features can depend.
 
 Currently it provides the following features:
 
+* Extensions to the `wokkel`_ package by implementing parts of the following XMPP extensions:
+  * `XEP-0071`_ XHTML-IM.
+  * `XEP-0144`_ Roster Item Exchange.
+  * `XEP-0060`_ Publish-Subscribe.
+  * `XEP-0248`_ PubSub Collection Nodes.
+  * `XEP-0133`_ Service Administration.
+* A `Twisted`_ reactor that runs side-by-side with the Zope instance.
+* Utilities that provide XMPP clients of two sorts, a *deferred* client that initially connects, executes a task and disconnects as soon as it is done, as well as a normal client that remains connected and can respond to XMPP events.
+* An XMPP component base class for writing custom components.
 * Integration of plone user accounts with XMPP accounts and authentication.
 
 ============
@@ -120,7 +129,7 @@ Your instances will need to maintain a connection to the administrator account o
 
     zcml-additional =
       <configure xmlns="http://namespaces.zope.org/zope">  
-        <include package="jarn.xmpp.twisted" file="reactor.zcml" />
+        <include package="collective.xmpp.core" file="reactor.zcml" />
       </configure>
 
 Again, it will help you to have a look at the sample buildout provided in `collective.xmpp.buildout`_.
@@ -152,8 +161,8 @@ This is a complex infrastructure so it can be hard to know what goes wrong somet
 
   ::
 
-    2011-09-01 14:37:38 INFO jarn.xmpp.twisted Starting Twisted reactor...
-    2011-09-01 14:37:38 INFO jarn.xmpp.twisted Twisted reactor started
+    2011-09-01 14:37:38 INFO collective.xmpp.core Starting Twisted reactor...
+    2011-09-01 14:37:38 INFO collective.xmpp.core Twisted reactor started
     2011-09-01 14:37:38 INFO Zope Ready to handle requests
 
 * After the first request to the site, you should also see in the logs:
@@ -188,7 +197,7 @@ Usage
 Security
 ========
 
-``jarn.xmpp.twisted`` includes an implementation of an authenticating client over BOSH according to `XEP-0206`_. This practically means that the javascript client never needs to know the password of the XMPP user. Instead, the user is authenticated directly between the XMPP server and the Plone instance. A pair of secret tokens are exchanged, valid for a short time (~2 minutes). It is this pair that is given to the javascript client and not the password.
+Included is an implementation of an authenticating client over BOSH according to `XEP-0206`_. This practically means that the javascript client never needs to know the password of the XMPP user. Instead, the user is authenticated directly between the XMPP server and the Plone instance. A pair of secret tokens are exchanged, valid for a short time (~2 minutes). It is this pair that is given to the javascript client and not the password.
 
 When a user is created (either through the Plone interface or by running ``@@setup-xmpp`` for existing users), a random password is generated and stored internally in a persistent utility.
 
@@ -220,5 +229,4 @@ Credits
 .. _Jarn AS: http://jarn.com
 .. _collective.xmpp.core: http://github.com/collective/collective.xmpp.core
 .. _jarn.xmpp.buildout: http://github.com/ggozad/jarn.xmpp.buildout
-.. _jarn.xmpp.twisted: http://pypi.python.org/pypi/jarn.xmpp.twisted
 .. _collective.xmpp.collaboration: http://github.com/collective/collective.xmpp.collaboration
