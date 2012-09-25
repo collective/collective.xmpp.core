@@ -26,6 +26,8 @@ setup(name='collective.xmpp.core',
       install_requires=[
           'setuptools',
           'BeautifulSoup',
+          'Twisted',
+          'wokkel>0.6.3',
           'plone.app.registry',
           'plone.app.z3cform',
           'jarn.jsi18n'
