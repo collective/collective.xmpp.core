@@ -8,7 +8,7 @@ from zope.component.hooks import getSite
 
 from Products.CMFCore.utils import getToolByName
 
-from jarn.xmpp.twisted.interfaces import IZopeReactor
+from collective.xmpp.core.interfaces import IZopeReactor
 
 from collective.xmpp.core.client import AdminClient
 from collective.xmpp.core.interfaces import IAdminClient

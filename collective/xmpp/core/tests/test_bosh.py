@@ -3,8 +3,8 @@ import unittest2 as unittest
 
 from twisted.words.protocols.jabber.jid import JID
 
-from jarn.xmpp.twisted.httpb import BOSHClient
-from jarn.xmpp.twisted.testing import REACTOR_INTEGRATION_TESTING
+from collective.xmpp.core.httpb import BOSHClient
+from collective.xmpp.core.testing import REACTOR_INTEGRATION_TESTING
 
 
 class ClientNetworkTest(unittest.TestCase):

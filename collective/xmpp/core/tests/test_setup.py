@@ -3,7 +3,7 @@ import unittest2 as unittest
 from Products.CMFCore.utils import getToolByName
 from zope.component import getUtility
 
-from jarn.xmpp.twisted.testing import wait_on_client_deferreds
+from collective.xmpp.core.testing import wait_on_client_deferreds
 
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.testing import XMPPCORE_INTEGRATION_TESTING

@@ -4,8 +4,8 @@ from twisted.words.protocols.jabber.xmlstream import toResponse
 from wokkel import data_form
 from wokkel.test.helpers import XmlStreamStub
 
-from jarn.xmpp.twisted import protocols
-from jarn.xmpp.twisted.testing import FactoryWithJID
+from collective.xmpp.core import protocols
+from collective.xmpp.core.testing import FactoryWithJID
 
 
 class PubSubCommandsProtocolTest(unittest.TestCase):

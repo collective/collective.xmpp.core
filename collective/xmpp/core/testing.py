@@ -13,7 +13,7 @@ from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import applyProfile
 from plone.registry.interfaces import IRegistry
 
-from jarn.xmpp.twisted.interfaces import IZopeReactor
+from collective.xmpp.core.interfaces import IZopeReactor
 
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.subscribers.startup import setupAdminClient
@@ -96,8 +96,8 @@ class NoReactorFixture(PloneSandboxLayer):
     defaultBases = (PLONE_FIXTURE, )
 
     def setUpZope(self, app, configurationContext):
-        import jarn.xmpp.twisted
-        xmlconfig.file('configure.zcml', jarn.xmpp.twisted,
+        import collective.xmpp.core
+        xmlconfig.file('configure.zcml', collective.xmpp.core,
                        context=configurationContext)
 
 NO_REACTOR_FIXTURE = NoReactorFixture()
@@ -113,8 +113,8 @@ class ReactorFixture(PloneSandboxLayer):
     defaultBases = (EJABBERD_LAYER, NO_REACTOR_FIXTURE, )
 
     def setUpZope(self, app, configurationContext):
-        import jarn.xmpp.twisted
-        xmlconfig.file('reactor.zcml', jarn.xmpp.twisted,
+        import collective.xmpp.core
+        xmlconfig.file('reactor.zcml', collective.xmpp.core,
                       context=configurationContext)
 
     def testSetUp(self):

@@ -7,8 +7,8 @@ from zope.component import queryUtility
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 
-from jarn.xmpp.twisted.client import randomResource
-from jarn.xmpp.twisted.httpb import BOSHClient
+from collective.xmpp.core.client import randomResource
+from collective.xmpp.core.httpb import BOSHClient
 
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPUsers

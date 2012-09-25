@@ -3,7 +3,7 @@ from twisted.words.xish import domish
 from zope.component import getUtility
 from wokkel.subprotocols import StreamManager
 
-from jarn.xmpp.twisted.interfaces import IZopeReactor
+from collective.xmpp.core.interfaces import IZopeReactor
 
 
 class XMPPComponent(StreamManager):

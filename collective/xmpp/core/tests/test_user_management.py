@@ -5,8 +5,8 @@ from plone.app.testing import TEST_USER_ID
 from Products.CMFCore.utils import getToolByName
 from zope.component import getUtility
 
-from jarn.xmpp.twisted.testing import wait_on_deferred
-from jarn.xmpp.twisted.testing import wait_on_client_deferreds
+from collective.xmpp.core.testing import wait_on_deferred
+from collective.xmpp.core.testing import wait_on_client_deferreds
 
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage

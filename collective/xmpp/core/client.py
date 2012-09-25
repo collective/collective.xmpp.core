@@ -11,10 +11,10 @@ from zope.component import getUtility
 from zope.event import notify
 from zope.interface import implements
 
-from jarn.xmpp.twisted.interfaces import IDeferredXMPPClient
-from jarn.xmpp.twisted.interfaces import IZopeReactor
-from jarn.xmpp.twisted.protocols import AdminHandler
-from jarn.xmpp.twisted.protocols import ChatHandler
+from collective.xmpp.core.interfaces import IDeferredXMPPClient
+from collective.xmpp.core.interfaces import IZopeReactor
+from collective.xmpp.core.protocols import AdminHandler
+from collective.xmpp.core.protocols import ChatHandler
 
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import AdminClientConnected

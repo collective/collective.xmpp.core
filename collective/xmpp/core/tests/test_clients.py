@@ -3,11 +3,11 @@ import unittest2 as unittest
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
 
-from jarn.xmpp.twisted.client import DeferredXMPPClient
-from jarn.xmpp.twisted.client import XMPPClient
-from jarn.xmpp.twisted.testing import REACTOR_INTEGRATION_TESTING
-from jarn.xmpp.twisted.testing import wait_on_deferred
-from jarn.xmpp.twisted.testing import wait_for_client_state
+from collective.xmpp.core.client import DeferredXMPPClient
+from collective.xmpp.core.client import XMPPClient
+from collective.xmpp.core.testing import REACTOR_INTEGRATION_TESTING
+from collective.xmpp.core.testing import wait_on_deferred
+from collective.xmpp.core.testing import wait_for_client_state
 
 NS_VERSION = 'jabber:iq:version'
 

@@ -26,7 +26,7 @@ ADMIN_REQUEST = "/iq[@type='get' or @type='set']" \
                 "/command[@xmlns='%s' and @node='/%s']" % \
                 (NS_COMMANDS, NODE_ADMIN)
 
-logger = logging.getLogger('jarn.xmpp.twisted')
+logger = logging.getLogger('collective.xmpp.core')
 
 
 def getRandomId():
