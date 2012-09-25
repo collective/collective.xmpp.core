@@ -4,6 +4,9 @@ from plone.registry.interfaces import IRegistry
 from zope.component import getGlobalSiteManager
 from zope.component import getUtility
 from zope.component import queryUtility
+from zope.component.hooks import getSite
+
+from Products.CMFCore.utils import getToolByName
 
 from jarn.xmpp.twisted.interfaces import IZopeReactor
 
@@ -12,11 +15,21 @@ from collective.xmpp.core.interfaces import IAdminClient
 
 log = logging.getLogger(__name__)
 
-def setupAdminClient(portal, event):
+def setUpAdminClient(event):
+    if "plone_javascript_variables.js" not in event.request.steps:
+        # XXX: This is a bit of a hack to make sure that we don't register the
+        # utility a zillion times (which can cause runtime errors).
+        # This package in any case depends on the above file being present, so
+        # we check if it's being loaded.
+        # A more elegant solution would be welcome :)
+        return
+    site = getSite()
+    mtool = getToolByName(site, 'portal_membership')
+    if mtool.isAnonymousUser():
+        return
     client = queryUtility(IAdminClient)
     if client is None:
         settings = getUtility(IRegistry)
-
         try:
             jid = settings['collective.xmpp.adminJID']
             jdomain = settings['collective.xmpp.xmppDomain']
@@ -40,7 +53,6 @@ def setupAdminClient(portal, event):
 
 def adminConnected(event):
     log.info('XMPP admin client has authenticated succesfully.')
-
     # Register user subscribers
     import user_management
     gsm = getGlobalSiteManager()
