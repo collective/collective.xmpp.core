@@ -200,6 +200,10 @@ Testing
 
 Some of the included tests are functional tests that require a XMPP server running on ``localhost`` as well as an administrator account setup up on this server with JID ``admin@localhost`` and password ``admin``. If you wish to run those you have to specify a *level* 2 on your testrunner, i.e.
 
+    ::
+
+    ./bin/test -a 2 -s collective.xmpp.core
+
 
 =======
 Credits
@@ -207,9 +211,6 @@ Credits
 
 * Thanks goes Yiorgis Gozadinos (@ggozad) for being the first person to properly integrate XMPP with Plone.
 
-    ::
-
-    ./bin/test -a 2 -s collective.xmpp.core
 
 .. _XEP-0144: http://xmpp.org/extensions/xep-0144.html
 .. _XEP-0133: http://xmpp.org/extensions/xep-0133.html
@@ -217,7 +218,7 @@ Credits
 .. _XEP-0206: http://xmpp.org/extensions/xep-0206.html
 .. _ejabberd: http://www.ejabberd.im
 .. _Jarn AS: http://jarn.com
-.. _collective.xmpp.core: http://github.com/ggozad/jarn.xmpp.core
-.. _collective.xmpp.buildout: http://github.com/ggozad/jarn.xmpp.buildout
+.. _collective.xmpp.core: http://github.com/collective/collective.xmpp.core
+.. _jarn.xmpp.buildout: http://github.com/ggozad/jarn.xmpp.buildout
 .. _jarn.xmpp.twisted: http://pypi.python.org/pypi/jarn.xmpp.twisted
-.. _collective.xmpp.collaboration: http://pypi.python.org/pypi/jarn.xmpp.collaboration
+.. _collective.xmpp.collaboration: http://github.com/collective/collective.xmpp.collaboration
