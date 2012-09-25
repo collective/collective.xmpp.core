@@ -202,10 +202,10 @@ Some of the included tests are functional tests that require a XMPP server runni
 
 
 =======
-Testing
+Credits
 =======
 
-* Thanks goes @ggozad for being the first person to properly integrate XMPP with Plone.
+* Thanks goes Yiorgis Gozadinos (@ggozad) for being the first person to properly integrate XMPP with Plone.
 
     ::
 
