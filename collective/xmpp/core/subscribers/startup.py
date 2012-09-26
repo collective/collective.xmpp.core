@@ -16,13 +16,6 @@ from collective.xmpp.core.interfaces import IAdminClient
 log = logging.getLogger(__name__)
 
 def setUpAdminClient(event):
-    if "plone_javascript_variables.js" not in event.request.steps:
-        # XXX: This is a bit of a hack to make sure that we don't register the
-        # utility a zillion times (which can cause runtime errors).
-        # This package in any case depends on the above file being present, so
-        # we check if it's being loaded.
-        # A more elegant solution would be welcome :)
-        return
     site = getSite()
     mtool = getToolByName(site, 'portal_membership')
     if mtool.isAnonymousUser():
