@@ -17,8 +17,8 @@ log = logging.getLogger(__name__)
 
 def setUpAdminClient(event):
     site = getSite()
-    mtool = getToolByName(site, 'portal_membership')
-    if mtool.isAnonymousUser():
+    mtool = getToolByName(site, 'portal_membership', None)
+    if not mtool or mtool.isAnonymousUser():
         return
     client = queryUtility(IAdminClient)
     if client is None:
