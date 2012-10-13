@@ -11,7 +11,7 @@ from collective.xmpp.core.testing import wait_on_client_deferreds
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.testing import XMPPCORE_INTEGRATION_TESTING
-from collective.xmpp.core.utils.pubsub import getAllChildNodes
+# from collective.xmpp.core.utils.pubsub import getAllChildNodes
 
 
 class UserManagementTests(unittest.TestCase):
@@ -34,10 +34,11 @@ class UserManagementTests(unittest.TestCase):
         user_jids = [user_dict['jid'] for user_dict in d.result]
         self.assertTrue('stpeter@localhost' in user_jids)
 
-        # User's pubsub node has been added
-        d = getAllChildNodes(client, 'people')
-        self.assertTrue(wait_on_deferred(d))
-        self.assertTrue('stpeter' in d.result['people'])
+        # # User's pubsub node has been added
+        # d = getAllChildNodes(client, 'people')
+        # self.assertTrue(wait_on_deferred(d))
+        # self.assertTrue('stpeter' in d.result['people'])
+        #
         pass_storage = getUtility(IXMPPPasswordStorage)
         self.assertTrue(pass_storage.get('stpeter') is not None)
 
