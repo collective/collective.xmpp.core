@@ -48,7 +48,11 @@ Setting up ejabberd (>=2.1.5)
 
 Automatic configuration
 -----------------------
-* Use the recipe provided in `collective.xmpp.buildout`_ (in which case you will need to have erlang installed) or download the `ejabberd`_ installer.
+
+* Use the recipe provided in `collective.xmpp.buildout`_ (in which case you
+  will need to have erlang installed, erlang-nox on Debian) or download the
+  `ejabberd`_ installer.
+
 * A minimal configuration for ejabberd can be generated for convenience by the ``ejabberd.cfg`` part of `collective.xmpp.buildout`_. You will need to copy the ``templates`` directory and modify the recipe configuration accordingly::
 
     [ejabberd.cfg]
