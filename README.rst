@@ -191,9 +191,9 @@ This is a complex infrastructure so it can be hard to know what goes wrong somet
 Experimenting
 =============
 
--------------
+-----
 Usage
--------------
+-----
 
 * Add a few users.
 * Login as one of them, and in a different browser as some other. Use the frontend to access the site, if you used the settings above this should be ``http://localhost:8080``.
