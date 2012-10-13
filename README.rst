@@ -10,11 +10,17 @@ only as a base on which Plone add-ons with XMPP-enabled features can depend.
 Currently it provides the following features:
 
 * Extensions to the `wokkel`_ package by implementing parts of the following XMPP extensions:
+
   * `XEP-0071`_ XHTML-IM.
+
   * `XEP-0144`_ Roster Item Exchange.
+
   * `XEP-0060`_ Publish-Subscribe.
+
   * `XEP-0248`_ PubSub Collection Nodes.
+
   * `XEP-0133`_ Service Administration.
+
 * A `Twisted`_ reactor that runs side-by-side with the Zope instance.
 * Utilities that provide XMPP clients of two sorts, a *deferred* client that initially connects, executes a task and disconnects as soon as it is done, as well as a normal client that remains connected and can respond to XMPP events.
 * An XMPP component base class for writing custom components.
@@ -42,7 +48,11 @@ Setting up ejabberd (>=2.1.5)
 
 Automatic configuration
 -----------------------
-* Use the recipe provided in `collective.xmpp.buildout`_ (in which case you will need to have erlang installed) or download the `ejabberd`_ installer.
+
+* Use the recipe provided in `collective.xmpp.buildout`_ (in which case you
+  will need to have erlang installed, erlang-nox on Debian) or download the
+  `ejabberd`_ installer.
+
 * A minimal configuration for ejabberd can be generated for convenience by the ``ejabberd.cfg`` part of `collective.xmpp.buildout`_. You will need to copy the ``templates`` directory and modify the recipe configuration accordingly::
 
     [ejabberd.cfg]
@@ -220,7 +230,9 @@ Credits
 
 * Thanks goes Yiorgis Gozadinos (@ggozad) for being the first person to properly integrate XMPP with Plone.
 
-
+.. _XEP-0248: http://xmpp.org/extensions/xep-0248.html
+.. _XEP-0060: http://xmpp.org/extensions/xep-0060.html
+.. _XEP-0071: http://xmpp.org/extensions/xep-0071.html
 .. _XEP-0144: http://xmpp.org/extensions/xep-0144.html
 .. _XEP-0133: http://xmpp.org/extensions/xep-0133.html
 .. _XEP-0124: http://xmpp.org/extensions/xep-0124.html
@@ -228,5 +240,11 @@ Credits
 .. _ejabberd: http://www.ejabberd.im
 .. _Jarn AS: http://jarn.com
 .. _collective.xmpp.core: http://github.com/collective/collective.xmpp.core
+.. _collective.xmpp.buildout: http://github.com/collective/collective.xmpp.buildout
 .. _jarn.xmpp.buildout: http://github.com/ggozad/jarn.xmpp.buildout
 .. _collective.xmpp.collaboration: http://github.com/collective/collective.xmpp.collaboration
+.. _jarn.xmpp.twisted: http://github.com/ggozad/jarn.xmpp.twisted
+.. _jarn.xmpp.core: http://github.com/ggozad/jarn.xmpp.core
+.. _wokkel: http://wokkel.ik.nu
+.. _Twisted: http://twistedmatrix.com
+
