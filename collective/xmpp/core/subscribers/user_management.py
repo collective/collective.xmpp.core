@@ -1,6 +1,7 @@
 import logging
 from zope.component import adapter
 from zope.component import getUtility
+from zope.globalrequest import getRequest
 
 from Products.CMFCore.utils import getToolByName
 from Products.PluggableAuthService.interfaces.events import \
@@ -11,6 +12,7 @@ from Products.PluggableAuthService.interfaces.events import \
 from plone.registry.interfaces import IRegistry
 
 from collective.xmpp.core.interfaces import IAdminClient
+from collective.xmpp.core.interfaces import IProductLayer
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.utils.users import deletePrincipal
@@ -20,8 +22,12 @@ log = logging.getLogger('collective.xmpp.core')
 
 @adapter(IPrincipalCreatedEvent)
 def onUserCreation(event):
-    """Create a jabber account for new user.
+    """ Create a jabber account for new user.
     """
+    request = getRequest()
+    if not IProductLayer.providedBy(request):
+        return
+
     client = getUtility(IAdminClient)
     xmpp_users = getUtility(IXMPPUsers)
     principal = event.principal
@@ -45,8 +51,12 @@ def onUserCreation(event):
 
 @adapter(IPrincipalDeletedEvent)
 def onUserDeletion(event):
-    """Delete jabber account when a user is removed.
+    """ Delete jabber account when a user is removed.
     """
+    request = getRequest()
+    if not IProductLayer.providedBy(request):
+        return
+
     client = getUtility(IAdminClient)
     xmpp_users = getUtility(IXMPPUsers)
 
