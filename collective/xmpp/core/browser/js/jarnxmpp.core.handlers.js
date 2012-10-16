@@ -196,6 +196,20 @@ $msg:false, Strophe:false, setTimeout:false, navigator:false, jarn:false, google
         }
     };
 
+    jarnxmpp.Roster = {
+
+        rosterSuggestedItem: function (msg) {
+            $(msg).find('item').each(function () {
+                var jid = $(this).attr('jid');
+                var action = $(this).attr('action');
+                if (action === 'add') {
+                    jarnxmpp.connection.send($pres({to: jid, type: 'subscribe'}));
+                }
+            });
+            return true;
+        }
+    };
+
     jarnxmpp.rawInput = function (data) {
         var event = jQuery.Event('jarnxmpp.dataReceived');
         event.text = data;
@@ -212,6 +226,9 @@ $msg:false, Strophe:false, setTimeout:false, navigator:false, jarn:false, google
         // Logging
         jarnxmpp.connection.rawInput = jarnxmpp.rawInput;
         jarnxmpp.connection.rawOutput = jarnxmpp.rawOutput;
+
+        jarnxmpp.connection.addHandler(jarnxmpp.Roster.rosterSuggestedItem, 'http://jabber.org/protocol/rosterx', 'message', null);
+        jarnxmpp.connection.send($pres());
     });
 
     $(document).bind('jarnxmpp.disconnecting', function () {
