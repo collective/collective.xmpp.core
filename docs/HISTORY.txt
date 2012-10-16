@@ -7,4 +7,9 @@ Changelog
 -----------------
 
 - Forked from jarn.xmpp.core 0.34 [jcbrand]
-- Removed all PubSub and Messaging related features [jcbrand]
+- Merged in jarn.xmpp.twisted 0.1 [jcbrand]
+- Removed all PubSub and Messaging related features. [jcbrand]
+- Add browserlayer and check for it when handling events. [jcbrand]
+- Fixed the @@setup-xmpp script to only register the next user once the previous one
+  has finished. [jcbrand]
+
