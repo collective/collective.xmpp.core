@@ -3,6 +3,11 @@ from zope.interface import Interface
 from zope.interface import implements
 from zope.viewlet.interfaces import IViewletManager
 
+class IProductLayer(Interface):
+    """ Marker interface for requests indicating the staralliance.theme
+        package has been installed.
+    """
+
 class IZopeReactor(Interface):
     """Initializes and provides the twisted reactor.
     """

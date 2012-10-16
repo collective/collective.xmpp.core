@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<layers>
+  <layer
+      name="collective.xmpp.core"
+      interface="collective.xmpp.core.interfaces.IProductLayer"
+      />
+</layers>
