@@ -41,8 +41,6 @@ def setupPrincipal(client,
     """Create a jabber account for a new user as well
        as create and configure its associated nodes."""
 
-    principal_id = principal_jid.user
-
     def subscribeToAllUsers(result):
         if result == False:
             return False
