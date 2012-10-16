@@ -61,13 +61,15 @@ def deletePrincipal(client, principal_jid):
     """Delete a jabber account as well as remove its associated nodes.
     """
     principal_id = principal_jid.user
+    d = client.admin.deleteUsers(principal_jid.userhost())
 
-    def deleteUser(result):
-        if result == False:
-            return False
-        d = client.admin.deleteUsers(principal_jid.userhost())
-        return d
+    # def deleteUser(result):
+    #     if result == False:
+    #         return False
+    #     d = client.admin.deleteUsers(principal_jid.userhost())
+    #     return d
 
-    d = client.deleteNode(principal_id)
-    d.addCallback(deleteUser)
-    return d
+    # d = client.deleteNode(principal_id)
+    # d.addCallback(deleteUser)
+    # return d
+    #
