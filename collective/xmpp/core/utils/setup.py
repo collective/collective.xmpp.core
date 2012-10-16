@@ -28,9 +28,7 @@ def setupXMPPEnvironment(context):
         member_pass = pass_storage.set(member_id)
 
         if registry['collective.xmpp.autoSubscribe']:
-            mtool = getToolByName(context, 'portal_membership')
-            members_jids = [xmpp_users.getUserJID(member.getUserId())
-                            for member in mtool.listMembers()]
+            members_jids = [xmpp_users.getUserJID(mid) for mid in member_ids]
         else:
             members_jids = []
         d = setupPrincipal(client, member_jid, member_pass, members_jids)
