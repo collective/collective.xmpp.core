@@ -15,6 +15,22 @@ from collective.xmpp.core.interfaces import IAdminClient
 
 log = logging.getLogger(__name__)
 
+def createAdminClient(callback):
+    settings = getUtility(IRegistry)
+    try:
+        jid = settings['collective.xmpp.adminJID']
+        jdomain = settings['collective.xmpp.xmppDomain']
+        password = settings['collective.xmpp.adminPassword']
+    except KeyError:
+        return
+
+    client = AdminClient(jid, jdomain, password)
+    gsm = getGlobalSiteManager()
+    gsm.registerUtility(client, IAdminClient)
+    zr = getUtility(IZopeReactor)
+    zr.reactor.callLater(10, callback, client)
+
+
 def setUpAdminClient(event):
     site = getSite()
     mtool = getToolByName(site, 'portal_membership', None)
@@ -22,26 +38,15 @@ def setUpAdminClient(event):
         return
     client = queryUtility(IAdminClient)
     if client is None:
-        settings = getUtility(IRegistry)
-        try:
-            jid = settings['collective.xmpp.adminJID']
-            jdomain = settings['collective.xmpp.xmppDomain']
-            password = settings['collective.xmpp.adminPassword']
-        except KeyError:
-            return
 
-        client = AdminClient(jid, jdomain, password)
-        gsm = getGlobalSiteManager()
-        gsm.registerUtility(client, IAdminClient)
-
-        def checkAdminClientConnected():
+        def checkAdminClientConnected(client):
             if client.state != 'authenticated':
                 log.warn('XMPP admin client has not been able to authenticate. ' \
                     'Client state is "%s". Will retry on the next request.' % client.state)
+                gsm = getGlobalSiteManager()
                 gsm.unregisterUtility(client, IAdminClient)
 
-        zr = getUtility(IZopeReactor)
-        zr.reactor.callLater(10, checkAdminClientConnected)
+        createAdminClient(checkAdminClientConnected)
 
 
 def adminConnected(event):
