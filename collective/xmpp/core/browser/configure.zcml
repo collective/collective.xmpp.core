@@ -36,7 +36,7 @@
     />
 
   <browser:page
-    for="*"
+    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
     name="setup-xmpp"
     class=".setup.SetupXMPPForm"
     permission="cmf.ManagePortal"
