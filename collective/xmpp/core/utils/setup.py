@@ -5,7 +5,6 @@ import Zope2
 from zope.component import getGlobalSiteManager
 from zope.component import getUtility
 from zope.component import queryUtility
-from zope.component.hooks import getSite
 from zope.component.hooks import setSite
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
