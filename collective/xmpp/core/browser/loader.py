@@ -45,6 +45,7 @@ class XMPPLoader(BrowserView):
 
     @property
     def bosh(self):
+	return self.context.REQUEST.get('SERVER_URL') + '/http-bind'
         return getToolByName(self.context, 'portal_url')() + '/http-bind'
 
     def prebind(self):
