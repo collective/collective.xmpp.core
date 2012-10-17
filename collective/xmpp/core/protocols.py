@@ -2,6 +2,9 @@ import string
 import random
 import logging
 
+from zope.component.hooks import getSite
+from Products.CMFCore.utils import getToolByName
+
 from twisted.words.xish.domish import Element
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
@@ -26,7 +29,7 @@ ADMIN_REQUEST = "/iq[@type='get' or @type='set']" \
                 "/command[@xmlns='%s' and @node='/%s']" % \
                 (NS_COMMANDS, NODE_ADMIN)
 
-logger = logging.getLogger('collective.xmpp.core')
+log = logging.getLogger(__name__)
 
 
 def getRandomId():
@@ -70,15 +73,30 @@ class ChatHandler(XMPPHandler):
     def sendRosterItemAddSuggestion(self, to, items, group=None):
         """ Suggest a user(s) to be added in the roster.
         """
+        site = getSite()
+        mt = getToolByName(site, 'portal_membership', None)
         message = Element((None, "message", ))
         message["id"] = getRandomId()
         message["from"] = self.xmlstream.factory.authenticator.jid.full()
         message["to"] = to.userhost()
         x = message.addElement((NS_ROSTER_X, 'x'))
         for jid in items:
+            if to == jid:
+                continue
+
+            member_id = jid.user
+            if mt is not None:
+                info = mt.getMemberInfo(member_id)
+                fullname = info.get('fullname', member_id)
+            else: 
+                log.warn('Could not get user fullname because the global site '
+                        'manager is not set')
+                fullname = ''
+
             item = x.addElement('item')
             item["action"]='add'
             item["jid"] = jid.userhost()
+            item["name"] = fullname
             if group:
                 item.addElement('group', content=group)
         self.xmlstream.send(message)
@@ -99,12 +117,12 @@ class AdminHandler(XMPPHandler):
         def resultReceived(result):
             items = result.query.children
             result = [item.attributes for item in items]
-            logger.info("Got registered users: %s" % result)
+            log.info("Got registered users: %s" % result)
             return result
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return False
 
         iq = IQ(self.xmlstream, 'get')
@@ -120,7 +138,7 @@ class AdminHandler(XMPPHandler):
         """
 
         def resultReceived(iq):
-            logger.info("Added user %s" % userjid)
+            log.info("Added user %s" % userjid)
             return True
 
         def formReceived(iq):
@@ -148,7 +166,7 @@ class AdminHandler(XMPPHandler):
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return False
 
         iq = IQ(self.xmlstream, 'set')
@@ -165,7 +183,7 @@ class AdminHandler(XMPPHandler):
         """
 
         def resultReceived(iq):
-            logger.info("Deleted users %s" % userjids)
+            log.info("Deleted users %s" % userjids)
             return True
 
         def formReceived(iq):
@@ -191,7 +209,7 @@ class AdminHandler(XMPPHandler):
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return False
 
         if isinstance(userjids, basestring):
@@ -210,7 +228,7 @@ class AdminHandler(XMPPHandler):
         """
 
         def resultReceived(iq):
-            logger.info("Sent announcement %s." % body)
+            log.info("Sent announcement %s." % body)
             return True
 
         def formReceived(iq):
@@ -239,7 +257,7 @@ class AdminHandler(XMPPHandler):
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return False
 
         iq = IQ(self.xmlstream, 'set')
@@ -261,12 +279,12 @@ class PubSubHandler(WokkelPubSubClient):
     def publish(self, service, nodeIdentifier, items=[]):
 
         def cb(result):
-            logger.info("Published to node %s." % nodeIdentifier)
+            log.info("Published to node %s." % nodeIdentifier)
             return True
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return False
 
 
@@ -275,19 +293,19 @@ class PubSubHandler(WokkelPubSubClient):
         return d
 
     def itemsReceived(self, event):
-        logger.info("Items received. %s." % event.items)
+        log.info("Items received. %s." % event.items)
         if hasattr(self.parent, 'itemsReceived'):
             self.parent.itemsReceived(event)
 
     def createNode(self, service, nodeIdentifier, options=None):
 
         def cb(result):
-            logger.info("Created node %s." % nodeIdentifier)
+            log.info("Created node %s." % nodeIdentifier)
             return True
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return False
         d = super(PubSubHandler, self).createNode(
             service,
@@ -299,12 +317,12 @@ class PubSubHandler(WokkelPubSubClient):
     def deleteNode(self, service, nodeIdentifier):
 
         def cb(result):
-            logger.info("Deleted node %s." % nodeIdentifier)
+            log.info("Deleted node %s." % nodeIdentifier)
             return True
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return False
 
         d = super(PubSubHandler, self).deleteNode(service, nodeIdentifier)
@@ -316,12 +334,12 @@ class PubSubHandler(WokkelPubSubClient):
         def cb(result):
             items = result.query.children
             result = [item.attributes for item in items]
-            logger.info("Got nodes of %s: %s ." % (nodeIdentifier, result))
+            log.info("Got nodes of %s: %s ." % (nodeIdentifier, result))
             return result
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return []
 
         iq = IQ(self.xmlstream, 'get')
@@ -339,13 +357,13 @@ class PubSubHandler(WokkelPubSubClient):
             subscriptions = result.pubsub.subscriptions.children
             result = [(JID(item['jid']), item['subscription'])
                      for item in subscriptions]
-            logger.info("Got subscriptions for %s: %s ." % \
+            log.info("Got subscriptions for %s: %s ." % \
                 (nodeIdentifier, result))
             return result
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return []
 
         iq = IQ(self.xmlstream, 'get')
@@ -361,14 +379,14 @@ class PubSubHandler(WokkelPubSubClient):
 
         def cb(result):
             if result['type']==u'result':
-                logger.info("Set subscriptions for %s: %s ." % \
+                log.info("Set subscriptions for %s: %s ." % \
                     (nodeIdentifier, delta))
                 return True
             return False
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return False
 
         iq = IQ(self.xmlstream, 'set')
@@ -389,12 +407,12 @@ class PubSubHandler(WokkelPubSubClient):
 
         def cb(result):
             result = result.query.identity['type']
-            logger.info("Got node type %s: %s ." % (nodeIdentifier, result))
+            log.info("Got node type %s: %s ." % (nodeIdentifier, result))
             return result
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return []
 
         iq = IQ(self.xmlstream, 'get')
@@ -419,12 +437,12 @@ class PubSubHandler(WokkelPubSubClient):
                 except (AttributeError, IndexError):
                     pass
                 result[field['var']] = value
-            logger.info("Got default node configuration: %s ." % result)
+            log.info("Got default node configuration: %s ." % result)
             return result
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return []
 
         iq = IQ(self.xmlstream, 'get')
@@ -449,12 +467,12 @@ class PubSubHandler(WokkelPubSubClient):
                 except (AttributeError, IndexError):
                     pass
                 result[field['var']] = value
-            logger.info("Got node config  %s: %s ." % (nodeIdentifier, result))
+            log.info("Got node config  %s: %s ." % (nodeIdentifier, result))
             return result
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return []
 
         iq = IQ(self.xmlstream, 'get')
@@ -469,12 +487,12 @@ class PubSubHandler(WokkelPubSubClient):
     def configureNode(self, service, nodeIdentifier, options):
 
         def cb(result):
-            logger.info("Configured %s: %s ." % (nodeIdentifier, options))
+            log.info("Configured %s: %s ." % (nodeIdentifier, options))
             return True
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return False
 
         form = data_form.Form(formType='submit',
@@ -500,7 +518,7 @@ class PubSubHandler(WokkelPubSubClient):
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return False
 
         iq = IQ(self.xmlstream, 'set')
@@ -522,13 +540,13 @@ class PubSubHandler(WokkelPubSubClient):
             for affiliate in affiliations.children:
                 result.append((JID(affiliate['jid']),
                                affiliate['affiliation'], ))
-            logger.info("Got affiliations for %s: %s ." % \
+            log.info("Got affiliations for %s: %s ." % \
                 (nodeIdentifier, result))
             return result
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return []
 
         iq = IQ(self.xmlstream, 'get')
@@ -544,14 +562,14 @@ class PubSubHandler(WokkelPubSubClient):
 
         def cb(result):
             if result['type']==u'result':
-                logger.info("Modified affiliations for %s: %s ." % \
+                log.info("Modified affiliations for %s: %s ." % \
                     (nodeIdentifier, delta))
                 return True
             return False
 
         def error(failure):
             # TODO: Handle gracefully?
-            logger.error(failure.getTraceback())
+            log.error(failure.getTraceback())
             return False
 
         iq = IQ(self.xmlstream, 'set')
