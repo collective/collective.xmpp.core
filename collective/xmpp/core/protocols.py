@@ -1,7 +1,10 @@
+import transaction
 import string
 import random
 import logging
+import Zope2
 
+from zope.component.hooks import setSite
 from zope.component.hooks import getSite
 from Products.CMFCore.utils import getToolByName
 
@@ -70,36 +73,47 @@ class ChatHandler(XMPPHandler):
         self.xmlstream.send(message)
         return True
 
-    def sendRosterItemAddSuggestion(self, to, items, group=None):
+    def sendRosterItemAddSuggestion(self, to, items, portal, group=None):
         """ Suggest a user(s) to be added in the roster.
         """
-        site = getSite()
-        mt = getToolByName(site, 'portal_membership', None)
-        message = Element((None, "message", ))
-        message["id"] = getRandomId()
-        message["from"] = self.xmlstream.factory.authenticator.jid.full()
-        message["to"] = to.userhost()
-        x = message.addElement((NS_ROSTER_X, 'x'))
-        for jid in items:
-            if to == jid:
-                continue
+        app = Zope2.app()
+        root = app.unrestrictedTraverse('/'.join(portal.getPhysicalPath()))
+        setSite(root)
+        transaction.begin()
+        try:
+            mt = getToolByName(root, 'portal_membership', None)
+            message = Element((None, "message", ))
+            message["id"] = getRandomId()
+            message["from"] = self.xmlstream.factory.authenticator.jid.full()
+            message["to"] = to.userhost()
+            x = message.addElement((NS_ROSTER_X, 'x'))
+            for jid in items:
+                if to == jid:
+                    continue
 
-            member_id = jid.user
-            if mt is not None:
-                info = mt.getMemberInfo(member_id)
-                fullname = info.get('fullname', member_id)
-            else: 
-                log.warn('Could not get user fullname because the global site '
-                        'manager is not set')
-                fullname = ''
+                member_id = jid.user
+                if mt is not None:
+                    info = mt.getMemberInfo(member_id)
+                    fullname = info.get('fullname', member_id)
+                else: 
+                    log.warn('Could not get user fullname because the global site '
+                            'manager is not set')
+                    fullname = ''
 
-            item = x.addElement('item')
-            item["action"]='add'
-            item["jid"] = jid.userhost()
-            item["name"] = fullname
-            if group:
-                item.addElement('group', content=group)
-        self.xmlstream.send(message)
+                item = x.addElement('item')
+                item["action"]='add'
+                item["jid"] = jid.userhost()
+                item["name"] = fullname
+                if group:
+                    item.addElement('group', content=group)
+            self.xmlstream.send(message)
+            transaction.commit()
+        except Exception, e:
+            log.error(e)
+            transaction.abort()
+        finally:
+            setSite(None)
+            app._p_jar.close()
         return True
 
 
@@ -138,7 +152,7 @@ class AdminHandler(XMPPHandler):
         """
 
         def resultReceived(iq):
-            log.info("Added user %s" % userjid)
+            log.info("Added user %s %s" % (userjid, password))
             return True
 
         def formReceived(iq):
