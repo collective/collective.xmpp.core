@@ -3,8 +3,8 @@ Changelog
 =========
 
 -----------------
-0.1 - Unreleased
------------------
+0.1a1 (2012-10-18)
+------------------
 
 - Forked from jarn.xmpp.core 0.34 [jcbrand]
 - Merged in jarn.xmpp.twisted 0.1 [jcbrand]
