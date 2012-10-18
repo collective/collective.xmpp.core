@@ -228,7 +228,7 @@ Some of the included tests are functional tests that require a XMPP server runni
 Credits
 =======
 
-* Thanks goes Yiorgis Gozadinos (@ggozad) for being the first person to properly integrate XMPP with Plone.
+* Thanks goes Yiorgis Gozadinos (@ggozad) for writing jarn.xmpp.core and being the first to integrate XMPP into Plone.
 
 .. _XEP-0248: http://xmpp.org/extensions/xep-0248.html
 .. _XEP-0060: http://xmpp.org/extensions/xep-0060.html
