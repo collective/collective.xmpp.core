@@ -43,19 +43,13 @@ def setupPrincipal(client,
                    roster_jids):
     """Create a jabber account for a new user as well
        as create and configure its associated nodes."""
-
     site = getSite()
 
     def subscribeToAllUsers(result):
-    
         if result == False:
             return False
         if roster_jids:
-            setSite(site)
-            client.chat.sendRosterItemAddSuggestion(principal_jid, roster_jids)
-            setSite(None)
-            app = Zope2.app()
-            app._p_jar.close()
+            client.chat.sendRosterItemAddSuggestion(principal_jid, roster_jids, site)
         return True
 
     d = client.admin.addUser(principal_jid.userhost(), principal_password)
