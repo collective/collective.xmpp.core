@@ -1,0 +1,11 @@
+include *.rst
+recursive-include src/collective/xmpp/core *.zcml
+recursive-include src/collective/xmpp/core/locales *.mo
+recursive-include src/collective/xmpp/core/locales *.po
+graft docs
+prune docs/.build
+graft src/collective/xmpp/core/profiles
+graft src/collective/xmpp/core/browser/css
+graft src/collective/xmpp/core/browser/gritter
+graft src/collective/xmpp/core/browser/images
+graft src/collective/xmpp/core/browser/js
