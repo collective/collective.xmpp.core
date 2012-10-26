@@ -21,10 +21,14 @@ class XMPPUserInfo(BrowserView):
         fullname = info.get('fullname') or user_id
         portrait_url = pm.getPersonalPortrait(user_id).absolute_url()
 
+        portal_url = getToolByName(self.context, 'portal_url')
+        user_profile_url = '%s/author/%s' % (portal_url(), user_id)
+
         response = self.request.response
         response.setHeader('content-type', 'application/json')
         response.setBody(json.dumps({'fullname': fullname,
-                                     'portrait_url': portrait_url}))
+                                     'portrait_url': portrait_url,
+                                     'user_profile_url': user_profile_url }))
         return response
 
 
