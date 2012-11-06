@@ -5,7 +5,6 @@ import logging
 import Zope2
 
 from zope.component.hooks import setSite
-from zope.component.hooks import getSite
 from Products.CMFCore.utils import getToolByName
 
 from twisted.words.xish.domish import Element
@@ -92,9 +91,9 @@ class ChatHandler(XMPPHandler):
                     continue
 
                 member_id = jid.user
-                if mt is not None:
+                if mt is not None and mt.getMemberInfo(member_id):
                     info = mt.getMemberInfo(member_id)
-                    fullname = info.get('fullname', member_id)
+                    fullname = info.get('fullname', member_id).decode('utf-8')
                 else: 
                     log.warn('Could not get user fullname because the global site '
                             'manager is not set')
