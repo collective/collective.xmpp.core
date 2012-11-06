@@ -1,0 +1,50 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      lang="en"
+      metal:use-macro="here/prefs_main_template/macros/master"
+      i18n:domain="collective.xmpp.core">
+
+
+<body>
+<div metal:fill-slot="prefs_configlet_content">
+  <div class="documentEditable">
+        <div id="edit-bar">
+            <ul class="contentViews" id="content-views">
+                <li class="selected">
+                <a href=""
+                    tal:attributes="href string:$portal_url/@@xmpp-settings"
+                    i18n:translate="label_users">General Settings</a>
+                </li>
+                <li>
+                <a href=""
+                    tal:attributes="href string:$portal_url/@@xmpp-user-setup"
+                    i18n:translate="label_groups">User Registration</a>
+                </li>
+            </ul>
+        </div>
+
+        <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+            Portal status message
+        </div>
+
+        <div id="content">
+            <h1 class="documentFirstHeading"
+                i18n:translate="heading_xmpp_settings">XMPP Settings</h1>
+
+            <div id="content-core">
+                <a href="" class="link-parent"
+                tal:attributes="href string:$portal_url/plone_control_panel"
+                i18n:translate="label_up_to_plone_setup">
+                Up to Site Setup
+                </a>
+                <div id="layout-contents">
+                    <span tal:replace="structure view/contents" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -11,6 +11,7 @@ from plone.registry.interfaces import IRegistry
 
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
+from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.subscribers.startup import createAdminClient
 from collective.xmpp.core.utils import users
@@ -49,6 +50,7 @@ def setupXMPPEnvironment(portal):
         return
 
     registry = getUtility(IRegistry)
+    settings = registry.forInterface(IXMPPSettings, check=False)
     xmpp_users = getUtility(IXMPPUsers)
     pass_storage = getUtility(IXMPPPasswordStorage)
     member_ids = users.getAllMemberIds() 
@@ -63,7 +65,7 @@ def setupXMPPEnvironment(portal):
 
     def registerUser():
         if not member_ids:
-            if registry['collective.xmpp.autoSubscribe']:
+            if settings.auto_subscribe:
                 subscribeToAllUsers()
             return
         member_id = member_ids.pop()

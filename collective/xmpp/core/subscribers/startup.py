@@ -12,15 +12,17 @@ from collective.xmpp.core.interfaces import IZopeReactor
 
 from collective.xmpp.core.client import AdminClient
 from collective.xmpp.core.interfaces import IAdminClient
+from collective.xmpp.core.interfaces import IXMPPSettings
 
 log = logging.getLogger(__name__)
 
 def createAdminClient(callback):
-    settings = getUtility(IRegistry)
+    registry = getUtility(IRegistry)
+    settings = registry.forInterface(IXMPPSettings, check=False)
     try:
-        jid = settings['collective.xmpp.adminJID']
-        jdomain = settings['collective.xmpp.xmppDomain']
-        password = settings['collective.xmpp.adminPassword']
+        jid = settings.admin_jid
+        jdomain = settings.xmpp_domain
+        password = settings.admin_password
     except KeyError:
         return
 

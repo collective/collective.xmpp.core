@@ -2,6 +2,7 @@ from zope.component.hooks import getSite
 from zope.component import getUtility
 from Products.CMFCore.utils import getToolByName
 from plone.registry.interfaces import IRegistry
+from collective.xmpp.core.interfaces import IXMPPSettings
 
 def getAllMemberIds():
     """ Call searchUsers from PluggableAuthService, so that we get users from
@@ -61,7 +62,8 @@ def setupPrincipal(client,
     d = client.admin.addUser(principal_jid.userhost(), principal_password)
 
     registry = getUtility(IRegistry)
-    if registry['collective.xmpp.autoSubscribe']:
+    settings = registry.forInterface(IXMPPSettings, check=False)
+    if settings.autosubscribe:
         d.addCallback(subscribeToAllUsers)
 
     return d

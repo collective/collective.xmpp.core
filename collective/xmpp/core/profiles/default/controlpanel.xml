@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<object
+    name="portal_controlpanel"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="plone"
+    purge="False">
+
+    <configlet
+        title="XMPP Integration"
+        action_id="xmpp"
+        appId="collective.xmpp.core"
+        category="Plone"
+        condition_expr=""
+        icon_expr="string:${portal_url}/++resource++collective.xmpp.core.images/icon-xmpp.png"
+        url_expr="string:${portal_url}/@@xmpp-settings"
+        visible="True"
+        i18n:attributes="title">
+            <permission>Manage portal</permission>
+    </configlet>
+
+</object>

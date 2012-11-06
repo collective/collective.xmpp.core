@@ -7,6 +7,7 @@ from zope.interface import implements
 
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPUsers
+from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.utils.users import escapeNode
 
 log = logging.getLogger(__name__)
@@ -16,8 +17,8 @@ class XMPPUsers(object):
 
     def getUserJID(self, user_id):
         registry = getUtility(IRegistry)
-        xmpp_domain = registry['collective.xmpp.xmppDomain']
-        return JID("%s@%s" % (escapeNode(user_id), xmpp_domain))
+        settings = registry.forInterface(IXMPPSettings, check=False)
+        return JID("%s@%s" % (escapeNode(user_id), settings.xmpp_domain))
 
     def getUserPassword(self, user_id):
         pass_storage = getUtility(IXMPPPasswordStorage)

@@ -13,6 +13,7 @@ from plone.registry.interfaces import IRegistry
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IProductLayer
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
+from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.utils import users
 
@@ -36,7 +37,8 @@ def onUserCreation(event):
     principal_pass = pass_storage.set(principal_id)
 
     registry = getUtility(IRegistry)
-    if registry['collective.xmpp.autoSubscribe']:
+    settings = registry.forInterface(IXMPPSettings, check=False)
+    if settings.auto_subscribe:
         members_jids = [xmpp_users.getUserJID(mid) for mid in users.getAllMemberIds()]
     else:
         members_jids = []

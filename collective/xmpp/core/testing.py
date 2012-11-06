@@ -16,6 +16,7 @@ from plone.registry.interfaces import IRegistry
 from collective.xmpp.core.interfaces import IZopeReactor
 
 from collective.xmpp.core.interfaces import IAdminClient
+from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.subscribers.startup import setUpAdminClient
 from collective.xmpp.core.utils.setup import setupXMPPEnvironment
 
@@ -209,10 +210,9 @@ class XMPPCoreFixture(PloneSandboxLayer):
         # Install into Plone site using portal_setup
         applyProfile(portal, 'collective.xmpp.core:default')
         registry = getUtility(IRegistry)
-        registry['collective.xmpp.adminJID'] = 'admin@localhost'
-        registry['collective.xmpp.pubsubJID'] = 'pubsub.localhost'
-        registry['collective.xmpp.conferenceJID'] = 'conference.localhost'
-        registry['collective.xmpp.xmppDomain'] = 'localhost'
+        settings = registry.forInterface(IXMPPSettings, check=False)
+        settings.admin_jid = 'admin@localhost'
+        settings.xmpp_domain = 'localhost'
         setUpAdminClient(None, None)
         client = getUtility(IAdminClient)
         wait_for_client_state(client, 'authenticated')

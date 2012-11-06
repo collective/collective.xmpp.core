@@ -35,13 +35,6 @@
     permission="collective.xmpp.core.XMPPView"
     />
 
-  <browser:page
-    for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-    name="setup-xmpp"
-    class=".setup.SetupXMPPForm"
-    permission="cmf.ManagePortal"
-    />
-
   <browser:view
     for="*"
     name="magic-links"
@@ -55,6 +48,21 @@
     class=".transforms.FavIconsView"
     permission="zope.Public"
     />
+
+  <!-- Control panel -->
+  <browser:page
+      name="xmpp-settings"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".controlpanel.XMPPSettingsControlPanel"
+      permission="cmf.ManagePortal"
+      />
+
+  <browser:page
+      name="xmpp-user-setup"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".controlpanel.XMPPUserSetupControlPanel"
+      permission="cmf.ManagePortal"
+      />
 
   <!-- Viewlets -->
   <!--
