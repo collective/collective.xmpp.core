@@ -8,17 +8,27 @@ from zope.component import queryUtility
 from zope.component.hooks import getSite
 from zope.component.hooks import setSite
 from plone.registry.interfaces import IRegistry
-from Products.CMFCore.utils import getToolByName
 
-from collective.xmpp.core.subscribers.startup import createAdminClient
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPUsers
+from collective.xmpp.core.subscribers.startup import createAdminClient
+from collective.xmpp.core.utils import users
 
 log = logging.getLogger(__name__)
 
 
 def setupXMPPEnvironment(portal):
+    """ Register each Plone user in the XMPP server and save his/her password.
+
+        If users auto-subscribe to one another, we need to send roster item add
+        suggestions containing all the XMPP users.
+
+        Since we only have all the XMPP users available once every single user
+        has been registered there, we need to make use of deferred objects and
+        ensure that the suggestion is sent only when every user has been
+        registered on the XMPP server.
+    """
     log.info('Preparing to create XMPP users from the existing Plone users')
 
     client = queryUtility(IAdminClient)
@@ -41,8 +51,7 @@ def setupXMPPEnvironment(portal):
     registry = getUtility(IRegistry)
     xmpp_users = getUtility(IXMPPUsers)
     pass_storage = getUtility(IXMPPPasswordStorage)
-    mt = getToolByName(portal, 'portal_membership')
-    member_ids = [m['userid'] for m in portal.acl_users.searchUsers()]
+    member_ids = users.getAllMemberIds() 
     member_jids = []
     member_passwords = {}
     pass_storage.clear()

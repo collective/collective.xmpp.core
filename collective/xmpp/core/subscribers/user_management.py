@@ -3,7 +3,6 @@ from zope.component import adapter
 from zope.component import getUtility
 from zope.globalrequest import getRequest
 
-from Products.CMFCore.utils import getToolByName
 from Products.PluggableAuthService.interfaces.events import \
     IPrincipalCreatedEvent
 from Products.PluggableAuthService.interfaces.events import \
@@ -15,10 +14,9 @@ from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IProductLayer
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPUsers
-from collective.xmpp.core.utils.users import deletePrincipal
-from collective.xmpp.core.utils.users import setupPrincipal
+from collective.xmpp.core.utils import users
 
-log = logging.getLogger('collective.xmpp.core')
+log = logging.getLogger(__name__)
 
 @adapter(IPrincipalCreatedEvent)
 def onUserCreation(event):
@@ -39,14 +37,11 @@ def onUserCreation(event):
 
     registry = getUtility(IRegistry)
     if registry['collective.xmpp.autoSubscribe']:
-        mtool = getToolByName(principal, 'portal_membership')
-        members_jids = [xmpp_users.getUserJID(member.getUserId())
-                        for member in mtool.listMembers()]
+        members_jids = [xmpp_users.getUserJID(mid) for mid in users.getAllMemberIds()]
     else:
         members_jids = []
 
-    d = setupPrincipal(client, principal_jid, principal_pass, members_jids)
-    return d
+    users.setupPrincipal(client, principal_jid, principal_pass, members_jids)
 
 
 @adapter(IPrincipalDeletedEvent)
@@ -66,5 +61,5 @@ def onUserDeletion(event):
     pass_storage = getUtility(IXMPPPasswordStorage)
     pass_storage.remove(principal_id)
 
-    d = deletePrincipal(client, principal_jid)
+    d = users.deletePrincipal(client, principal_jid)
     return d

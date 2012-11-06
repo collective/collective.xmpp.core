@@ -1,9 +1,15 @@
-import Zope2
 from zope.component.hooks import getSite
-from zope.component.hooks import setSite
 from zope.component import getUtility
+from Products.CMFCore.utils import getToolByName
 from plone.registry.interfaces import IRegistry
 
+def getAllMemberIds():
+    """ Call searchUsers from PluggableAuthService, so that we get users from
+        PAS plugins as well (e.g LDAP).
+    """
+    portal = getSite()
+    acl_users = getToolByName(portal, 'acl_users')
+    return [m['userid'] for m in acl_users.searchUsers()]
 
 def escapeNode(node):
     """ Escape the node part (also called local part) of a JID.
