@@ -184,15 +184,15 @@ $msg:false, Strophe:false, setTimeout:false, navigator:false, jarn:false, google
     jarnxmpp.onConnect = function (status) {
         if ((status === Strophe.Status.ATTACHED) || (status === Strophe.Status.CONNECTED)) {
             $(window).bind('beforeunload', function () {
-                $(document).trigger('jarnxmpp.disconnecting');
+                $(document).trigger('xmpp.disconnecting');
                 var presence = $pres({type: 'unavailable'});
                 jarnxmpp.connection.send(presence);
                 jarnxmpp.connection.disconnect();
                 jarnxmpp.connection.flush();
             });
-            $(document).trigger('jarnxmpp.connected');
+            $(document).trigger('xmpp.connected', jarnxmpp.connection);
         } else if (status === Strophe.Status.DISCONNECTED) {
-            $(document).trigger('jarnxmpp.disconnected');
+            $(document).trigger('xmpp.disconnected');
         }
     };
 
