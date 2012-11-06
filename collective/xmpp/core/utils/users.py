@@ -63,7 +63,7 @@ def setupPrincipal(client,
 
     registry = getUtility(IRegistry)
     settings = registry.forInterface(IXMPPSettings, check=False)
-    if settings.autosubscribe:
+    if settings.auto_subscribe:
         d.addCallback(subscribeToAllUsers)
 
     return d
