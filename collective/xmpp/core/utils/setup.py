@@ -42,7 +42,7 @@ def setupXMPPEnvironment(portal):
     xmpp_users = getUtility(IXMPPUsers)
     pass_storage = getUtility(IXMPPPasswordStorage)
     mt = getToolByName(portal, 'portal_membership')
-    member_ids = mt.listMemberIds()
+    member_ids = [m['userid'] for m in portal.acl_users.searchUsers()]
     member_jids = []
     member_passwords = {}
     pass_storage.clear()
