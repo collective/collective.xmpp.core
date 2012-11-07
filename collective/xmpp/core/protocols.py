@@ -126,24 +126,11 @@ class AdminHandler(XMPPHandler):
         """ XXX: This is ejabberd specific. ejabberd does not implement
         the #get-registered-users-list command, instead does it with an iq/get.
         """
-
-        def resultReceived(result):
-            items = result.query.children
-            result = [item.attributes for item in items]
-            log.info("Got registered users: %s" % result)
-            return result
-
-        def error(failure):
-            # TODO: Handle gracefully?
-            log.error(failure.getTraceback())
-            return False
-
         iq = IQ(self.xmlstream, 'get')
         iq['to'] = self.xmlstream.factory.authenticator.jid.host
         query = iq.addElement((NS_DISCO_ITEMS, 'query'))
         query['node'] = 'all users'
         d = iq.send()
-        d.addCallbacks(resultReceived, error)
         return d
 
     def addUser(self, userjid, password):

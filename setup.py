@@ -30,6 +30,7 @@ setup(name='collective.xmpp.core',
           'wokkel>0.6.3',
           'plone.app.registry',
           'plone.app.z3cform',
+          'Products.UserAndGroupSelectionWidget',
           'jarn.jsi18n'
       ],
       extras_require = {

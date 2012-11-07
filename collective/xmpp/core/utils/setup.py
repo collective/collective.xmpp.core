@@ -14,12 +14,11 @@ from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.subscribers.startup import createAdminClient
-from collective.xmpp.core.utils import users
 
 log = logging.getLogger(__name__)
 
 
-def setupXMPPEnvironment(portal):
+def registerXMPPUsers(portal, member_ids):
     """ Register each Plone user in the XMPP server and save his/her password.
 
         If users auto-subscribe to one another, we need to send roster item add
@@ -31,7 +30,6 @@ def setupXMPPEnvironment(portal):
         registered on the XMPP server.
     """
     log.info('Preparing to create XMPP users from the existing Plone users')
-
     client = queryUtility(IAdminClient)
     if client is None:
         log.info('We first have to create the XMPP admin client. '
@@ -43,7 +41,7 @@ def setupXMPPEnvironment(portal):
                     'Client state is "%s". Will retry on the next request.' % client.state)
                 gsm = getGlobalSiteManager()
                 gsm.unregisterUtility(client, IAdminClient)
-            setupXMPPEnvironment(portal)
+            registerXMPPUsers(portal, member_ids)
             setSite(None)
 
         createAdminClient(checkAdminClientConnected)
@@ -53,7 +51,6 @@ def setupXMPPEnvironment(portal):
     settings = registry.forInterface(IXMPPSettings, check=False)
     xmpp_users = getUtility(IXMPPUsers)
     pass_storage = getUtility(IXMPPPasswordStorage)
-    member_ids = users.getAllMemberIds() 
     member_jids = []
     member_passwords = {}
     pass_storage.clear()
@@ -98,3 +95,32 @@ def setupXMPPEnvironment(portal):
         return True
 
     registerNextUser(True)
+
+
+def deregisterXMPPUsers(portal, member_jids):
+    """ Deregister each Plone user from the XMPP
+    """
+    log.info('Preparing to remove XMPP users')
+    client = queryUtility(IAdminClient)
+    if client is None:
+        log.info('We first have to create the XMPP admin client. '
+                 'This might take a few seconds')
+
+        def checkAdminClientConnected(client):
+            if client.state != 'authenticated':
+                log.warn('XMPP admin client has not been able to authenticate. ' \
+                    'Client state is "%s". Will retry on the next request.' % client.state)
+                gsm = getGlobalSiteManager()
+                gsm.unregisterUtility(client, IAdminClient)
+            deregisterXMPPUsers(portal, member_jids)
+            setSite(None)
+
+        createAdminClient(checkAdminClientConnected)
+        return
+
+    # TODO
+    # passwords = queryUtility(IXMPPPasswordStorage)
+    # if passwords:
+    #     passwords.clear()
+    client.admin.deleteUsers(member_jids)
+

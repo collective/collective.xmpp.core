@@ -3,6 +3,7 @@ from zope.component.interfaces import IObjectEvent
 from zope.interface import Interface
 from zope.interface import implements
 from zope.viewlet.interfaces import IViewletManager
+from z3c.form import button
 
 from collective.xmpp.core import messageFactory as _
 
@@ -10,6 +11,54 @@ class IProductLayer(Interface):
     """ Marker interface for requests indicating the staralliance.theme
         package has been installed.
     """
+
+class IXMPPUserSetup(Interface):
+    """ 
+    """
+    users = schema.List(
+        title=_(u"label_users", default=u"Choose Users"),
+        description=_(u"help_user_setup",
+                default=u"Choose here the users you'd like to register "
+                        u"or deregister from the XMPP server."),
+        value_type=schema.TextLine(),
+        required=False,
+        )
+
+    register_selected = button.Button(
+                            title=_(u'label_register_selected',
+                                default=u"Register Selected Users"),
+                            description=_(u"help_register_selected", 
+                                default=u"Click this button to let the above "
+                                "selected users be registered on the XMPP "
+                                "server."),
+                            required=False,
+                            )
+    deregister_selected = button.Button(
+                            title=_(u'label_deregister_selected',
+                                default=u"Deregister Selected Users"),
+                            description=_(u"help_deregister_selected",
+                                default=u"Click this button to deregister the "
+                                "above selected users from the XMPP server."),
+                            required=False,
+                            )
+    register_all = button.Button(
+                            title=_(u'label_register_all',
+                                default=u"Register ALL Users"),
+                            description=_(u"help_register_all", 
+                                default=u"Click this button to register ALL "
+                                "the users in the site on the XMPP "
+                                "server. WARNING: This should only ever be done "
+                                "once, unless you know what you're doing!"),
+                            required=False,
+                            )
+    deregister_all = button.Button(
+                            title=_(u'label_deregister_all',
+                                default=u"Deregister ALL Users"),
+                            description=_(u"help_deregister_all",
+                                default=u"Click this button to deregister ALL "
+                                "the users in the site from the XMPP server."),
+                            required=False,
+                            )
 
 
 class IXMPPSettings(Interface):
@@ -114,7 +163,7 @@ class IPubSubStorage(Interface):
 
 
 class IAdminClient(Interface):
-    """Marker interface for the PubSub twisted client.
+    """Marker interface for the twisted client.
     """
 
 
