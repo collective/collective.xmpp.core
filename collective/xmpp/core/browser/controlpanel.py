@@ -21,9 +21,9 @@ from collective.xmpp.core import messageFactory as _
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPSettings 
 from collective.xmpp.core.interfaces import IXMPPUserSetup
+from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.utils import setup 
 from collective.xmpp.core.utils import users
-from collective.xmpp.core.interfaces import IXMPPUsers
 
 log = logging.getLogger(__name__)
 
@@ -113,10 +113,12 @@ class XMPPUserSetupForm(form.Form):
                         member_jids.remove(settings.admin_jid)
                     if member_jids:
                         setup.deregisterXMPPUsers(self.context, member_jids)
+
                 return result
 
             d = client.admin.getRegisteredUsers()
             d.addCallbacks(resultReceived)
+
             status.add(_(u"The XMPP users is being instructed to deregister all "
                         u"the users. This might take some minutes to complete."), "info")
 

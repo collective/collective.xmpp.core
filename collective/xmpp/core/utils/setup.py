@@ -2,6 +2,8 @@ import logging
 import transaction
 import Zope2
 
+from twisted.words.protocols.jabber.jid import JID
+
 from zope.component import getGlobalSiteManager
 from zope.component import getUtility
 from zope.component import queryUtility
@@ -118,9 +120,14 @@ def deregisterXMPPUsers(portal, member_jids):
         createAdminClient(checkAdminClientConnected)
         return
 
-    # TODO
-    # passwords = queryUtility(IXMPPPasswordStorage)
-    # if passwords:
-    #     passwords.clear()
+    # Clear passwords
+    passwords = queryUtility(IXMPPPasswordStorage)
+    if passwords:
+        for member_jid in member_jids:
+            if isinstance(member_jid, JID):
+                member_jid = member_jid.userhost()
+            member_id = member_jid.rsplit('@')[0]
+            passwords.remove(member_id)
+
     client.admin.deleteUsers(member_jids)
 
