@@ -64,7 +64,6 @@ class XMPPUserSetupForm(form.EditForm):
 
     @button.buttonAndHandler(_('Register all users for XMPP'), name=None)
     def handleApply(self, action):
-        import pdb; pdb.set_trace() 
         data, errors = self.extractData()
         setupXMPPEnvironment(self.context)
         IStatusMessage(self.request).addStatusMessage(
