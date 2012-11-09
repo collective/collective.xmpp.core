@@ -3,7 +3,7 @@ Changelog
 =========
 
 ------------------
-0.1a3 (unreleased)
+0.1a3 (2012-11-09)
 ------------------
 
 - Bugfix for RuntimeError that might occur when upgrading from 0.1a1 to 0.1a2
