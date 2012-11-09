@@ -3,7 +3,7 @@ Changelog
 =========
 
 ------------------
-0.1a2 (unreleased)
+0.1a2 (2012-11-09)
 ------------------
 
 - Add control panel configlet for configuration and registering XMPP users. [jcbrand]
