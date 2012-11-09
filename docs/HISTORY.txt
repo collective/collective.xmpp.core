@@ -6,7 +6,8 @@ Changelog
 0.1a2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add control panel configlet for configuration and registering XMPP users. [jcbrand]
+- Add support for PAS plugins (such as LDAP). [jcbrand]
 
 
 0.1a1 (2012-10-18)
