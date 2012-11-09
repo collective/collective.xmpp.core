@@ -7,9 +7,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: collective.xmpp.core 0.1-dev\n"
+"Project-Id-Version: collective.xmpp.core 0.1a2.dev0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2012-10-18 21:56+0200\n"
+"POT-Creation-Date: 2012-11-09 10:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,15 +18,135 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
 
-#: collective/xmpp/core/browser/setup.py:21
-msgid "Set up XMPP"
+#: collective/xmpp/core/interfaces.py:19
+msgid "label_users"
 msgstr ""
 
-#: collective/xmpp/core/browser/setup.py:22
-msgid "label_setup_warning"
+#: collective/xmpp/core/interfaces.py:20
+msgid "help_user_setup"
 msgstr ""
 
-#: collective/xmpp/core/browser/setup.py:34
-msgid "Setup"
+#: collective/xmpp/core/interfaces.py:28
+msgid "label_register_selected"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:30
+msgid "help_register_selected"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:37
+msgid "label_deregister_selected"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:39
+msgid "help_deregister_selected"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:45
+msgid "label_register_all"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:47
+msgid "help_register_all"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:58
+msgid "label_deregister_all"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:60
+msgid "help_deregister_all"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:72
+msgid "label_xmpp_domain"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:74
+msgid "help_xmpp_domain"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:81
+msgid "label_xmpp_admin_jid"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:83
+msgid "help_xmpp_admin_jid"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:92
+msgid "label_xmpp_admin_password"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:99
+msgid "label_xmpp_auto_subscribe"
+msgstr ""
+
+#: collective/xmpp/core/interfaces.py:101
+msgid "help_xmpp_auto_subscribe"
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:39
+msgid "XMPP settings"
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:41
+msgid "Save"
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:48
+msgid "Changes saved"
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:52
+msgid "Cancel"
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:54
+msgid "Edit cancelled"
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:72
+msgid "XMPP User Setup"
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:73
+msgid "help_xmpp_user_setup"
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:99
+msgid ""
+"All users are being registered. This might take a few minutes and your "
+"site might become unresponsive."
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:110
+msgid ""
+"The XMPP Twisted utility could not be found. Either your XMPP settings "
+"are incorrect, or the Zope server was just restarted and the utility not "
+"yet registered again (it's registered upon page load). If it's the second"
+" case, please try again. Otherwise, check your XMPP settings."
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:138
+msgid ""
+"The XMPP users is being instructed to deregister all the users. This "
+"might take some minutes to complete."
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:162
+msgid "You first need to choose the users to deregister"
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:174
+msgid "The selected users were deregistered"
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:180
+msgid "You first need to choose the users to register"
+msgstr ""
+
+#: collective/xmpp/core/browser/controlpanel.py:185
+msgid "The selected users where registered"
 msgstr ""
 
