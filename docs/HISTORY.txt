@@ -6,7 +6,8 @@ Changelog
 0.1a3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Bugfix for RuntimeError that might occur when upgrading from 0.1a1 to 0.1a2
+  [jcbrand]
 
 
 0.1a2 (2012-11-09)
