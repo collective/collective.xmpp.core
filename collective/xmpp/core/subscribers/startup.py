@@ -13,6 +13,7 @@ from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.client import AdminClient
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPSettings
+from collective.xmpp.core.interfaces import IProductLayer
 
 log = logging.getLogger(__name__)
 
@@ -34,6 +35,8 @@ def createAdminClient(callback):
 
 
 def setUpAdminClient(event):
+    if not IProductLayer.providedBy(event.request):
+        return
     site = getSite()
     mtool = getToolByName(site, 'portal_membership', None)
     if not mtool or mtool.isAnonymousUser():
