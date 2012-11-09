@@ -26,7 +26,6 @@ def createAdminClient(callback):
         password = settings.admin_password
     except KeyError:
         return
-
     client = AdminClient(jid, jdomain, password)
     gsm = getGlobalSiteManager()
     gsm.registerUtility(client, IAdminClient)

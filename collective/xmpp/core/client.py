@@ -125,18 +125,15 @@ class AdminClient(XMPPClient):
     implements(IAdminClient)
 
     def __init__(self, jid, jdomain, password):
-
         try:
             jid = JID(jid)
         except RuntimeError, e:
             logger.warn(e)
+            return
+
         self.admin = AdminHandler()
         self.chat = ChatHandler()
         self.presence = PresenceClientProtocol()
-
-        if not jid:
-            return
-
         super(AdminClient, self).__init__(
             jid, password,
             extra_handlers=[self.admin,
