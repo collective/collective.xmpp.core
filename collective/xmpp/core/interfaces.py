@@ -21,7 +21,7 @@ class IXMPPUserSetup(Interface):
                 default=u"Choose here the users you'd like to register "
                         u"or deregister from the XMPP server."),
         value_type=schema.TextLine(),
-        required=False,
+        required=True,
         )
 
     register_selected = button.Button(
@@ -47,8 +47,11 @@ class IXMPPUserSetup(Interface):
                             description=_(u"help_register_all", 
                                 default=u"Click this button to register ALL "
                                 "the users in the site on the XMPP "
-                                "server. WARNING: This should only ever be done "
-                                "once, unless you know what you're doing!"),
+                                "server. WARNING: Don't call this method if "
+                                "you already have some users registered for "
+                                "XMPP. Also be aware that for many users this "
+                                "might take a few minutes, max out your CPU "
+                                "and make your site unresponsive."),
                             required=False,
                             )
     deregister_all = button.Button(

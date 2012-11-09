@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 import logging
+import zope.component
 from zope.component import queryUtility
 from zope.component import getUtility
 from z3c.form import button
 from z3c.form import form
 from z3c.form import field
+from z3c.form.interfaces import NO_VALUE
 
 from Products.statusmessages.interfaces import IStatusMessage
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.CMFCore.utils import getToolByName
 from Products.UserAndGroupSelectionWidget.z3cform.widget import \
                                             UsersAndGroupsSelectionWidgetFactory
 
@@ -67,7 +70,7 @@ class XMPPUserSetupForm(form.Form):
     ignoreContext = True
     id = "XMPPUserSetupForm"
     label = _(u"XMPP User Setup")
-    description = _("label_setup_warning", """
+    description = _("help_xmpp_user_setup", """
         This page lets you register and deregister Plone users on the XMPP
         server. You can either choose specific users, or do it for all users in
         the site. Make sure you have set the correct settings for you XMPP 
@@ -78,65 +81,108 @@ class XMPPUserSetupForm(form.Form):
 
     def update(self):
         super(XMPPUserSetupForm, self).update()
-        status = IStatusMessage(self.request)
         if self.request.form.get('form.widgets.register_all'):
-            member_ids = users.getAllMemberIds() 
-            setup.registerXMPPUsers(self.context, member_ids)
-            status.add(_(u"All users were registered"), "info")
+            return self.registerAll()
 
         elif self.request.form.get('form.widgets.deregister_all'):
-            registry = getUtility(IRegistry)
-            settings = registry.forInterface(IXMPPSettings, check=False)
-
-            client = queryUtility(IAdminClient)
-            if client is None:
-                status.add(_(u"The XMPP Twisted utility could not be "
-                "found. Either your XMPP settings are incorrect, or the Zope "
-                "server was just restarted and the utility not yet registered "
-                "again (it's registered upon page load). If it's the "
-                "second case, please try again. Otherwise, check your XMPP "
-                "settings."), "error")
-                return
-                
-            def resultReceived(result):
-                items = [item.attributes for item in result.query.children]
-                if items[0].has_key('node'):
-                    for item in reversed(items):
-                        iq = IQ(client.admin.xmlstream, 'get')
-                        iq['to'] = client.admin.xmlstream.factory.authenticator.jid.host
-                        query = iq.addElement((NS_DISCO_ITEMS, 'query'))
-                        query['node'] = item['node']
-                        iq.send().addCallbacks(resultReceived)
-                else:
-                    member_jids = [item['jid'] for item in items]
-                    if settings.admin_jid in member_jids:
-                        member_jids.remove(settings.admin_jid)
-                    if member_jids:
-                        setup.deregisterXMPPUsers(self.context, member_jids)
-
-                return result
-
-            d = client.admin.getRegisteredUsers()
-            d.addCallbacks(resultReceived)
-
-            status.add(_(u"The XMPP users is being instructed to deregister all "
-                        u"the users. This might take some minutes to complete."), "info")
+            return self.deregisterAll()
 
         elif self.request.form.get('form.widgets.register_selected'):
-            member_ids = self.request.form.get('form.widgets.users')
-            setup.registerXMPPUsers(self.context, member_ids)
-            status.add(_(u"The selected users where registered"), "info")
+            return self.registerSelected()
 
         elif self.request.form.get('form.widgets.deregister_selected'):
-            member_jids = []
-            member_ids = self.request.form.get('form.widgets.users')
-            xmpp_users = getUtility(IXMPPUsers)
-            for member_id in member_ids:
-                member_jid = xmpp_users.getUserJID(member_id)
-                member_jids.append(member_jid)
+            return self.deregisterSelected()
 
-            setup.deregisterXMPPUsers(self.context, member_jids)
-            status.add(_(u"The selected users were deregistered"), "info")
+    def registerAll(self):
+        member_ids = users.getAllMemberIds() 
+        setup.registerXMPPUsers(self.context, member_ids)
+        IStatusMessage(self.request).add(_(u"All users are being registered. "
+            "This might take a few minutes and your site might become "
+            "unresponsive."), "info")
+
+    def deregisterAll(self):
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(IXMPPSettings, check=False)
+        status = IStatusMessage(self.request)
+
+        client = queryUtility(IAdminClient)
+        if client is None:
+            status.add(_(u"The XMPP Twisted utility could not be "
+            "found. Either your XMPP settings are incorrect, or the Zope "
+            "server was just restarted and the utility not yet registered "
+            "again (it's registered upon page load). If it's the "
+            "second case, please try again. Otherwise, check your XMPP "
+            "settings."), "error")
+            return
+            
+        def resultReceived(result):
+            items = [item.attributes for item in result.query.children]
+            if items[0].has_key('node'):
+                for item in reversed(items):
+                    iq = IQ(client.admin.xmlstream, 'get')
+                    iq['to'] = client.admin.xmlstream.factory.authenticator.jid.host
+                    query = iq.addElement((NS_DISCO_ITEMS, 'query'))
+                    query['node'] = item['node']
+                    iq.send().addCallbacks(resultReceived)
+            else:
+                member_jids = [item['jid'] for item in items]
+                if settings.admin_jid in member_jids:
+                    member_jids.remove(settings.admin_jid)
+                if member_jids:
+                    setup.deregisterXMPPUsers(self.context, member_jids)
+
+            return result
+
+        d = client.admin.getRegisteredUsers()
+        d.addCallbacks(resultReceived)
+        status.add(_(u"The XMPP users is being instructed to deregister all "
+                    u"the users. This might take some minutes to complete."), "info")
+
+    def getChosenMembers(self):
+        """ The UserAndGroupSelectionWidget can return users and groups.
+
+            Identify the chosen groups and return their members as well as the
+            individually chosen members (while removing duplicates).
+        """
+        members_and_groups = self.request.form.get('form.widgets.users')
+        pg = getToolByName(self.context, 'portal_groups')
+        groups = pg.getGroupIds()
+        chosen_groups = list(set(members_and_groups).intersection(set(groups)))
+        chosen_members = list(set(members_and_groups).difference(set(groups)))
+
+        for g in chosen_groups:
+            chosen_members += pg.getGroupById(g).getGroupMemberIds()
+
+        return list(set(chosen_members))
+
+    def deregisterSelected(self):
+        status = IStatusMessage(self.request)
+        widget = self.widgets.get('users')
+        if widget.extract() == NO_VALUE:
+            status.add(_(u"You first need to choose the users to deregister"), 
+                        "error")
+            return
+
+        member_jids = []
+        member_ids = self.getChosenMembers()
+        xmpp_users = getUtility(IXMPPUsers)
+        for member_id in member_ids:
+            member_jid = xmpp_users.getUserJID(member_id)
+            member_jids.append(member_jid)
+
+        setup.deregisterXMPPUsers(self.context, member_jids)
+        status.add(_(u"The selected users were deregistered"), "info")
+
+    def registerSelected(self):
+        status = IStatusMessage(self.request)
+        widget = self.widgets.get('users')
+        if widget.extract() == NO_VALUE:
+            status.add(_(u"You first need to choose the users to register"), 
+                        "error")
+            return
+        member_ids = self.getChosenMembers()
+        setup.registerXMPPUsers(self.context, member_ids)
+        status.add(_(u"The selected users where registered"), "info")
 
 
 class XMPPUserSetupControlPanel(controlpanel.ControlPanelFormWrapper):
