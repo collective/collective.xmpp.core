@@ -150,13 +150,18 @@ Setting up a new Plone site
 * Start ejabberd (if you used the recipe to build ejabberd, ``bin/ejabberd`` will do the job).
 * Start the Nginx frontend. ``bin/frontend start``
 * Start your zope instance.
-* Access Zope directly at ``http://localhost:8081/manage`` and create a new Plone site with ``collective.xmpp.core`` (or ``collective.xmpp.collaboration`` if you want that package installed as well).
-* Go to the Plone control panel, into the registry settings. Edit the collective.xmpp.* settings to reflect your installation, passwords etc.
+* Access Zope directly at ``http://localhost:8081/manage`` and create a new Plone site with ``collective.xmpp.core``.
+* Go to the Plone control panel and click on the ``XMPP Integration`` link
+under ``Plone Configuration``.  Make sure the XMPP settings reflect your
+installation.
 * Restart your Plone instance.
 * Upon the first request the administrator will log to his account. You should see things happening in the logs and if there are any errors something might be wrong with your installation.
-* Set up the users. You do this by calling ``@@setup-xmpp`` like ``http://localhost:8080/@@setup-xmpp``. The form will not report any errors as everything will happen asynchronously but you will get the results/failures on the console.
-
-If you are going to use this on an existing site, you only need to perform the last step after making sure that your XMPP admin is connected.
+* When you create a new Plone user, they will automatically be registered on
+the XMPP server. Your existing users can also be registered by going back to
+the ``XMPP Integration`` configlet in the control panel, and then clicking on
+the ``User Registration`` tab. Keep an eye on your instance.log traceback in
+the console to make sure there aren't any errors. You can see the registered
+users by going to the XMPP admin interface at localhost:5280/admin.
 
 --------------------------
 Making sure things work ;)
@@ -181,7 +186,7 @@ This is a complex infrastructure so it can be hard to know what goes wrong somet
 
     2011-09-01 14:45:48 INFO collective.xmpp.core XMPP admin client has authenticated succesfully.
 
-* After having run ``@@setup-xmpp``, logging-in to the Plone site with a user should also authenticate him with the XMPP server. This is indicated in the logs by:
+* If your Plone user was succesfully registered on the XMPP server, logging-in to the Plone site with a user should also authenticate him with the XMPP server. This is indicated in the logs by:
 
   ::
 
@@ -209,7 +214,7 @@ Security
 
 Included is an implementation of an authenticating client over BOSH according to `XEP-0206`_. This practically means that the javascript client never needs to know the password of the XMPP user. Instead, the user is authenticated directly between the XMPP server and the Plone instance. A pair of secret tokens are exchanged, valid for a short time (~2 minutes). It is this pair that is given to the javascript client and not the password.
 
-When a user is created (either through the Plone interface or by running ``@@setup-xmpp`` for existing users), a random password is generated and stored internally in a persistent utility.
+When a Plone user is registered on the XMPP server, a random password is generated and stored in the ZODB in a persistent utility.
 
 If you do not need to access the XMPP accounts outside of the Plone instance you can additionally hide the entire XMPP service behind a firewall and only allow connections to it from the Plone instances. This in combination with HTTPS should be enough for the paranoid among us.
 
