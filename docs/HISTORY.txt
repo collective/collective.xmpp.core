@@ -9,8 +9,10 @@ Changelog
 - Fixed HISTORY.txt markup
   [alecghica]
 - Fixed version used for Products.UserAndGroupSelectionWidget to >2.04
-  as earlier version will crash due to API cahnges
+  as earlier version will crash due to API changes
   [ghicaale]
+- Bugfix. Password utility forgets user passwords when a user is registered.
+  [jcbrand]
 
 0.1a3 (2012-11-09)
 ------------------
