@@ -2,7 +2,7 @@
 Changelog
 =========
 
-0.1a4 (unreleased)
+0.1a4 (2012-11-19)
 ------------------
 - Documentation updated
   [jcbrand]
