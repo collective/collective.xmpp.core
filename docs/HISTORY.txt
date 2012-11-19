@@ -2,34 +2,39 @@
 Changelog
 =========
 
-------------------
 0.1a4 (unreleased)
 ------------------
-
-- Nothing changed yet.
-
+- Documentation updated
+  [jcbrand]
+- Fixed HISTORY.txt markup
+  [alecghica]
+- Fixed version used for Products.UserAndGroupSelectionWidget to >2.04
+  as earlier version will crash due to API cahnges
+  [ghicaale]
 
 0.1a3 (2012-11-09)
 ------------------
-
 - Bugfix for RuntimeError that might occur when upgrading from 0.1a1 to 0.1a2
   [jcbrand]
 
-
 0.1a2 (2012-11-09)
 ------------------
-
-- Add control panel configlet for configuration and registering XMPP users. [jcbrand]
-- Add support for PAS plugins (such as LDAP). [jcbrand]
-
+- Add control panel configlet for configuration and registering XMPP users.
+  [jcbrand]
+- Add support for PAS plugins (such as LDAP).
+  [jcbrand]
 
 0.1a1 (2012-10-18)
 ------------------
-
-- Forked from jarn.xmpp.core 0.34 [jcbrand]
-- Merged in jarn.xmpp.twisted 0.1 [jcbrand]
-- Removed all PubSub and Messaging related features. [jcbrand]
-- Add browserlayer and check for it when handling events. [jcbrand]
+- Forked from jarn.xmpp.core 0.34
+  [jcbrand]
+- Merged in jarn.xmpp.twisted 0.1
+  [jcbrand]
+- Removed all PubSub and Messaging related features.
+  [jcbrand]
+- Add browserlayer and check for it when handling events.
+  [jcbrand]
 - Fixed the @@setup-xmpp script to only register the next user once the previous one
-  has finished. [jcbrand]
+  has finished.
+  [jcbrand]
 
