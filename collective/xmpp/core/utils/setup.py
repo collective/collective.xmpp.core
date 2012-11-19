@@ -55,7 +55,6 @@ def registerXMPPUsers(portal, member_ids):
     pass_storage = getUtility(IXMPPPasswordStorage)
     member_jids = []
     member_passwords = {}
-    pass_storage.clear()
 
     def subscribeToAllUsers():
         for member_jid in member_jids:
