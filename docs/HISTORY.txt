@@ -6,7 +6,8 @@ Changelog
 0.1a6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Bugfix. Prevent getAllMemberIds from returning duplicates.
+  [jcbrand]
 
 
 ------------------
