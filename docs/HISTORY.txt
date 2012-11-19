@@ -6,6 +6,12 @@ Changelog
 0.1a6 (unreleased)
 ------------------
 
+- Added Spanish translation.
+  [macagua]
+
+- Added improvements about i18n support.
+  [macagua]
+
 - Bugfix. Prevent getAllMemberIds from returning duplicates.
   [jcbrand]
 
