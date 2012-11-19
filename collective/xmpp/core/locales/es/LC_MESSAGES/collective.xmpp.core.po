@@ -1,217 +1,247 @@
-# --- PLEASE EDIT THE LINES BELOW CORRECTLY ---
-# SOME DESCRIPTIVE TITLE.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Leonardo J. Caballero G. <leonardocaballero@gmail.com>, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: collective.xmpp.core\n"
 "POT-Creation-Date: 2012-11-19 19:09+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"PO-Revision-Date: 2012-11-19 15:30-0430\n"
+"Last-Translator: Leonardo J. Caballero G. <leonardocaballero@gmail.com>\n"
+"Language-Team: Leonardo J. Caballero G.\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0\n"
-"Language-Code: en\n"
-"Language-Name: English\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.7.1\n"
+"Language-Code: es\n"
+"Language-Name: Español\n"
 "Preferred-Encodings: utf-8 latin1\n"
 "Domain: collective.xmpp.core\n"
+"X-Is-Fallback-For: es-ar es-bo es-cl es-co es-cr es-do es-ec es-es es-sv es-"
+"gt es-hn es-mx es-ni es-pa es-py es-pe es-pr es-us es-uy es-ve\n"
 
 #: ./profiles/default/portlets.xml
 msgid "A portlet that renders the feed from a PubSub node."
-msgstr ""
+msgstr "Un portlet que muestra el feed desde un nodo PubSub."
 
 #: ./browser/controlpanel.py:99
 msgid "All users are being registered. This might take a few minutes and your site might become unresponsive."
-msgstr ""
+msgstr "Todos los usuarios que se están registrando. Esto puede tardar unos minutos y su sitio podría dejar de responder."
 
 #: ./browser/controlpanel.py:52
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: ./browser/controlpanel.py:48
 msgid "Changes saved"
-msgstr ""
+msgstr "Cambios guardado"
 
 #: ./browser/user_details.pt:7
 msgid "Click to toggle user's details"
-msgstr ""
+msgstr "Haga clic para cambiar los detalles del usuario"
 
 #: ./browser/controlpanel.py:54
 msgid "Edit cancelled"
-msgstr ""
+msgstr "Edición cancelado"
 
 #: ./browser/user_details.pt:23
 msgid "Personal message"
-msgstr ""
+msgstr "Mensaje personal"
 
 #: ./browser/user_details.pt:13
 msgid "Personal stream"
-msgstr ""
+msgstr "Actividad personal"
 
 #: ./profiles/default/portlets.xml
 msgid "PubSub feed portlet"
-msgstr ""
+msgstr "Portlet feed PubSub"
 
 #: ./browser/user_details.pt:21
 msgid "Reply"
-msgstr ""
+msgstr "Responder"
 
 #: ./browser/controlpanel.py:41
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: ./browser/user_details.pt:26
 msgid "Send"
-msgstr ""
+msgstr "Enviar"
 
 #: ./browser/controlpanel.py:110
 msgid "The XMPP Twisted utility could not be found. Either your XMPP settings are incorrect, or the Zope server was just restarted and the utility not yet registered again (it's registered upon page load). If it's the second case, please try again. Otherwise, check your XMPP settings."
 msgstr ""
+"La utilidad Twisted XMPP no se pudo encontrar. Algunas de sus "
+"configuraciones XMPP son incorrectas, o el servidor Zope se reinició justo y "
+"la utilidad no se ha registrado de nuevo (se registró al cargar la página). "
+"Si es el segundo caso, por favor, inténtelo de nuevo mas tarde. De lo "
+"contrario, compruebe su configuración XMPP."
 
 #: ./browser/controlpanel.py:138
 msgid "The XMPP users is being instructed to deregister all the users. This might take some minutes to complete."
 msgstr ""
+"Se ha instruido que los usuarios XMPP se den de baja. Esto puede tardar "
+"varios minutos en completarse."
 
 #: ./browser/controlpanel.py:174
 msgid "The selected users were deregistered"
-msgstr ""
+msgstr "Los usuarios seleccionados ha sido dado de baja"
 
 #: ./browser/controlpanel.py:185
 msgid "The selected users where registered"
-msgstr ""
+msgstr "Los usuarios seleccionados han sido registrados"
 
 #: ./profiles/default/controlpanel.xml
 msgid "XMPP Integration"
-msgstr ""
+msgstr "Integración con XMPP"
 
 #: ./browser/controlpanel.py:72
 msgid "XMPP User Setup"
-msgstr ""
+msgstr "Usuario de instalación XMPP"
 
 #: ./browser/controlpanel.py:39
 msgid "XMPP settings"
-msgstr ""
+msgstr "Configuraciones XMPP"
 
 #: ./browser/controlpanel.py:162
 msgid "You first need to choose the users to deregister"
-msgstr ""
+msgstr "Usted primero necesita seleccionar los usuarios a eliminar sus registros"
 
 #: ./browser/controlpanel.py:180
 msgid "You first need to choose the users to register"
-msgstr ""
+msgstr "Usted primero necesita seleccionar los usuarios a registrar"
 
 #. Default: "XMPP Settings"
 #: ./browser/usersetup.pt:33
 #: ./browser/xmppsettings.pt:33
 msgid "heading_xmpp_settings"
-msgstr ""
+msgstr "Configuraciones XMPP"
 
 #. Default: "Click this button to deregister ALL the users in the site from the XMPP server."
 #: ./interfaces.py:63
 msgid "help_deregister_all"
-msgstr ""
+msgstr "Haga clic en este botón para eliminar el registrar de TODOS los usuarios en este sitio desde el servidor XMPP."
 
 #. Default: "Click this button to deregister the above selected users from the XMPP server."
 #: ./interfaces.py:39
 msgid "help_deregister_selected"
-msgstr ""
+msgstr "Haga clic en este botón para eliminar el registrar a los usuarios seleccionados arriba desde el servidor XMPP."
 
 #. Default: "Click this button to register ALL the users in the site on the XMPP server. WARNING: Don't call this method if you already have some users registered for XMPP. Their passwords will change and become invalid. Also be aware, if you register lots of users and have auto-subscribe turned on, your Plone server will be very busy with multiple threads and may become unresponsive for some minutes."
 #: ./interfaces.py:47
 msgid "help_register_all"
 msgstr ""
+"Haga clic en este botón para registrar a todos los usuarios en el sitio en "
+"el servidor XMPP. ADVERTENCIA: No llame a este método si ya tiene algunos "
+"usuarios inscritos en XMPP. Sus contraseñas se cambian y dejan de ser "
+"válidas. También tenga en cuenta, si se registra gran cantidad de usuarios y "
+"tiene activada la casilla auto-suscripción, el servidor Plone estarán muy "
+"ocupados con varios subprocesos y puede dejar de responder durante unos "
+"minutos."
 
 #. Default: "Click this button to let the above selected users be registered on the XMPP server."
 #: ./interfaces.py:30
 msgid "help_register_selected"
-msgstr ""
+msgstr "Haga clic en este botón para dejar registrados a los usuarios seleccionados arriba en el servidor XMPP."
 
 #. Default: "Choose here the users you'd like to register or deregister from the XMPP server."
 #: ./interfaces.py:20
 msgid "help_user_setup"
 msgstr ""
+"Seleccione aquí los usuarios que usted le gustaría registrar o eliminar su "
+"registro desde el servidor XMPP."
 
 #. Default: "The Jabber ID of an XMPP user with administration rights. Plone uses this user to manage (e.g register/unregister) other XMPP users."
 #: ./interfaces.py:86
 msgid "help_xmpp_admin_jid"
 msgstr ""
+"El ID Jabber de un usuario XMPP con privilegios de administración. Plone usa "
+"este usuario para administrar (ej. registrar/dar de baja) a otros usuarios "
+"XMPP."
 
 #. Default: "Should XMPP users automatically be subscribed to one another? Users will automatically subscribe to all other XMPP users in the site, but each subscription will only be confirmed once the user being subscribed to logs in. Be aware that this is probably a bad idea on sites with many users!"
 #: ./interfaces.py:104
 msgid "help_xmpp_auto_subscribe"
 msgstr ""
+"Si los usuarios XMPP automáticamente se suscribirán entre sí? Los usuarios "
+"se suscribirán automáticamente a todos los demás usuarios XMPP en el sitio, "
+"pero cada subscripción sólo se confirmará una vez que el usuario se allá "
+"suscrito al iniciar sesión. Tenga en cuenta que esta es probablemente una "
+"mala idea en sitios con muchos usuarios!"
 
 #. Default: "The domain under which your XMPP server is running."
 #: ./interfaces.py:77
 msgid "help_xmpp_domain"
-msgstr ""
+msgstr "El dominio bajo el cual su servidor XMPP esta ejecutándose."
 
 #. Default: "\n        This page lets you register and deregister Plone users on the XMPP\n        server. You can either choose specific users, or do it for all users in\n        the site. Make sure you have set the correct settings for you XMPP \n        server before submitting.\n        "
 #: ./browser/controlpanel.py:73
 msgid "help_xmpp_user_setup"
 msgstr ""
+"\\n        Esta página le permite registrar y dar de baja usuarios de Plone "
+"en el servidor XMPP\\n        server. Usted puede elegir los usuarios "
+"específicos, o hacerlo para todos los usuarios\\n        en el sitio. "
+"Asegúrese de que ha establecido las configuraciones correctas para su "
+"servidor XMPP \\n        antes de enviar.\\n        "
 
 #. Default: "Deregister ALL Users"
 #: ./interfaces.py:61
 msgid "label_deregister_all"
-msgstr ""
+msgstr "Dar de baja a TODOS los usuarios"
 
 #. Default: "Deregister Selected Users"
 #: ./interfaces.py:37
 msgid "label_deregister_selected"
-msgstr ""
+msgstr "Eliminar inscripción de los usuarios seleccionados"
 
 #. Default: "General Settings"
 #: ./browser/usersetup.pt:16
 #: ./browser/xmppsettings.pt:16
 msgid "label_general_settings"
-msgstr ""
+msgstr "Configuración general"
 
 #. Default: "Register ALL Users"
 #: ./interfaces.py:45
 msgid "label_register_all"
-msgstr ""
+msgstr "Registrar TODOS los usuarios"
 
 #. Default: "Register Selected Users"
 #: ./interfaces.py:28
 msgid "label_register_selected"
-msgstr ""
+msgstr "Registrar los usuarios seleccionados"
 
 #. Default: "Up to Site Setup"
 #: ./browser/usersetup.pt:37
 #: ./browser/xmppsettings.pt:37
 msgid "label_up_to_plone_setup"
-msgstr ""
+msgstr "Subir a la Configuración del sitio"
 
 #. Default: "User Registration"
 #: ./browser/usersetup.pt:21
 #: ./browser/xmppsettings.pt:21
 msgid "label_user_registration"
-msgstr ""
+msgstr "Registro de usuario"
 
 #. Default: "Choose Users"
 #: ./interfaces.py:19
 msgid "label_users"
-msgstr ""
+msgstr "Elija usuarios"
 
 #. Default: "XMPP Admin JID"
 #: ./interfaces.py:84
 msgid "label_xmpp_admin_jid"
-msgstr ""
+msgstr "JID del Administrador XMPP"
 
 #. Default: "XMPP Admin Password"
 #: ./interfaces.py:95
 msgid "label_xmpp_admin_password"
-msgstr ""
+msgstr "Contraseña del Administrador XMPP"
 
 #. Default: "Auto-subscribe XMPP users"
 #: ./interfaces.py:102
 msgid "label_xmpp_auto_subscribe"
-msgstr ""
+msgstr "Auto suscribir los usuarios XMPP"
 
 #. Default: "XMPP Domain"
 #: ./interfaces.py:75
 msgid "label_xmpp_domain"
-msgstr ""
-
+msgstr "Dominio XMPP"

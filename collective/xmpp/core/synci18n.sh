@@ -13,11 +13,11 @@
 
 # Assume the product name is the current folder name
 CURRENT_PATH=`pwd`
-CATALOGNAME="jarn.xmpp.core"
-JSCATALOGNAME="jarn.xmpp.core.js"
+CATALOGNAME="collective.xmpp.core"
+JSCATALOGNAME="collective.xmpp.core.js"
 
 # List of languages
-LANGUAGES="en no el"
+LANGUAGES="en no el es"
 
 # Create locales folder structure for languages
 install -d locales

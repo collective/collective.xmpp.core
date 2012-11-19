@@ -15,12 +15,12 @@
                 <li class="selected">
                 <a href=""
                     tal:attributes="href string:$portal_url/@@xmpp-settings"
-                    i18n:translate="label_users">General Settings</a>
+                    i18n:translate="label_general_settings">General Settings</a>
                 </li>
                 <li>
                 <a href=""
                     tal:attributes="href string:$portal_url/@@xmpp-user-setup"
-                    i18n:translate="label_groups">User Registration</a>
+                    i18n:translate="label_user_registration">User Registration</a>
                 </li>
             </ul>
         </div>
