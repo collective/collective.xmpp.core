@@ -37,10 +37,11 @@ Before setting up the package you need to have a working XMPP server and access 
 * `XEP-0124`_ Bidirectional-streams Over Synchronous HTTP (BOSH)
 * `XEP-0206`_ XMPP over BOSH
 
-.. --------
-.. Buildout
-.. --------
-.. A sample buildout you can use as a starting point can be found at `collective.xmpp.buildout`_.
+--------
+Buildout
+--------
+
+A sample buildout you can use as a starting point can be found at `collective.xmpp.buildout`_.
 
 -----------------------------
 Setting up ejabberd (>=2.1.5)
@@ -151,17 +152,10 @@ Setting up a new Plone site
 * Start the Nginx frontend. ``bin/frontend start``
 * Start your zope instance.
 * Access Zope directly at ``http://localhost:8081/manage`` and create a new Plone site with ``collective.xmpp.core``.
-* Go to the Plone control panel and click on the ``XMPP Integration`` link
-under ``Plone Configuration``.  Make sure the XMPP settings reflect your
-installation.
+* Go to the Plone control panel and click on the ``XMPP Integration`` link under ``Plone Configuration``.  Make sure the XMPP settings reflect your installation.
 * Restart your Plone instance.
 * Upon the first request the administrator will log to his account. You should see things happening in the logs and if there are any errors something might be wrong with your installation.
-* When you create a new Plone user, they will automatically be registered on
-the XMPP server. Your existing users can also be registered by going back to
-the ``XMPP Integration`` configlet in the control panel, and then clicking on
-the ``User Registration`` tab. Keep an eye on your instance.log traceback in
-the console to make sure there aren't any errors. You can see the registered
-users by going to the XMPP admin interface at localhost:5280/admin.
+* When you create a new Plone user, they will automatically be registered on the XMPP server. Your existing users can also be registered by going back to the ``XMPP Integration`` configlet in the control panel, and then clicking on the ``User Registration`` tab. Keep an eye on your instance.log traceback in the console to make sure there aren't any errors. You can see the registered users by going to the XMPP admin interface at localhost:5280/admin.
 
 --------------------------
 Making sure things work ;)
