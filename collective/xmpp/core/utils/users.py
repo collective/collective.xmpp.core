@@ -10,7 +10,7 @@ def getAllMemberIds():
     """
     portal = getSite()
     acl_users = getToolByName(portal, 'acl_users')
-    return [m['userid'] for m in acl_users.searchUsers()]
+    return list(set([m['userid'] for m in acl_users.searchUsers()]))
 
 def escapeNode(node):
     """ Escape the node part (also called local part) of a JID.
