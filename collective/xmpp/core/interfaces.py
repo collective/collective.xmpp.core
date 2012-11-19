@@ -49,9 +49,12 @@ class IXMPPUserSetup(Interface):
                                 "the users in the site on the XMPP "
                                 "server. WARNING: Don't call this method if "
                                 "you already have some users registered for "
-                                "XMPP. Also be aware that for many users this "
-                                "might take a few minutes, max out your CPU "
-                                "and make your site unresponsive."),
+                                "XMPP. Their passwords will change and become "
+                                "invalid. Also be aware, if you register lots "
+                                "of users and have auto-subscribe turned on, "
+                                "your Plone server will be very busy with multiple "
+                                "threads and may become unresponsive for some "
+                                "minutes."),
                             required=False,
                             )
     deregister_all = button.Button(
