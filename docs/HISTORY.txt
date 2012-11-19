@@ -6,8 +6,8 @@ Changelog
 0.1a5 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Fixed RST formatting bugs.
+  [jcbrand]
 
 ------------------
 0.1a4 (2012-11-19)
