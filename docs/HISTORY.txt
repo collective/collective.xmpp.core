@@ -3,7 +3,7 @@ Changelog
 =========
 
 ------------------
-0.1a5 (unreleased)
+0.1a5 (2012-11-19)
 ------------------
 
 - Fixed RST formatting bugs.
