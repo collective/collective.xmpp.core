@@ -18,7 +18,7 @@ from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.subscribers.startup import setUpAdminClient
-from collective.xmpp.core.utils.setup import setupXMPPEnvironment
+from collective.xmpp.core.utils.setup import registerXMPPUsers 
 
 
 def wait_on_deferred(d, seconds=10):
@@ -224,7 +224,7 @@ class XMPPCoreFixture(PloneSandboxLayer):
             zr.reactor.callFromThread(client.connect)
 
         wait_for_client_state(client, 'authenticated')
-        setupXMPPEnvironment(client,
+        registerXMPPUsers(client,
             member_jids=[JID('test_user_1_@localhost')],
             member_passwords={JID('test_user_1_@localhost'): 'secret'})
         wait_on_client_deferreds(client)
