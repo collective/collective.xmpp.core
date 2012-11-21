@@ -16,6 +16,7 @@ from wokkel.pubsub import PubSubClient as WokkelPubSubClient
 from wokkel.subprotocols import XMPPHandler
 from wokkel.pubsub import NS_PUBSUB_OWNER, NS_PUBSUB_NODE_CONFIG
 
+NS_VCARD_TEMP = 'vcard-temp'
 NS_CLIENT = 'jabber:client'
 NS_ROSTER_X = 'http://jabber.org/protocol/rosterx'
 NS_COMMANDS = 'http://jabber.org/protocol/commands'
@@ -40,9 +41,8 @@ def getRandomId():
 
 
 class ChatHandler(XMPPHandler):
-    """
-    Simple chat client.
-    http://xmpp.org/extensions/xep-0071.html
+    """ Simple chat client.
+        http://xmpp.org/extensions/xep-0071.html
     """
 
     def sendMessage(self, to, body):
@@ -114,6 +114,41 @@ class ChatHandler(XMPPHandler):
             setSite(None)
             app._p_jar.close()
         return True
+
+
+class VCardHandler(XMPPHandler):
+    """ """
+
+    def createVCardIQ(self, udict):
+        """ <FN>Jeremie Miller</FN>
+            <NICKNAME>jer</NICKNAME>
+            <EMAIL><INTERNET/><PREF/><USERID>jeremie@jabber.org</USERID></EMAIL>
+            <JABBERID>jer@jabber.org</JABBERID>
+        """
+        iq = IQ(self.xmlstream, 'set')
+        vcard = iq.addElement((NS_VCARD_TEMP, 'vCard'))
+        vcard['version'] = '3.0'
+        fn = vcard.addElement('FN', content=udict.get('fullname'))
+        vcard.addElement('NICKNAME', content=udict.get('nickname'))
+        email = vcard.addElement('EMAIL')
+        email.addElement('INTERNET')
+        email.addElement('PREF')
+        email.addElement('USERID', content=udict.get('userid'))
+        vcard.addElement('JABBERID', content=udict.get('jabberid'))
+        return iq
+
+    def sendVCard(self):
+        def resultReceived(iq):
+            log.info("Result received for vcard set")
+            return True
+
+        def error(failure):
+            log.error(failure.getTraceback())
+            return False
+
+        iq = self.createVCardIQ()
+        d = iq.send()
+        d.addCallbacks(resultReceived, error)
 
 
 class AdminHandler(XMPPHandler):
