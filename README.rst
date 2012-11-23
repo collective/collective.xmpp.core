@@ -1,8 +1,9 @@
+
 ============
 Introduction
 ============
 
-``collective.xmpp.core`` is a fork/merge of `jarn.xmpp.twisted`_ and `jarn.xmpp.core`_ both written by Yiorgis Gozadinos (@ggozad). 
+``collective.xmpp.core`` is a fork/merge of `jarn.xmpp.twisted`_ and `jarn.xmpp.core`_ both written by Yiorgis Gozadinos (@ggozad).
 
 It removes the PubSub and Messaging features from the `jarn.xmpp.core`_ and is intended to instead serve
 only as a base on which Plone add-ons with XMPP-enabled features can depend.
@@ -89,7 +90,7 @@ If you already run an XMPP server here are some hints on how to set it up:
   ::
 
     {5347, ejabberd_service, [
-              {access, all}, 
+              {access, all},
               {shaper_rule, fast},
               {ip, {127, 0, 0, 1}},
               {hosts,
@@ -111,11 +112,9 @@ Test that you can access your ejabberd by logging to the admin interface (typica
 -------------------------------
 Setting up your front-end proxy
 -------------------------------
-On the client-side every authenticated user will be connected to your jabber server through an emulated bidirectional stream through HTTP. To allow for this you need a proxy in front of Plone that will be redirecting the XMPP stream to your XMPP server. It is possible to do without one using the inferior solution of Flash plugins but this is not going to be supported. 
+On the client-side every authenticated user will be connected to your jabber server through an emulated bidirectional stream through HTTP. To allow for this you need a proxy in front of Plone that will be redirecting the XMPP stream to your XMPP server. It is possible to do without one using the inferior solution of Flash plugins but this is not going to be supported.
 
-So assuming you run ``nginx`` as a proxy at port ``8080`` for the domain ``localhost``, Zope listens on ``8081``, there exists a Plone site with id  ``Plone`` and your ejabberd has the ``http_bind`` configured for port ``5280``, your ``nginx`` configuration will look like this:
-
-    ::
+So assuming you run ``nginx`` as a proxy at port ``8080`` for the domain ``localhost``, Zope listens on ``8081``, there exists a Plone site with id  ``Plone`` and your ejabberd has the ``http_bind`` configured for port ``5280``, your ``nginx`` configuration will look like this::
 
         http {
             server {
@@ -131,6 +130,15 @@ So assuming you run ``nginx`` as a proxy at port ``8080`` for the domain ``local
             }
           }
 
+Below is the equivalent configuration for Apache::
+
+    <VirtualHost *:8080>
+        ServerName localhost
+        RewriteEngine On
+        RewriteRule ^/http-bind(.*) http://localhost:5280/http-bind$1 [P,L]
+        RewriteRule ^/(.*) http://localhost:8081/VirtualHostBase/http/%{HTTP_HOST}:8080/Plone/VirtualHostRoot/$1 [P,L]
+    </VirtualHost>
+
 -------------------------------
 Setting up your Plone instances
 -------------------------------
@@ -139,7 +147,7 @@ Your instances will need to maintain a connection to the administrator account o
   ::
 
     zcml-additional =
-      <configure xmlns="http://namespaces.zope.org/zope">  
+      <configure xmlns="http://namespaces.zope.org/zope">
         <include package="collective.xmpp.core" file="reactor.zcml" />
       </configure>
 
@@ -246,4 +254,3 @@ Credits
 .. _jarn.xmpp.core: http://github.com/ggozad/jarn.xmpp.core
 .. _wokkel: http://wokkel.ik.nu
 .. _Twisted: http://twistedmatrix.com
-
