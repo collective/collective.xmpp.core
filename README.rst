@@ -114,23 +114,28 @@ Setting up your front-end proxy
 -------------------------------
 On the client-side every authenticated user will be connected to your jabber server through an emulated bidirectional stream through HTTP. To allow for this you need a proxy in front of Plone that will be redirecting the XMPP stream to your XMPP server. It is possible to do without one using the inferior solution of Flash plugins but this is not going to be supported.
 
-So assuming you run ``nginx`` as a proxy at port ``8080`` for the domain ``localhost``, Zope listens on ``8081``, there exists a Plone site with id  ``Plone`` and your ejabberd has the ``http_bind`` configured for port ``5280``, your ``nginx`` configuration will look like this::
+Assuming you run your webserver as a proxy at port ``8080`` for the domain ``localhost``, Zope listens on ``8081``, there exists a Plone site with id  ``Plone`` and your ejabberd has the ``http_bind`` configured for port ``5280``, your ``nginx`` or ``apache`` configuration will look as follows:
 
-        http {
-            server {
-                listen       8080;
-                server_name  localhost;
-                location ~ ^/http-bind/ {
-                    proxy_pass http://localhost:5280;
-                }
+Nginx
+-----
+  ::
 
-                location / {
-                    proxy_pass http://localhost:8081/VirtualHostBase/http/localhost:8080/Plone/VirtualHostRoot/;
-                }
+    http {
+        server {
+            listen       8080;
+            server_name  localhost;
+            location ~ ^/http-bind/ {
+                proxy_pass http://localhost:5280;
             }
-          }
+            location / {
+                proxy_pass http://localhost:8081/VirtualHostBase/http/localhost:8080/Plone/VirtualHostRoot/;
+            }
+        }
+    }
 
-Below is the equivalent configuration for Apache::
+Apache
+------
+  ::
 
     <VirtualHost *:8080>
         ServerName localhost
