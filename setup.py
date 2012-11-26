@@ -28,9 +28,7 @@ setup(name='collective.xmpp.core',
           'BeautifulSoup',
           'Twisted',
           'wokkel>0.6.3',
-          'plone.app.registry',
-          'plone.app.z3cform',
-          'Products.UserAndGroupSelectionWidget>2.0.4',
+          'Products.UserAndGroupSelectionWidget',
           'jarn.jsi18n'
       ],
       extras_require = {

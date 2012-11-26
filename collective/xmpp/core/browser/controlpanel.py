@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import logging
 import zope.component
 from zope.component import queryUtility
 from zope.component import getUtility
@@ -11,9 +10,6 @@ from z3c.form.interfaces import NO_VALUE
 from Products.statusmessages.interfaces import IStatusMessage
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
-from Products.UserAndGroupSelectionWidget.z3cform.widget import \
-                                            UsersAndGroupsSelectionWidgetFactory
-
 from twisted.words.protocols.jabber.xmlstream import IQ
 from wokkel.disco import NS_DISCO_ITEMS
 
@@ -28,11 +24,17 @@ from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.utils import setup 
 from collective.xmpp.core.utils import users
 
-log = logging.getLogger(__name__)
-
+UserAndGroupSelectionWidget_installed = True
+try:
+    # We have installed UserAndGroupSelectionWidget with version greated then 2.0.4
+    from Products.UserAndGroupSelectionWidget.z3cform.widget import \
+                                            UsersAndGroupsSelectionWidgetFactory
+except ImportError:
+    # UserAndGroupSelectionWidget > 2.0.4 not found
+    UserAndGroupSelectionWidget_installed = False
 
 class XMPPSettingsEditForm(controlpanel.RegistryEditForm):
-    """XMPP settings form.
+    """ XMPP settings form.
     """
     schema = IXMPPSettings
     id = "XMPPSettingsEditForm"
@@ -58,14 +60,14 @@ class XMPPSettingsEditForm(controlpanel.RegistryEditForm):
 
 
 class XMPPSettingsControlPanel(controlpanel.ControlPanelFormWrapper):
-    """XMPP settings control panel.
+    """ XMPP settings control panel.
     """
     form = XMPPSettingsEditForm
     index = ViewPageTemplateFile('xmppsettings.pt')
 
 
 class XMPPUserSetupForm(form.Form):
-    """XMPP User Setup Form.
+    """ XMPP User Setup Form.
     """
     ignoreContext = True
     id = "XMPPUserSetupForm"
@@ -77,7 +79,9 @@ class XMPPUserSetupForm(form.Form):
         server before submitting.
         """)
     fields = field.Fields(IXMPPUserSetup)
-    fields['users'].widgetFactory = UsersAndGroupsSelectionWidgetFactory
+
+    if UserAndGroupSelectionWidget_installed:
+        fields['users'].widgetFactory = UsersAndGroupsSelectionWidgetFactory
 
     def update(self):
         super(XMPPUserSetupForm, self).update()
@@ -114,7 +118,7 @@ class XMPPUserSetupForm(form.Form):
             "second case, please try again. Otherwise, check your XMPP "
             "settings."), "error")
             return
-            
+
         def resultReceived(result):
             items = [item.attributes for item in result.query.children]
             if items[0].has_key('node'):
@@ -139,27 +143,35 @@ class XMPPUserSetupForm(form.Form):
                     u"the users. This might take some minutes to complete."), "info")
 
     def getChosenMembers(self):
-        """ The UserAndGroupSelectionWidget can return users and groups.
+        """ The Products.UserAndGroupSelectionWidget can return users and groups.
 
             Identify the chosen groups and return their members as well as the
             individually chosen members (while removing duplicates).
         """
         members_and_groups = self.request.form.get('form.widgets.users')
-        pg = getToolByName(self.context, 'portal_groups')
-        groups = pg.getGroupIds()
-        chosen_groups = list(set(members_and_groups).intersection(set(groups)))
-        chosen_members = list(set(members_and_groups).difference(set(groups)))
+        members = []
 
-        for g in chosen_groups:
-            chosen_members += pg.getGroupById(g).getGroupMemberIds()
+        if UserAndGroupSelectionWidget_installed:
+            pg = getToolByName(self.context, 'portal_groups')
+            groups = pg.getGroupIds()
+            chosen_groups = list(set(members_and_groups).intersection(set(groups)))
+            chosen_members = list(set(members_and_groups).difference(set(groups)))
 
-        return list(set(chosen_members))
+            for g in chosen_groups:
+                chosen_members += pg.getGroupById(g).getGroupMemberIds()
+
+            members = list(set(chosen_members))
+        else:
+            # Case when Products.UserAndGroupSelectionWidget is not installed/used
+            members = members_and_groups.split('\r\n')
+
+        return members
 
     def deregisterSelected(self):
         status = IStatusMessage(self.request)
         widget = self.widgets.get('users')
         if widget.extract() == NO_VALUE:
-            status.add(_(u"You first need to choose the users to deregister"), 
+            status.add(_(u"You first need to choose the users to deregister"),
                         "error")
             return
 
@@ -186,7 +198,7 @@ class XMPPUserSetupForm(form.Form):
 
 
 class XMPPUserSetupControlPanel(controlpanel.ControlPanelFormWrapper):
-    """XMPP user setup control panel.
+    """ XMPP user setup control panel.
     """
     form = XMPPUserSetupForm
     index = ViewPageTemplateFile('usersetup.pt')
