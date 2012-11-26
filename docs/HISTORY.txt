@@ -8,6 +8,19 @@ Changelog
 
 - Documentation updated with Apache config example.
   [alecghica]
+- Cleaned up dependencies that already ships with Plone
+  [alecghica]
+- Made Products.UserAndGroupSelectionWidget package optional.
+  Products.UserAndGroupSelectionWidget will be imported only
+  if package version is greater then 2.0.4 as it brings dependencies
+  like plone.dexterity witch conflict with other packages found in
+  the current Plone release.
+  [alecghica]
+- Fixed register users form to work for the case when
+  Products.UserAndGroupSelectionWidget is not installed/used
+  [alecghica]
+- Added info on how to make plone.dexterity optional
+  [alecghica]
 
 ------------------
 0.1a6 (2012-11-22)
