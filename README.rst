@@ -76,18 +76,14 @@ If you already run an XMPP server here are some hints on how to set it up:
 
 * We assume that your xmpp domain is ``localhost``. There should exist an administrator account ``admin@localhost``. In addition if you intend to run some of the tests in any of the ``collective.xmpp.*`` packages you will need to be running an additional XMPP node on ``localhost`` if you use some other domain for production. You can safely remove any references to ``localhost`` if you are not interested in doing that.
 
-* Make sure you have enabled the `http_bind` module, as this is what the javascript clients will use to connect. You should have  something like this in your ejabberd.cfg:
-
-  ::
+* Make sure you have enabled the `http_bind` module, as this is what the javascript clients will use to connect. You should have  something like this in your ejabberd.cfg::
 
     {5280, ejabberd_http, [
          http_bind,
          web_admin
          ]}
 
-* In order to test and run custom XMPP components (for instance the collaborative editing component provided by ``collective.xmpp.collaboration``) you will need to allow them to connect. This means you should have something similar to this configuration:
-
-  ::
+* In order to test and run custom XMPP components (for instance the collaborative editing component provided by ``collective.xmpp.collaboration``) you will need to allow them to connect. This means you should have something similar to this configuration::
 
     {5347, ejabberd_service, [
               {access, all},
@@ -142,14 +138,17 @@ Below is the equivalent configuration for Apache::
 -------------------------------
 Setting up your Plone instances
 -------------------------------
-Your instances will need to maintain a connection to the administrator account of your XMPP server. This is accomplished through ``Twisted`` and you will need to run a Twisted reactor on each of them. To do so include this in your instance section of your buildout:
-
-  ::
+Your instances will need to maintain a connection to the administrator account of your XMPP server. This is accomplished through ``Twisted`` and you will need to run a Twisted reactor on each of them. To do so include this in your instance section of your buildout::
 
     zcml-additional =
       <configure xmlns="http://namespaces.zope.org/zope">
         <include package="collective.xmpp.core" file="reactor.zcml" />
       </configure>
+
+Moreover, if your Plone buildout is not using plone.dexterity and you want to avoid this dependency being brought just add the bellow line to your CFG file::
+
+    [versions]
+    Products.UserAndGroupSelectionWidget = 2.0.4
 
 Again, it will help you to have a look at the sample buildout provided in `collective.xmpp.buildout`_.
 
@@ -174,23 +173,17 @@ This is a complex infrastructure so it can be hard to know what goes wrong somet
 * Make sure your ejabberd is running. Connect to it normal client as the admin user.
 * Verify that http-binding is setup properly on ejabberd. Visiting ``http://localhost:5280/http-bind`` should tell you it's working.
 * Verify that XMPP requests will get properly through your proxy. Visiting ``http://localhost:8080/http-bind/`` should give you the same result as above.
-* When you start your Zope instance in foreground you can verify the Twisted reactor is running fine:
-
-  ::
+* When you start your Zope instance in foreground you can verify the Twisted reactor is running fine::
 
     2011-09-01 14:37:38 INFO collective.xmpp.core Starting Twisted reactor...
     2011-09-01 14:37:38 INFO collective.xmpp.core Twisted reactor started
     2011-09-01 14:37:38 INFO Zope Ready to handle requests
 
-* After the first request to the site, you should also see in the logs:
-
-  ::
+* After the first request to the site, you should also see in the logs::
 
     2011-09-01 14:45:48 INFO collective.xmpp.core XMPP admin client has authenticated succesfully.
 
-* If your Plone user was succesfully registered on the XMPP server, logging-in to the Plone site with a user should also authenticate him with the XMPP server. This is indicated in the logs by:
-
-  ::
+* If your Plone user was succesfully registered on the XMPP server, logging-in to the Plone site with a user should also authenticate him with the XMPP server. This is indicated in the logs by::
 
     2011-09-01 14:45:50 INFO collective.xmpp.core Pre-binded ggozad@localhost/auto-QravOoyEeE
 
@@ -224,9 +217,7 @@ If you do not need to access the XMPP accounts outside of the Plone instance you
 Testing
 =======
 
-Some of the included tests are functional tests that require a XMPP server running on ``localhost`` as well as an administrator account setup up on this server with JID ``admin@localhost`` and password ``admin``. If you wish to run those you have to specify a *level* 2 on your testrunner, i.e.
-
-    ::
+Some of the included tests are functional tests that require a XMPP server running on ``localhost`` as well as an administrator account setup up on this server with JID ``admin@localhost`` and password ``admin``. If you wish to run those you have to specify a *level* 2 on your testrunner, i.e.::
 
     ./bin/test -a 2 -s collective.xmpp.core
 
