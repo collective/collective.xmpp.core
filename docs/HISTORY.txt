@@ -21,6 +21,11 @@ Changelog
   [alecghica]
 - Added info on how to make plone.dexterity optional
   [alecghica]
+- New feature implemented, so Plone users might be registered
+  in automatic into the jabber server on login. Upgrade
+  step was also added to update the new added property to
+  existing installations.
+  [alecghica]
 
 ------------------
 0.1a6 (2012-11-22)

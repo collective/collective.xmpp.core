@@ -3,15 +3,19 @@ import json
 
 from zope.component import getUtility
 from zope.component import queryUtility
+from zope.component.hooks import getSite
 
+from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 
 from collective.xmpp.core.client import randomResource
 from collective.xmpp.core.httpb import BOSHClient
+from collective.xmpp.core.utils import setup
 
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPUsers
+from collective.xmpp.core.interfaces import IXMPPSettings
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +44,16 @@ class XMPPLoader(BrowserView):
         self.jpassword = self.xmpp_users.getUserPassword(self.user_id)
         if self.jpassword is None:
             self._available = False
+
+            # Auto register Plone users on login
+            registry = getUtility(IRegistry)
+            settings = registry.forInterface(IXMPPSettings, check=False)
+            if settings.auto_register:
+                setup.registerXMPPUsers(getSite(), [self.user_id])
+                #TODO: add message to ask user to re-login
+
             return
+
         return self._available
 
     @property
@@ -67,6 +80,7 @@ class XMPPLoader(BrowserView):
                 }
             else:
                 logger.warning('Unable to pre-bind %s' % self.jid)
+
         response = self.request.response
         response.setHeader('content-type', 'application/json')
         response.setHeader('Cache-Control', 'max-age=0, must-revalidate, private')
