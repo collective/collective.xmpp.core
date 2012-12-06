@@ -18,10 +18,10 @@ from plone.app.registry.browser import controlpanel
 
 from collective.xmpp.core import messageFactory as _
 from collective.xmpp.core.interfaces import IAdminClient
-from collective.xmpp.core.interfaces import IXMPPSettings 
+from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IXMPPUserSetup
 from collective.xmpp.core.interfaces import IXMPPUsers
-from collective.xmpp.core.utils import setup 
+from collective.xmpp.core.utils import setup
 from collective.xmpp.core.utils import users
 
 UserAndGroupSelectionWidget_installed = True
