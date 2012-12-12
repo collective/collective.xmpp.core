@@ -22,11 +22,12 @@ def createAdminClient(callback):
     settings = registry.forInterface(IXMPPSettings, check=False)
     try:
         jid = settings.admin_jid
-        jdomain = settings.xmpp_domain
         password = settings.admin_password
+        host = settings.hostname
+        port = settings.port
     except KeyError:
         return
-    client = AdminClient(jid, jdomain, password)
+    client = AdminClient(jid, host, password, port)
     gsm = getGlobalSiteManager()
     gsm.registerUtility(client, IAdminClient)
     zr = getUtility(IZopeReactor)

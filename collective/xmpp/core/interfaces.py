@@ -75,9 +75,34 @@ class IXMPPSettings(Interface):
         title=_(u"label_xmpp_domain",
                 default=u"XMPP Domain"),
         description=_(u"help_xmpp_domain",
-                default=u"The domain under which your XMPP server is running."),
+                default=u"The domain which the XMPP server will serve."
+                    u"This is also the domain under which users are "
+                    u"registered. XMPP user ids are made up of the plone "
+                    u"username and domain, like this: ${username}@${domain}."),
         required=True,
         default=u'localhost',
+        )
+         
+    hostname = schema.TextLine(
+        title=_(u"label_server_hostname",
+                default=u"XMPP Server Hostname"),
+        description=_(u"help_server_hostname",
+                default=u"The hostname of the server on which the XMPP server "
+                    u"is running. Useful when you are running your XMPP server "
+                    u"on the same server, LAN or VPN as your Plone site. "
+                    u"Otherwise, keep the same as the XMPP domain."),
+        required=True,
+        default=u'localhost',
+        )
+
+    port = schema.Int(
+        title=_(u"label_server_port",
+                default=u"XMPP Server Port"),
+        description=_(u"help_server_port",
+                default=u"The port number of the XMPP server. Default is "
+                    u"5222."),
+        required=True,
+        default=5222,
         )
 
     admin_jid = schema.TextLine(

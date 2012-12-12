@@ -8,7 +8,7 @@ Changelog
 
 - Documentation updated with Apache config example.
   [alecghica]
-- Cleaned up dependencies that already ships with Plone
+- Cleaned up dependencies that already ship with Plone
   [alecghica]
 - Made Products.UserAndGroupSelectionWidget package optional.
   Products.UserAndGroupSelectionWidget will be imported only
@@ -21,6 +21,9 @@ Changelog
   [alecghica]
 - Added info on how to make plone.dexterity optional
   [alecghica]
+- Explicitly store XMPP server's hostname instead of only using the XMPP 
+  domain. Also store the port number instead of only using the default.
+  [jcbrand]
 
 ------------------
 0.1a6 (2012-11-22)
