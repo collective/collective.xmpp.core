@@ -124,7 +124,7 @@ class XMPPClient(StreamManager):
 class AdminClient(XMPPClient):
     implements(IAdminClient)
 
-    def __init__(self, jid, jdomain, password):
+    def __init__(self, jid, host, password, port):
         try:
             jid = JID(jid)
         except RuntimeError, e:
@@ -136,10 +136,9 @@ class AdminClient(XMPPClient):
         self.presence = PresenceClientProtocol()
         super(AdminClient, self).__init__(
             jid, password,
-            extra_handlers=[self.admin,
-                            self.chat,
-                            self.presence],
-            host=jdomain)
+            extra_handlers=[self.admin, self.chat, self.presence],
+            host=host, 
+            port=port)
 
     def _authd(self, xs):
         super(AdminClient, self)._authd(xs)

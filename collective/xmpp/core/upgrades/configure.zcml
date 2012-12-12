@@ -1,0 +1,18 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="collective.xmpp.core">
+
+  <genericsetup:upgradeSteps
+    source="1"
+    destination="2"
+    profile="collective.xmpp.core:default">
+
+    <genericsetup:upgradeStep
+      title="Add XMPP hostname and port entries to the Plone registry"
+      description=""
+      handler=".v2.updatePloneRegistry"
+      />
+  </genericsetup:upgradeSteps>
+
+</configure>
