@@ -27,4 +27,8 @@
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
+  <subscriber for="zope.processlifetime.IProcessStarting"
+    handler=".dbconfig.dbconfig"
+    />
+
 </configure>

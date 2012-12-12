@@ -24,6 +24,9 @@ Changelog
 - Explicitly store XMPP server's hostname instead of only using the XMPP 
   domain. Also store the port number instead of only using the default.
   [jcbrand]
+- Allow the configuration of the registry settings via buildout. See
+  dbconfig.py
+  [jcbrand]
 
 ------------------
 0.1a6 (2012-11-22)
