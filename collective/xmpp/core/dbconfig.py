@@ -25,6 +25,7 @@ import logging
 import transaction
 from zope.app.publication.zopepublication import ZopePublication
 from zope.component import getUtility
+from zope.component.hooks import setSite
 
 from App.config import getConfiguration
 from Products.CMFCore.utils import getToolByName
@@ -73,8 +74,10 @@ def dbconfig(event):
         log.error('Could not get intelligible profile version for collective.xmpp.core')
         return
 
-    if version < 2:
+    if version < 2 or True:
+        setSite(plone)
         setup.runImportStepFromProfile('profile-collective.xmpp.core:default', 'plone.app.registry')
+        setSite(None)
 
     registry = getUtility(IRegistry, context=plone)
     settings = registry.forInterface(IXMPPSettings, check=False)
