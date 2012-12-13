@@ -27,6 +27,7 @@ from zope.app.publication.zopepublication import ZopePublication
 from zope.component import getUtility
 
 from App.config import getConfiguration
+from Products.CMFCore.utils import getToolByName
 import Zope2
 
 from plone.registry.interfaces import IRegistry
@@ -58,6 +59,22 @@ def dbconfig(event):
     if plone is None:
         log.error('No Plone instance with instance_name "%s" found!' % instance_name)
         return
+
+    setup = getToolByName(plone, 'portal_setup')
+    try:
+        info = setup.getProfileInfo('profile-collective.xmpp.core:default')
+    except KeyError:
+        log.error('Could not find GS profile for collective.xmpp.core')
+        return
+
+    try:
+        version = int(info.get('version', 0))
+    except KeyError:
+        log.error('Could not get intelligible profile version for collective.xmpp.core')
+        return
+
+    if version < 2:
+        plone.runImportStepFromProfile('profile-collective.xmpp.core:default', 'plone.app.registry')
 
     registry = getUtility(IRegistry, context=plone)
     settings = registry.forInterface(IXMPPSettings, check=False)
