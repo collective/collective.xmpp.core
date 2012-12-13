@@ -6,7 +6,9 @@ Changelog
 0.1a8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Bugfix. Check for GS profile version in dbconfig.py to avoid the instance not
+  starting without having run the GS upgrade step.
+  [jcbrand]
 
 
 0.1a7 (2012-12-13)
