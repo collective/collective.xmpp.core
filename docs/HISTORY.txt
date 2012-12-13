@@ -3,7 +3,7 @@ Changelog
 =========
 
 ------------------
-0.1a8 (unreleased)
+0.1a8 (2012-12-13)
 ------------------
 
 - Bugfix. Check for GS profile version in dbconfig.py to avoid the instance not
