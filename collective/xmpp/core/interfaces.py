@@ -98,17 +98,6 @@ class IXMPPSettings(Interface):
         default=u'admin',
         )
 
-    auto_register = schema.Bool(
-        title=_(u"label_xmpp_auto_register",
-                default=u"Auto-register Plone users"),
-        description=_(u"help_xmpp_auto_register",
-                default=u"Should Plone users automatically be registered to XMPP "
-                        u"server? "
-                        u"Users will automatically be registered on login to "
-                        u"the XMPP server!"),
-        default=False,
-        )
-
     auto_subscribe = schema.Bool( 
         title=_(u"label_xmpp_auto_subscribe",
                 default=u"Auto-subscribe XMPP users"),
@@ -122,7 +111,6 @@ class IXMPPSettings(Interface):
                         u"sites with many users!"),
         default=False,
         )
-
 
 
 class IZopeReactor(Interface):

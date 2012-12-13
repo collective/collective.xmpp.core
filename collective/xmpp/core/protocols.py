@@ -94,9 +94,9 @@ class ChatHandler(XMPPHandler):
                 if mt is not None and mt.getMemberInfo(member_id):
                     info = mt.getMemberInfo(member_id)
                     fullname = info.get('fullname', member_id).decode('utf-8')
-                else: 
-                    log.warn('Could not get user fullname because the global site '
-                             'manager is not set')
+                else:
+                    #log.warn('Could not get user fullname because the global site '
+                    #         'manager is not set')
                     fullname = ''
 
                 item = x.addElement('item')
