@@ -15,6 +15,11 @@ zope-conf-additional +=
         admin_password secret
         auto_subscribe 0 
     </product-config>
+
+WARNING: If you put the above in your buildout.cfg, your plone.registry entries
+will be overridden with those values every time you restart your zope server.
+In other words, you basically lose the ability to configure your xmpp settings
+via Plone itself.
 """
 import logging
 import transaction
