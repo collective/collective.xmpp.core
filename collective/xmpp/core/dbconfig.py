@@ -74,7 +74,7 @@ def dbconfig(event):
         return
 
     if version < 2:
-        plone.runImportStepFromProfile('profile-collective.xmpp.core:default', 'plone.app.registry')
+        setup.runImportStepFromProfile('profile-collective.xmpp.core:default', 'plone.app.registry')
 
     registry = getUtility(IRegistry, context=plone)
     settings = registry.forInterface(IXMPPSettings, check=False)
