@@ -14,7 +14,6 @@
   <include package="plone.app.registry" />
   <include package=".subscribers" />
   <include package=".browser" />
-  <include package=".upgrades" />
 
   <utility factory=".client.DeferredXMPPClient" />
   <utility factory=".settings.XMPPUsers" />

@@ -102,7 +102,7 @@ def deregisterXMPPUsers(portal, member_jids):
     """ Deregister each Plone user from the XMPP
     """
     log.info('Preparing to remove XMPP users')
-    client = queryUtility(IAdminClient)
+    client = queryUtility(IAdminClient, context=portal)
     if client is None:
         log.info('We first have to create the XMPP admin client. '
                  'This might take a few seconds')
@@ -120,7 +120,7 @@ def deregisterXMPPUsers(portal, member_jids):
         return
 
     # Clear passwords
-    passwords = queryUtility(IXMPPPasswordStorage)
+    passwords = queryUtility(IXMPPPasswordStorage, context=portal)
     if passwords:
         for member_jid in member_jids:
             if isinstance(member_jid, JID):
@@ -129,4 +129,4 @@ def deregisterXMPPUsers(portal, member_jids):
             passwords.remove(member_id)
 
     client.admin.deleteUsers(member_jids)
-
+    transaction.commit()
