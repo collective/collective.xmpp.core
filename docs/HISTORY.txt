@@ -3,7 +3,7 @@ Changelog
 =========
 
 ------------------
-0.1a7 (unreleased)
+0.1a7 (2012-12-13)
 ------------------
 
 - Documentation updated with Apache config example.
