@@ -21,10 +21,13 @@ Changelog
   [alecghica]
 - Added info on how to make plone.dexterity optional
   [alecghica]
-- New feature: if not already registered,
-  Plone users get registered on jabber server on login
+- Feature: if not already registered, Plone users get
+  registered on jabber server on login
   [alecghica]
-- Fixed "Deregister ALL Users" function, as credentials were
+- Bug fix: no need to refresh browser for users registered
+  on login, they are binded on the fly
+  [alecghica]
+- Bug fix: fixed "Deregister ALL Users" function, as credentials were
   left un-deleted under IXMPPPasswordStorage resulting in
   various errors when register/deregister users
   [alecghica]
