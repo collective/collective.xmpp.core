@@ -226,6 +226,20 @@ Some of the included tests are functional tests that require a XMPP server runni
 
     ./bin/test -a 2 -s collective.xmpp.core
 
+==============================
+Tips for production deployment
+==============================
+
+--------------------------
+Don't cache @@xmpp-loader:
+--------------------------
+
+Make sure the **${site_url}/@@xmpp-loader** URL isn't cached. This view
+returns an authentication token which has to be different each time you
+reload your page.
+
+If you cache this, the token won't change and you won't be able to communicate
+with the XMPP server.
 
 =======
 Credits
