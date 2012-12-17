@@ -173,7 +173,8 @@ class XMPPUserSetupForm(form.Form):
             members = list(set(chosen_members))
         else:
             # Case when Products.UserAndGroupSelectionWidget is not installed/used
-            members = members_and_groups.split('\r\n')
+            members = [member for member in members_and_groups.split('\r\n')
+                           if member]
 
         return members
 
