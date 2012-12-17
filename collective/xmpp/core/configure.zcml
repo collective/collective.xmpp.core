@@ -14,6 +14,7 @@
   <include package="plone.app.registry" />
   <include package=".subscribers" />
   <include package=".browser" />
+  <include package=".upgrades"/>
 
   <utility factory=".client.DeferredXMPPClient" />
   <utility factory=".settings.XMPPUsers" />
@@ -24,6 +25,10 @@
     directory="profiles/default"
     description="Plone messaging"
     provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+
+  <subscriber for="zope.processlifetime.IProcessStarting"
+    handler=".dbconfig.dbconfig"
     />
 
 </configure>

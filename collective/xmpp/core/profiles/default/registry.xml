@@ -1,4 +1,4 @@
 <?xml version="1.0"?>
 <registry>
- <records interface="collective.xmpp.core.browser.controlpanel.IXMPPSettings" />
+    <records interface="collective.xmpp.core.browser.controlpanel.IXMPPSettings" />
 </registry>
