@@ -239,7 +239,6 @@ $msg:false, Strophe:false, setTimeout:false, navigator:false, jarn:false, google
 
     $(document).ready(function () {
         var resource = jarnxmpp.Storage.get('xmppresource');
-        var bind_retry = true;
         if (resource) {
             data = {'resource': resource};
         } else {
@@ -252,11 +251,10 @@ $msg:false, Strophe:false, setTimeout:false, navigator:false, jarn:false, google
                 'data': data,
                 'success': function (data) {
                     if (!(('rid' in data) && ('sid' in data) && ('BOSH_SERVICE' in data))) {
-                        // Try one more time so users registered on login to be binded
-                        if (bind_retry) {
+                        // Try one more time to bind users registered on login
+                        if ('bind_retry' in data) {
                             xmpp_loader();
                         }
-                        bind_retry = false;
                         return;
                     }
                     if (!resource) {
