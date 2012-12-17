@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 class XMPPLoader(BrowserView):
     """ """
+    bind_retry = False
 
     def available(self, resource=None):
         self._available = True
@@ -55,6 +56,7 @@ class XMPPLoader(BrowserView):
 
             if settings.auto_subscribe:
                 self.member_jids = []
+                self.bind_retry = True
 
                 def getUserJID(user_id):
                     sm = getSiteManager(self.context)
@@ -105,7 +107,13 @@ class XMPPLoader(BrowserView):
 
     def __call__(self, resource=None):
         bosh_credentials = {}
-        if self.available(resource):
+        available = self.available(resource)
+        if self.bind_retry:
+            # Try one more time to bind users registered on login
+            bosh_credentials = {
+                'bind_retry': True,
+            }
+        if available:
             rid, sid = self.prebind()
             if rid and sid:
                 logger.info('Pre-binded %s' % self.jid.full())
