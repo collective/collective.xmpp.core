@@ -16,7 +16,16 @@ Changelog
   left un-deleted under IXMPPPasswordStorage resulting in
   various errors when register/deregister users
   [alecghica]
-
+- Bug fix: fixed subscribing when a new plone user is added
+  [alecghica]
+- Bug fix: fixed that users were only being auto-subscribed to
+  other users added in that current session
+  [alecghica]
+- Bug fix: new users are now auto-subscribed only
+  to existing XMPP users
+  [alecghica]
+- Change: code cosmetics
+  [alecghica]
 
 0.1a8 (2012-12-13)
 ------------------

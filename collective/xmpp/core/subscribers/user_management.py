@@ -1,20 +1,21 @@
 import logging
-from zope.component import adapter
-from zope.component import getUtility
+from zope.component import (
+    adapter,
+    getUtility
+)
 from zope.globalrequest import getRequest
-
-from Products.PluggableAuthService.interfaces.events import \
-    IPrincipalCreatedEvent
-from Products.PluggableAuthService.interfaces.events import \
+from Products.PluggableAuthService.interfaces.events import (
+    IPrincipalCreatedEvent,
     IPrincipalDeletedEvent
-
+)
 from plone.registry.interfaces import IRegistry
-
-from collective.xmpp.core.interfaces import IAdminClient
-from collective.xmpp.core.interfaces import IProductLayer
-from collective.xmpp.core.interfaces import IXMPPPasswordStorage
-from collective.xmpp.core.interfaces import IXMPPSettings
-from collective.xmpp.core.interfaces import IXMPPUsers
+from collective.xmpp.core.interfaces import (
+    IAdminClient,
+    IProductLayer,
+    IXMPPPasswordStorage,
+    IXMPPSettings,
+    IXMPPUsers
+)
 from collective.xmpp.core.utils import users
 
 log = logging.getLogger(__name__)
@@ -38,12 +39,8 @@ def onUserCreation(event):
 
     registry = getUtility(IRegistry)
     settings = registry.forInterface(IXMPPSettings, check=False)
-    if settings.auto_subscribe:
-        members_jids = [xmpp_users.getUserJID(mid) for mid in users.getAllMemberIds()]
-    else:
-        members_jids = []
 
-    users.setupPrincipal(client, principal_jid, principal_pass, members_jids)
+    users.setupPrincipal(client, principal_jid, principal_pass)
 
 
 @adapter(IPrincipalDeletedEvent)

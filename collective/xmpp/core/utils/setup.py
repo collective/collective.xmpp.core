@@ -1,21 +1,25 @@
 import logging
 import transaction
 import Zope2
-
 from twisted.words.protocols.jabber.jid import JID
-
-from zope.component import getGlobalSiteManager
-from zope.component import getUtility
-from zope.component import queryUtility
-from zope.component.hooks import getSite
-from zope.component.hooks import setSite
+from zope.component import (
+    getGlobalSiteManager,
+    getUtility,
+    queryUtility
+)
+from zope.component.hooks import (
+    getSite,
+    setSite
+)
 from plone.registry.interfaces import IRegistry
-
-from collective.xmpp.core.interfaces import IAdminClient
-from collective.xmpp.core.interfaces import IXMPPPasswordStorage
-from collective.xmpp.core.interfaces import IXMPPSettings
-from collective.xmpp.core.interfaces import IXMPPUsers
+from collective.xmpp.core.interfaces import (
+    IAdminClient,
+    IXMPPPasswordStorage,
+    IXMPPSettings,
+    IXMPPUsers
+)
 from collective.xmpp.core.subscribers.startup import createAdminClient
+from collective.xmpp.core.utils.users import escapeNode
 
 log = logging.getLogger(__name__)
 
@@ -31,6 +35,8 @@ def registerXMPPUsers(portal, member_ids):
         ensure that the suggestion is sent only when every user has been
         registered on the XMPP server.
     """
+    site = getSite()
+
     log.info('Preparing to create XMPP users from the existing Plone users')
     client = queryUtility(IAdminClient)
     if client is None:
@@ -57,8 +63,35 @@ def registerXMPPUsers(portal, member_ids):
     member_passwords = {}
 
     def subscribeToAllUsers():
-        for member_jid in member_jids:
-            client.chat.sendRosterItemAddSuggestion(member_jid, member_jids, portal)
+        def getUserJID(user_id):
+            return JID("%s@%s" % (escapeNode(user_id), settings.xmpp_domain))
+
+        def resultReceived(result):
+            items = [item.attributes for item in result.query.children]
+            if items[0].has_key('node'):
+                for item in reversed(items):
+                    iq = IQ(client.admin.xmlstream, 'get')
+                    iq['to'] = client.admin.xmlstream.factory.authenticator.jid.host
+                    query = iq.addElement((NS_DISCO_ITEMS, 'query'))
+                    query['node'] = item['node']
+                    iq.send().addCallbacks(resultReceived)
+            else:
+                subscribe_jids = [item['jid'] for item in items]
+                if settings.admin_jid in subscribe_jids:
+                    subscribe_jids.remove(settings.admin_jid)
+                if subscribe_jids:
+                    roster_jids = [getUserJID(user_id.split('@')[0])
+                                     for user_id in subscribe_jids]
+
+                    for member_jid in member_jids:
+                        client.chat.sendRosterItemAddSuggestion(member_jid,
+                                                                roster_jids,
+                                                                site)
+
+            return result
+
+        d = client.admin.getRegisteredUsers()
+        d.addCallbacks(resultReceived)
         return True
 
     def registerUser():
@@ -70,8 +103,10 @@ def registerXMPPUsers(portal, member_ids):
         member_jid = xmpp_users.getUserJID(member_id)
         member_jids.append(member_jid)
         member_pass = pass_storage.set(member_id)
+
         d = client.admin.addUser(member_jid.userhost(), member_pass)
         d.addCallback(registerNextUser)
+
 
     def registerNextUser(result):
         if result is False:
