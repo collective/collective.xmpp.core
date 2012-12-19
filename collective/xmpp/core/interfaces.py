@@ -1,7 +1,9 @@
 from zope import schema
 from zope.component.interfaces import IObjectEvent
-from zope.interface import Interface
-from zope.interface import implements
+from zope.interface import (
+    Interface,
+    implements
+)
 from zope.viewlet.interfaces import IViewletManager
 from z3c.form import button
 

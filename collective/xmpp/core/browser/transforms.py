@@ -3,9 +3,7 @@ import re
 import urllib2
 from urlparse import urlparse
 from BeautifulSoup import BeautifulSoup
-
 from plone.memoize import ram
-
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
 

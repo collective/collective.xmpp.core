@@ -253,7 +253,10 @@ $msg:false, Strophe:false, setTimeout:false, navigator:false, jarn:false, google
                     if (!(('rid' in data) && ('sid' in data) && ('BOSH_SERVICE' in data))) {
                         // Try one more time to bind users registered on login
                         if ('bind_retry' in data) {
-                            xmpp_loader();
+                            // Set 1 sec timeout to give time for the new user be registered
+                            setTimeout(function() {
+                                xmpp_loader();
+                            }, 1000);
                         }
                         return;
                     }
