@@ -1,10 +1,8 @@
 import string
 import random
-
 from BTrees.OOBTree import OOBTree
 from persistent import Persistent
 from zope.interface import implements
-
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 
 chars = string.letters + string.digits

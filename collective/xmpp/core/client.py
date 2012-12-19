@@ -1,24 +1,26 @@
 import logging
 import random
 import string
-
 from twisted.words.protocols.jabber.jid import JID
 from wokkel import client
 from wokkel.subprotocols import StreamManager
 from wokkel.xmppim import PresenceClientProtocol
-
 from zope.component import getUtility
 from zope.event import notify
 from zope.interface import implements
-
-from collective.xmpp.core.interfaces import IDeferredXMPPClient
-from collective.xmpp.core.interfaces import IZopeReactor
-from collective.xmpp.core.protocols import AdminHandler
-from collective.xmpp.core.protocols import ChatHandler
-
-from collective.xmpp.core.interfaces import IAdminClient
-from collective.xmpp.core.interfaces import AdminClientConnected
-from collective.xmpp.core.interfaces import AdminClientDisconnected
+from collective.xmpp.core.interfaces import (
+    IZopeReactor,
+    IDeferredXMPPClient
+)
+from collective.xmpp.core.protocols import (
+    AdminHandler,
+    ChatHandler
+)
+from collective.xmpp.core.interfaces import (
+    IAdminClient,
+    AdminClientConnected,
+    AdminClientDisconnected
+)
 
 logger = logging.getLogger(__name__)
 

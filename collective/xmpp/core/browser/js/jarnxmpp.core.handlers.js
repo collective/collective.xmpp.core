@@ -244,23 +244,33 @@ $msg:false, Strophe:false, setTimeout:false, navigator:false, jarn:false, google
         } else {
             data = {};
         }
-        $.ajax({
-            'url':portal_url + '/@@xmpp-loader', 
-            'dataType': 'json',
-            'data': data, 
-            'success': function (data) {
-                if (!(('rid' in data) && ('sid' in data) && ('BOSH_SERVICE' in data))) {
-                    return;
+        var xmpp_loader = function () {
+            return $.ajax({
+                'url':portal_url + '/@@xmpp-loader',
+                'dataType': 'json',
+                'data': data,
+                'success': function (data) {
+                    if (!(('rid' in data) && ('sid' in data) && ('BOSH_SERVICE' in data))) {
+                        // Try one more time to bind users registered on login
+                        if ('bind_retry' in data) {
+                            // Set 1 sec timeout to give time for the new user be registered
+                            setTimeout(function() {
+                                xmpp_loader();
+                            }, 1000);
+                        }
+                        return;
+                    }
+                    if (!resource) {
+                        jarnxmpp.Storage.set('xmppresource', Strophe.getResourceFromJid(data.jid));
+                    }
+                    jarnxmpp.BOSH_SERVICE = data.BOSH_SERVICE;
+                    jarnxmpp.jid = data.jid;
+                    jarnxmpp.connection = new Strophe.Connection(jarnxmpp.BOSH_SERVICE);
+                    jarnxmpp.connection.attach(jarnxmpp.jid, data.sid, data.rid, jarnxmpp.onConnect);
                 }
-                if (!resource) {
-                    jarnxmpp.Storage.set('xmppresource', Strophe.getResourceFromJid(data.jid));
-                }
-                jarnxmpp.BOSH_SERVICE = data.BOSH_SERVICE;
-                jarnxmpp.jid = data.jid;
-                jarnxmpp.connection = new Strophe.Connection(jarnxmpp.BOSH_SERVICE);
-                jarnxmpp.connection.attach(jarnxmpp.jid, data.sid, data.rid, jarnxmpp.onConnect);
-            }
-        });
+            });
+        };
+        xmpp_loader();
     });
 
 })(window.jarnxmpp = window.jarnxmpp || {}, jQuery);

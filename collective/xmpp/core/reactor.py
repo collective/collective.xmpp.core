@@ -1,9 +1,11 @@
 import atexit
 import logging
 import threading
-
-from collective.xmpp.core.interfaces import IZopeReactor
-from collective.xmpp.core.interfaces import ReactorStarted, ReactorStoped
+from collective.xmpp.core.interfaces import (
+    IZopeReactor,
+    ReactorStarted,
+    ReactorStoped
+)
 import  twisted.internet.selectreactor
 from zope.event import notify
 from zope.interface import implements
