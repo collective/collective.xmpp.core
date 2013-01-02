@@ -1,7 +1,9 @@
 from zope import schema
 from zope.component.interfaces import IObjectEvent
-from zope.interface import Interface
-from zope.interface import implements
+from zope.interface import (
+    Interface,
+    implements
+)
 from zope.viewlet.interfaces import IViewletManager
 from z3c.form import button
 
@@ -33,6 +35,7 @@ class IXMPPUserSetup(Interface):
                                 "server."),
                             required=False,
                             )
+
     deregister_selected = button.Button(
                             title=_(u'label_deregister_selected',
                                 default=u"Deregister Selected Users"),
@@ -41,6 +44,7 @@ class IXMPPUserSetup(Interface):
                                 "above selected users from the XMPP server."),
                             required=False,
                             )
+
     register_all = button.Button(
                             title=_(u'label_register_all',
                                 default=u"Register ALL Users"),
@@ -57,6 +61,7 @@ class IXMPPUserSetup(Interface):
                                 "minutes."),
                             required=False,
                             )
+
     deregister_all = button.Button(
                             title=_(u'label_deregister_all',
                                 default=u"Deregister ALL Users"),
@@ -82,7 +87,7 @@ class IXMPPSettings(Interface):
         required=True,
         default=u'localhost',
         )
-         
+
     hostname = schema.TextLine(
         title=_(u"label_server_hostname",
                 default=u"XMPP Server Hostname"),
@@ -136,7 +141,6 @@ class IXMPPSettings(Interface):
                         u"sites with many users!"),
         default=False,
         )
-
 
 
 class IZopeReactor(Interface):

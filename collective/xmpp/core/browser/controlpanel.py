@@ -1,34 +1,41 @@
 # -*- coding: utf-8 -*-
 import zope.component
-from zope.component import queryUtility
-from zope.component import getUtility
-from z3c.form import button
-from z3c.form import form
-from z3c.form import field
+from zope.component import (
+    queryUtility,
+    getUtility
+)
+from z3c.form import (
+    button,
+    form,
+    field
+)
 from z3c.form.interfaces import NO_VALUE
-
 from Products.statusmessages.interfaces import IStatusMessage
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
 from twisted.words.protocols.jabber.xmlstream import IQ
+from twisted.words.protocols.jabber.jid import JID
 from wokkel.disco import NS_DISCO_ITEMS
-
 from plone.registry.interfaces import IRegistry
 from plone.app.registry.browser import controlpanel
-
 from collective.xmpp.core import messageFactory as _
-from collective.xmpp.core.interfaces import IAdminClient
-from collective.xmpp.core.interfaces import IXMPPSettings 
-from collective.xmpp.core.interfaces import IXMPPUserSetup
-from collective.xmpp.core.interfaces import IXMPPUsers
-from collective.xmpp.core.utils import setup 
-from collective.xmpp.core.utils import users
+from collective.xmpp.core.interfaces import (
+    IAdminClient,
+    IXMPPSettings,
+    IXMPPUserSetup,
+    IXMPPUsers
+)
+from collective.xmpp.core.utils import (
+    setup,
+    users
+)
+from collective.xmpp.core.utils.users import escapeNode
 
 UserAndGroupSelectionWidget_installed = True
 try:
     # We have installed UserAndGroupSelectionWidget with version greated then 2.0.4
     from Products.UserAndGroupSelectionWidget.z3cform.widget import \
-                                            UsersAndGroupsSelectionWidgetFactory
+        UsersAndGroupsSelectionWidgetFactory
 except ImportError:
     # UserAndGroupSelectionWidget > 2.0.4 not found
     UserAndGroupSelectionWidget_installed = False
@@ -119,6 +126,7 @@ class XMPPUserSetupForm(form.Form):
             "settings."), "error")
             return
 
+        self.member_jids = []
         def resultReceived(result):
             items = [item.attributes for item in result.query.children]
             if items[0].has_key('node'):
@@ -129,16 +137,23 @@ class XMPPUserSetupForm(form.Form):
                     query['node'] = item['node']
                     iq.send().addCallbacks(resultReceived)
             else:
-                member_jids = [item['jid'] for item in items]
-                if settings.admin_jid in member_jids:
-                    member_jids.remove(settings.admin_jid)
-                if member_jids:
-                    setup.deregisterXMPPUsers(self.context, member_jids)
+                self.member_jids = [item['jid'] for item in items]
+
+                if settings.admin_jid in self.member_jids:
+                    self.member_jids.remove(settings.admin_jid)
+
+                self.member_jids = [JID("%s@%s" % (escapeNode(item.split('@')[0]),
+                                              settings.xmpp_domain))
+                               for item in self.member_jids]
+
+                if self.member_jids:
+                    setup.deregisterXMPPUsers(self.context, self.member_jids)
 
             return result
 
         d = client.admin.getRegisteredUsers()
         d.addCallbacks(resultReceived)
+
         status.add(_(u"The XMPP users is being instructed to deregister all "
                     u"the users. This might take some minutes to complete."), "info")
 
@@ -163,7 +178,8 @@ class XMPPUserSetupForm(form.Form):
             members = list(set(chosen_members))
         else:
             # Case when Products.UserAndGroupSelectionWidget is not installed/used
-            members = members_and_groups.split('\r\n')
+            members = [member for member in members_and_groups.split('\r\n')
+                           if member]
 
         return members
 

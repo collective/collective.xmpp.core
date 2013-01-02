@@ -2,7 +2,6 @@ from twisted.words.protocols.jabber import component
 from twisted.words.xish import domish
 from zope.component import getUtility
 from wokkel.subprotocols import StreamManager
-
 from collective.xmpp.core.interfaces import IZopeReactor
 
 

@@ -1,13 +1,13 @@
 import logging
-
 from plone.registry.interfaces import IRegistry
 from twisted.words.protocols.jabber.jid import JID
 from zope.component import getUtility
 from zope.interface import implements
-
-from collective.xmpp.core.interfaces import IXMPPPasswordStorage
-from collective.xmpp.core.interfaces import IXMPPUsers
-from collective.xmpp.core.interfaces import IXMPPSettings
+from collective.xmpp.core.interfaces import (
+    IXMPPPasswordStorage,
+    IXMPPUsers,
+    IXMPPSettings
+)
 from collective.xmpp.core.utils.users import escapeNode
 
 log = logging.getLogger(__name__)
