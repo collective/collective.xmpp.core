@@ -3,10 +3,8 @@ import string
 import random
 import logging
 import Zope2
-
 from zope.component.hooks import setSite
 from Products.CMFCore.utils import getToolByName
-
 from twisted.words.xish.domish import Element
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
@@ -94,9 +92,9 @@ class ChatHandler(XMPPHandler):
                 if mt is not None and mt.getMemberInfo(member_id):
                     info = mt.getMemberInfo(member_id)
                     fullname = info.get('fullname', member_id).decode('utf-8')
-                else: 
+                else:
                     log.warn('Could not get user fullname because the global site '
-                            'manager is not set')
+                             'manager is not set')
                     fullname = ''
 
                 item = x.addElement('item')
@@ -152,9 +150,8 @@ class VCardHandler(XMPPHandler):
 
 
 class AdminHandler(XMPPHandler):
-    """
-    Admin client.
-    http://xmpp.org/extensions/xep-0133.html
+    """ Admin client.
+        http://xmpp.org/extensions/xep-0133.html
     """
 
     def getRegisteredUsers(self):
@@ -169,7 +166,7 @@ class AdminHandler(XMPPHandler):
         return d
 
     def addUser(self, userjid, password):
-        """Add a user.
+        """ Add a user
         """
 
         def resultReceived(iq):
@@ -214,7 +211,7 @@ class AdminHandler(XMPPHandler):
         return d
 
     def deleteUsers(self, userjids):
-        """Add a user.
+        """ Add a user
         """
 
         def resultReceived(iq):
@@ -259,7 +256,7 @@ class AdminHandler(XMPPHandler):
         return d
 
     def sendAnnouncement(self, body, subject='Announce'):
-        """Send an announement to all users.
+        """ Send an announement to all users.
         """
 
         def resultReceived(iq):
@@ -307,8 +304,8 @@ class AdminHandler(XMPPHandler):
 
 class PubSubHandler(WokkelPubSubClient):
     """ Pubslish-Subscribe
-    http://xmpp.org/extensions/xep-0060.html
-    http://xmpp.org/extensions/xep-0248.html
+        http://xmpp.org/extensions/xep-0060.html
+        http://xmpp.org/extensions/xep-0248.html
     """
 
     def publish(self, service, nodeIdentifier, items=[]):

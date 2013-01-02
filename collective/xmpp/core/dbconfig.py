@@ -26,11 +26,9 @@ import transaction
 from zope.app.publication.zopepublication import ZopePublication
 from zope.component import getUtility
 from zope.component.hooks import setSite
-
 from App.config import getConfiguration
 from Products.CMFCore.utils import getToolByName
 import Zope2
-
 from plone.registry.interfaces import IRegistry
 from collective.xmpp.core.interfaces import IXMPPSettings
 

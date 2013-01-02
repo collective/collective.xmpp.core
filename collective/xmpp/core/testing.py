@@ -1,22 +1,22 @@
 import time
 import urllib2
-
 from twisted.words.protocols.jabber.jid import JID
-
 from zope.component import getUtility
 from zope.configuration import xmlconfig
-
 from plone.testing import Layer
-from plone.app.testing import PLONE_FIXTURE
-from plone.app.testing import IntegrationTesting, FunctionalTesting
-from plone.app.testing import PloneSandboxLayer
-from plone.app.testing import applyProfile
+from plone.app.testing import (
+    PLONE_FIXTURE,
+    IntegrationTesting,
+    FunctionalTesting,
+    PloneSandboxLayer,
+    applyProfile
+)
 from plone.registry.interfaces import IRegistry
-
-from collective.xmpp.core.interfaces import IZopeReactor
-
-from collective.xmpp.core.interfaces import IAdminClient
-from collective.xmpp.core.interfaces import IXMPPSettings
+from collective.xmpp.core.interfaces import (
+    IZopeReactor,
+    IAdminClient,
+    IXMPPSettings
+)
 from collective.xmpp.core.subscribers.startup import setUpAdminClient
 from collective.xmpp.core.utils.setup import registerXMPPUsers 
 
