@@ -3,29 +3,28 @@ Changelog
 =========
 
 ------------------
-0.1a9 (unreleased)
+0.1b1 (unreleased)
 ------------------
 
 - Feature: if not already registered, Plone users get
   registered on jabber server on login
   [alecghica]
-- Bug fix: no need to refresh browser for users registered
+- Bugfix: no need to refresh browser for users registered
   on login, they are binded on the fly
   [alecghica]
-- Bug fix: fixed "Deregister ALL Users" function, as credentials were
+- Bugfix: "Deregister ALL Users" function, credentials were
   left un-deleted under IXMPPPasswordStorage resulting in
-  various errors when register/deregister users
+  various errors when registering/deregistering users
   [alecghica]
-- Bug fix: fixed subscribing when a new plone user is added
+- Bugfix: fixed subscribing when a new plone user is added
   [alecghica]
-- Bug fix: fixed that users were only being auto-subscribed to
+- Bugfix: users were only being auto-subscribed to
   other users added in that current session
   [alecghica]
-- Bug fix: new users are now auto-subscribed only
+- Bugfix: new users are now auto-subscribed only
   to existing XMPP users
   [alecghica]
-- Change: code cosmetics
-  [alecghica]
+
 
 0.1a8 (2012-12-13)
 ------------------
