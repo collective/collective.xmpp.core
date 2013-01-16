@@ -59,7 +59,6 @@ Changelog
   dbconfig.py
   [jcbrand]
 
-------------------
 0.1a6 (2012-11-22)
 ------------------
 
@@ -70,14 +69,12 @@ Changelog
 - Bugfix. Prevent getAllMemberIds from returning duplicates.
   [jcbrand]
 
-------------------
 0.1a5 (2012-11-19)
 ------------------
 
 - Fixed RST formatting bugs.
   [jcbrand]
 
-------------------
 0.1a4 (2012-11-19)
 ------------------
 
@@ -91,14 +88,12 @@ Changelog
 - Bugfix. Password utility forgets user passwords when a user is registered.
   [jcbrand]
 
-------------------
 0.1a3 (2012-11-09)
 ------------------
 
 - Bugfix for RuntimeError that might occur when upgrading from 0.1a1 to 0.1a2
   [jcbrand]
 
-------------------
 0.1a2 (2012-11-09)
 ------------------
 
@@ -107,7 +102,6 @@ Changelog
 - Add support for PAS plugins (such as LDAP).
   [jcbrand]
 
-------------------
 0.1a1 (2012-10-18)
 ------------------
 
