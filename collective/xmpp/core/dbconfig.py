@@ -26,9 +26,10 @@ import transaction
 from zope.app.publication.zopepublication import ZopePublication
 from zope.component import getUtility
 from zope.component.hooks import setSite
+import Globals
+import Zope2
 from App.config import getConfiguration
 from Products.CMFCore.utils import getToolByName
-import Zope2
 from plone.registry.interfaces import IRegistry
 from collective.xmpp.core.interfaces import IXMPPSettings
 
@@ -45,6 +46,12 @@ def dbconfig(event):
     if conf is None:
         log.error('No product config found! Configuration will not be set')
         return
+
+    if Globals.DevelopmentMode:
+        log.info('Configuration settings for collective.xmpp.core are ignored '
+                'because Zope is starting up in debug_mode')
+        return
+
     db = Zope2.DB
     connection = db.open()
     root_folder = connection.root().get(ZopePublication.root_name, None)
