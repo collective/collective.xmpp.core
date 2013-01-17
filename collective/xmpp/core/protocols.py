@@ -14,7 +14,7 @@ from wokkel.subprotocols import XMPPHandler
 
 from zope.component.hooks import setSite
 from Products.CMFCore.utils import getToolByName
-from collective.xmpp.core.utils.users import getXMPPDomain 
+from collective.xmpp.core.utils import users
 
 NS_VCARD_TEMP = 'vcard-temp'
 NS_CLIENT = 'jabber:client'
@@ -90,13 +90,12 @@ class ChatHandler(XMPPHandler):
                 if to == jid:
                     continue
 
-                member_id = jid.user
+                member_id = users.unescapeNode(jid.user)
                 if mt is not None and mt.getMemberInfo(member_id):
                     info = mt.getMemberInfo(member_id)
                     fullname = info.get('fullname', member_id).decode('utf-8')
                 else:
-                    log.warn('Could not get user fullname because the global site '
-                             'manager is not set')
+                    log.warn('Could not get user fullname')
                     fullname = ''
 
                 item = x.addElement('item')
@@ -161,7 +160,7 @@ class AdminHandler(XMPPHandler):
         the #get-registered-users-list command, instead does it with an iq/get.
         """
         iq = IQ(self.xmlstream, 'get')
-        iq['to'] = getXMPPDomain() 
+        iq['to'] = users.getXMPPDomain() 
         query = iq.addElement((NS_DISCO_ITEMS, 'query'))
         query['node'] = 'all users'
         d = iq.send()
@@ -204,7 +203,7 @@ class AdminHandler(XMPPHandler):
             return False
 
         iq = IQ(self.xmlstream, 'set')
-        iq['to'] = getXMPPDomain() 
+        iq['to'] = users.getXMPPDomain() 
         command = iq.addElement((NS_COMMANDS, 'command'))
         command['action'] = 'execute'
         command['node'] = NODE_ADMIN_ADD_USER
@@ -248,7 +247,7 @@ class AdminHandler(XMPPHandler):
         if isinstance(userjids, basestring):
             userjids = [userjids]
         iq = IQ(self.xmlstream, 'set')
-        iq['to'] = getXMPPDomain()
+        iq['to'] = users.getXMPPDomain()
         command = iq.addElement((NS_COMMANDS, 'command'))
         command['action'] = 'execute'
         command['node'] = NODE_ADMIN_DELETE_USER
@@ -294,7 +293,7 @@ class AdminHandler(XMPPHandler):
             return False
 
         iq = IQ(self.xmlstream, 'set')
-        iq['to'] = getXMPPDomain() 
+        iq['to'] = users.getXMPPDomain() 
         command = iq.addElement((NS_COMMANDS, 'command'))
         command['action'] = 'execute'
         command['node'] = NODE_ADMIN_ANNOUNCE
