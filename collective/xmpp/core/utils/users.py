@@ -111,6 +111,7 @@ def deletePrincipal(client, principal_jid):
     """
     d = client.admin.deleteUsers(principal_jid.userhost())
 
+    # XXX: PubSub stuff.
     # def deleteUser(result):
     #     if result == False:
     #         return False
