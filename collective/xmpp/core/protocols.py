@@ -3,16 +3,16 @@ import string
 import random
 import logging
 import Zope2
-from zope.component.hooks import setSite
-from Products.CMFCore.utils import getToolByName
-from twisted.words.xish.domish import Element
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
+from twisted.words.xish.domish import Element
 from wokkel import data_form
 from wokkel.disco import NS_DISCO_INFO, NS_DISCO_ITEMS
+from wokkel.pubsub import NS_PUBSUB_OWNER, NS_PUBSUB_NODE_CONFIG
 from wokkel.pubsub import PubSubClient as WokkelPubSubClient
 from wokkel.subprotocols import XMPPHandler
-from wokkel.pubsub import NS_PUBSUB_OWNER, NS_PUBSUB_NODE_CONFIG
+from zope.component.hooks import setSite
+from Products.CMFCore.utils import getToolByName
 
 NS_VCARD_TEMP = 'vcard-temp'
 NS_CLIENT = 'jabber:client'
