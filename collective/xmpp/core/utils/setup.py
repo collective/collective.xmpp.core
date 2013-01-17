@@ -2,22 +2,21 @@ import logging
 import transaction
 import Zope2
 from twisted.words.protocols.jabber.jid import JID
-from zope.component import (
-    getGlobalSiteManager,
-    getUtility,
-    queryUtility
-)
-from zope.component.hooks import (
-    getSite,
-    setSite
-)
+from twisted.words.protocols.jabber.xmlstream import IQ
+
+from wokkel.disco import NS_DISCO_ITEMS
+from zope.component import getGlobalSiteManager
+from zope.component import getUtility
+from zope.component import queryUtility
+from zope.component.hooks import getSite
+from zope.component.hooks import setSite
+
 from plone.registry.interfaces import IRegistry
-from collective.xmpp.core.interfaces import (
-    IAdminClient,
-    IXMPPPasswordStorage,
-    IXMPPSettings,
-    IXMPPUsers
-)
+
+from collective.xmpp.core.interfaces import IAdminClient
+from collective.xmpp.core.interfaces import IXMPPPasswordStorage
+from collective.xmpp.core.interfaces import IXMPPSettings
+from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.subscribers.startup import createAdminClient
 from collective.xmpp.core.utils.users import escapeNode
 
