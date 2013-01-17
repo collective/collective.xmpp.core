@@ -36,6 +36,8 @@ class XMPPLoader(BrowserView):
             return
         setup.registerXMPPUsers(getSite(), [self.user_id])
 
+        # XXX: Is this necessary? auto_subscribe is already handled in
+        # registerXMPPUsers
         if settings.auto_subscribe:
             self.member_jids = []
             self.bind_retry = True
