@@ -1,9 +1,14 @@
+from wokkel.disco import NS_DISCO_ITEMS
+from twisted.words.protocols.jabber.jid import JID
+from twisted.words.protocols.jabber.xmlstream import IQ
+
 from zope.component.hooks import getSite
 from zope.component import getUtility
 from Products.CMFCore.utils import getToolByName
 from plone.registry.interfaces import IRegistry
+
 from collective.xmpp.core.interfaces import IXMPPSettings
-from twisted.words.protocols.jabber.jid import JID
+
 
 def getAllMemberIds():
     """ Call searchUsers from PluggableAuthService, so that we get
