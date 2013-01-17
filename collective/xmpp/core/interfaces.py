@@ -128,6 +128,19 @@ class IXMPPSettings(Interface):
         default=u'admin',
         )
 
+    auto_register_on_login = schema.Bool( 
+        title=_(u"label_xmpp_auto_register_on_login",
+                default=u"Automatically register for XMPP on login"),
+        description=_(u"help_xmpp_auto_register_on_login",
+                default=u"Newly created users will automatically be registered "
+                        u"on the XMPP server, but existing users won't be. "
+                        u"Either you have to register them manually, or you "
+                        u"can check this option, and they will be registered "
+                        u"on the XMPP server as soon as they log in to the "
+                        u"site."),
+        default=False,
+        )
+
     auto_subscribe = schema.Bool( 
         title=_(u"label_xmpp_auto_subscribe",
                 default=u"Auto-subscribe XMPP users"),
