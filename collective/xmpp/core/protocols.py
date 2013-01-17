@@ -211,8 +211,7 @@ class AdminHandler(XMPPHandler):
         return d
 
     def deleteUsers(self, userjids):
-        """ Add a user
-        """
+        """ """
 
         def resultReceived(iq):
             log.info("Deleted users %s" % userjids)
