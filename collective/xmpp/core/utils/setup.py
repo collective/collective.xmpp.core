@@ -86,9 +86,7 @@ def registerXMPPUsers(portal, member_ids):
                         client.chat.sendRosterItemAddSuggestion(member_jid,
                                                                 roster_jids,
                                                                 site)
-
             return result
-
         d = client.admin.getRegisteredUsers()
         d.addCallbacks(resultReceived)
         return True
@@ -102,14 +100,12 @@ def registerXMPPUsers(portal, member_ids):
         member_jid = xmpp_users.getUserJID(member_id)
         member_jids.append(member_jid)
         member_pass = pass_storage.set(member_id)
-
         d = client.admin.addUser(member_jid.userhost(), member_pass)
         d.addCallback(registerNextUser)
 
     def registerNextUser(result):
         if result is False:
             return 
-
         if getSite():
             registerUser()
         else:
