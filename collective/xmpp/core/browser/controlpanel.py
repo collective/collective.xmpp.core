@@ -20,6 +20,7 @@ from plone.app.registry.browser import controlpanel
 
 from collective.xmpp.core import messageFactory as _
 from collective.xmpp.core.interfaces import IAdminClient
+from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IXMPPUserSetup
 from collective.xmpp.core.interfaces import IXMPPUsers
@@ -99,6 +100,9 @@ class XMPPUserSetupForm(form.Form):
 
         elif self.request.form.get('form.widgets.deregister_selected'):
             return self.deregisterSelected()
+
+        elif self.request.form.get('form.widgets.clear_all_passwords'):
+            return self.clearAllPasswords()
 
     def registerAll(self):
         member_ids = users.getAllMemberIds() 
@@ -207,6 +211,12 @@ class XMPPUserSetupForm(form.Form):
         member_ids = self.getChosenMembers()
         setup.registerXMPPUsers(self.context, member_ids)
         status.add(_(u"The selected users where registered"), "info")
+
+    def clearAllPasswords(self):
+        status = IStatusMessage(self.request)
+        pass_storage = getUtility(IXMPPPasswordStorage)
+        pass_storage.clear()
+        status.add(_(u"The password storage has been wiped."), "info")
 
 
 class XMPPUserSetupControlPanel(controlpanel.ControlPanelFormWrapper):
