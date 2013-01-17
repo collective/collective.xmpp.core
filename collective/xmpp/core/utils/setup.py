@@ -106,7 +106,6 @@ def registerXMPPUsers(portal, member_ids):
         d = client.admin.addUser(member_jid.userhost(), member_pass)
         d.addCallback(registerNextUser)
 
-
     def registerNextUser(result):
         if result is False:
             return 

@@ -70,6 +70,18 @@ class IXMPPUserSetup(Interface):
                                 "the users in the site from the XMPP server."),
                             required=False,
                             )
+                             
+    clear_all_passwords = button.Button(
+                            title=_(u'label_clear_passwords',
+                                default=u"Completely wipe password storage"),
+                            description=_(u"help_clear_passwords",
+                                default=u"DON'T CLICK THIS UNLESS YOU KNOW WHAT "
+                                u"YOU'RE DOING! This will remove ALL the "
+                                u"entries in the XMPP password storage "
+                                u"utility in Plone and should only be useful "
+                                u"in very rare cases or while developing."),
+                            required=False,
+                            )
 
 
 class IXMPPSettings(Interface):
