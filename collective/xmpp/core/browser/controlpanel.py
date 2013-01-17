@@ -1,34 +1,30 @@
 # -*- coding: utf-8 -*-
-import zope.component
-from zope.component import (
-    queryUtility,
-    getUtility
-)
-from z3c.form import (
-    button,
-    form,
-    field
-)
-from z3c.form.interfaces import NO_VALUE
-from Products.statusmessages.interfaces import IStatusMessage
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.CMFCore.utils import getToolByName
 from twisted.words.protocols.jabber.xmlstream import IQ
 from twisted.words.protocols.jabber.jid import JID
 from wokkel.disco import NS_DISCO_ITEMS
+
+from zope.component import queryUtility
+from zope.component import getUtility
+ 
+from z3c.form import button
+from z3c.form import field
+from z3c.form import form
+from z3c.form.interfaces import NO_VALUE
+
+from Products.statusmessages.interfaces import IStatusMessage
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.CMFCore.utils import getToolByName
+
 from plone.registry.interfaces import IRegistry
 from plone.app.registry.browser import controlpanel
+
 from collective.xmpp.core import messageFactory as _
-from collective.xmpp.core.interfaces import (
-    IAdminClient,
-    IXMPPSettings,
-    IXMPPUserSetup,
-    IXMPPUsers
-)
-from collective.xmpp.core.utils import (
-    setup,
-    users
-)
+from collective.xmpp.core.interfaces import IAdminClient
+from collective.xmpp.core.interfaces import IXMPPSettings
+from collective.xmpp.core.interfaces import IXMPPUserSetup
+from collective.xmpp.core.interfaces import IXMPPUsers
+from collective.xmpp.core.utils import setup
+from collective.xmpp.core.utils import users
 from collective.xmpp.core.utils.users import escapeNode
 
 UserAndGroupSelectionWidget_installed = True
