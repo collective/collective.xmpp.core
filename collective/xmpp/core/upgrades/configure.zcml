@@ -7,12 +7,20 @@
     source="1"
     destination="2"
     profile="collective.xmpp.core:default">
+        <genericsetup:upgradeStep
+            title="Add XMPP hostname and port entries to the Plone registry"
+            description=""
+            handler=".v2.updatePloneRegistry"/>
+  </genericsetup:upgradeSteps>
 
-    <genericsetup:upgradeStep
-      title="Add XMPP hostname and port entries to the Plone registry"
-      description=""
-      handler=".v2.updatePloneRegistry"
-      />
+  <genericsetup:upgradeSteps
+    source="2"
+    destination="3"
+    profile="collective.xmpp.core:default">
+        <genericsetup:upgradeStep
+            title="Add auto register on login entry to the Plone registry"
+            description=""
+            handler=".v2.updatePloneRegistry"/>
   </genericsetup:upgradeSteps>
 
 </configure>
