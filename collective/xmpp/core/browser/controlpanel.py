@@ -27,6 +27,7 @@ from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.utils import setup
 from collective.xmpp.core.utils import users
 from collective.xmpp.core.utils.users import escapeNode
+from collective.xmpp.core.utils.users import getXMPPDomain 
 
 UserAndGroupSelectionWidget_installed = True
 try:
@@ -132,7 +133,7 @@ class XMPPUserSetupForm(form.Form):
             if items[0].has_key('node'):
                 for item in reversed(items):
                     iq = IQ(client.admin.xmlstream, 'get')
-                    iq['to'] = client.admin.xmlstream.factory.authenticator.jid.host
+                    iq['to'] = getXMPPDomain() 
                     query = iq.addElement((NS_DISCO_ITEMS, 'query'))
                     query['node'] = item['node']
                     iq.send().addCallbacks(resultReceived)

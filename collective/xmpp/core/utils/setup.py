@@ -19,6 +19,7 @@ from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.subscribers.startup import createAdminClient
 from collective.xmpp.core.utils.users import escapeNode
+from collective.xmpp.core.utils.users import getXMPPDomain 
 
 log = logging.getLogger(__name__)
 
@@ -70,7 +71,7 @@ def registerXMPPUsers(portal, member_ids):
             if items[0].has_key('node'):
                 for item in reversed(items):
                     iq = IQ(client.admin.xmlstream, 'get')
-                    iq['to'] = client.admin.xmlstream.factory.authenticator.jid.host
+                    iq['to'] = getXMPPDomain() 
                     query = iq.addElement((NS_DISCO_ITEMS, 'query'))
                     query['node'] = item['node']
                     iq.send().addCallbacks(resultReceived)

@@ -11,6 +11,8 @@ Changelog
 - Add upgrade step to make sure the registry is reloaded so that the
   "auto-register on login" entry is added.
   [jcbrand]
+- Bugfix. Always get the XMPP virtual host from the registry.
+  [jcbrand]
 
 
 0.1b2 (2013-01-17)
