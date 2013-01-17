@@ -9,6 +9,10 @@ from plone.registry.interfaces import IRegistry
 
 from collective.xmpp.core.interfaces import IXMPPSettings
 
+def getXMPPDomain():
+    registry = getUtility(IRegistry)
+    settings = registry.forInterface(IXMPPSettings, check=False)
+    return settings.xmpp_domain
 
 def getAllMemberIds():
     """ Call searchUsers from PluggableAuthService, so that we get
@@ -70,7 +74,7 @@ def setupPrincipal(client, principal_jid, principal_password):
             if items[0].has_key('node'):
                 for item in reversed(items):
                     iq = IQ(client.admin.xmlstream, 'get')
-                    iq['to'] = client.admin.xmlstream.factory.authenticator.jid.host
+                    iq['to'] = getXMPPDomain() 
                     query = iq.addElement((NS_DISCO_ITEMS, 'query'))
                     query['node'] = item['node']
                     iq.send().addCallbacks(resultReceived)

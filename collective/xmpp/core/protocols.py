@@ -12,11 +12,9 @@ from wokkel.pubsub import NS_PUBSUB_OWNER, NS_PUBSUB_NODE_CONFIG
 from wokkel.pubsub import PubSubClient as WokkelPubSubClient
 from wokkel.subprotocols import XMPPHandler
 
-from zope.component import getUtility
 from zope.component.hooks import setSite
 from Products.CMFCore.utils import getToolByName
-from plone.registry.interfaces import IRegistry
-from collective.xmpp.core.interfaces import IXMPPSettings
+from collective.xmpp.core.utils.users import getXMPPDomain 
 
 NS_VCARD_TEMP = 'vcard-temp'
 NS_CLIENT = 'jabber:client'
@@ -163,9 +161,7 @@ class AdminHandler(XMPPHandler):
         the #get-registered-users-list command, instead does it with an iq/get.
         """
         iq = IQ(self.xmlstream, 'get')
-        registry = getUtility(IRegistry)
-        settings = registry.forInterface(IXMPPSettings, check=False)
-        iq['to'] = settings.xmpp_domain
+        iq['to'] = getXMPPDomain() 
         query = iq.addElement((NS_DISCO_ITEMS, 'query'))
         query['node'] = 'all users'
         d = iq.send()
@@ -208,9 +204,7 @@ class AdminHandler(XMPPHandler):
             return False
 
         iq = IQ(self.xmlstream, 'set')
-        registry = getUtility(IRegistry)
-        settings = registry.forInterface(IXMPPSettings, check=False)
-        iq['to'] = settings.xmpp_domain
+        iq['to'] = getXMPPDomain() 
         command = iq.addElement((NS_COMMANDS, 'command'))
         command['action'] = 'execute'
         command['node'] = NODE_ADMIN_ADD_USER
@@ -254,9 +248,7 @@ class AdminHandler(XMPPHandler):
         if isinstance(userjids, basestring):
             userjids = [userjids]
         iq = IQ(self.xmlstream, 'set')
-        registry = getUtility(IRegistry)
-        settings = registry.forInterface(IXMPPSettings, check=False)
-        iq['to'] = settings.xmpp_domain
+        iq['to'] = getXMPPDomain()
         command = iq.addElement((NS_COMMANDS, 'command'))
         command['action'] = 'execute'
         command['node'] = NODE_ADMIN_DELETE_USER
@@ -302,9 +294,7 @@ class AdminHandler(XMPPHandler):
             return False
 
         iq = IQ(self.xmlstream, 'set')
-        registry = getUtility(IRegistry)
-        settings = registry.forInterface(IXMPPSettings, check=False)
-        iq['to'] = settings.xmpp_domain
+        iq['to'] = getXMPPDomain() 
         command = iq.addElement((NS_COMMANDS, 'command'))
         command['action'] = 'execute'
         command['node'] = NODE_ADMIN_ANNOUNCE
