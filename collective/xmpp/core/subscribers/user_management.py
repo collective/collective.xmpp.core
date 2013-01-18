@@ -1,21 +1,18 @@
 import logging
-from zope.component import (
-    adapter,
-    getUtility
-)
+from zope.component import adapter
+from zope.component import getUtility
 from zope.globalrequest import getRequest
-from Products.PluggableAuthService.interfaces.events import (
-    IPrincipalCreatedEvent,
-    IPrincipalDeletedEvent
-)
+
+from Products.PluggableAuthService.interfaces.events import IPrincipalCreatedEvent
+from Products.PluggableAuthService.interfaces.events import IPrincipalDeletedEvent
+
 from plone.registry.interfaces import IRegistry
-from collective.xmpp.core.interfaces import (
-    IAdminClient,
-    IProductLayer,
-    IXMPPPasswordStorage,
-    IXMPPSettings,
-    IXMPPUsers
-)
+
+from collective.xmpp.core.interfaces import IAdminClient
+from collective.xmpp.core.interfaces import IProductLayer
+from collective.xmpp.core.interfaces import IXMPPPasswordStorage
+from collective.xmpp.core.interfaces import IXMPPSettings
+from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.utils import users
 
 log = logging.getLogger(__name__)
@@ -62,3 +59,4 @@ def onUserDeletion(event):
 
     d = users.deletePrincipal(client, principal_jid)
     return d
+
