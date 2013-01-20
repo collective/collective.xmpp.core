@@ -8,12 +8,15 @@ from collective.xmpp.core.testing import wait_for_client_state
 
 
 class ComponentNetworkTest(unittest.TestCase):
-
     layer = REACTOR_INTEGRATION_TESTING
     level = 2
 
     def test_component_connection(self):
+        """
+        You'll need this in your ejabberd.cfg:
 
+        {{5347, {0,0,0,0} }, ejabberd_service, []}
+        """
         component = XMPPComponent('localhost',
                                   5347,
                                   'example.localhost',
