@@ -10,7 +10,6 @@ class XMPPComponent(StreamManager):
     def __init__(self, host, port, domain, password, extra_handlers=[]):
         self.host = host
         self.port = port
-
         self._state = None
         factory = component.componentFactory(domain, password)
 

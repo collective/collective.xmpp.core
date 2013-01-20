@@ -24,8 +24,6 @@ class BOSHClient(object):
         self.bosh_service = urlparse(service)
 
     def buildBody(self, attributes={}, child=None):
-
-
         body = Element('body')
         body.setAttribute('xmlns', NS_HTTPBIND)
         body.setAttribute('rid', str(self.rid))
