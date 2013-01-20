@@ -3,22 +3,24 @@ import urllib2
 from twisted.words.protocols.jabber.jid import JID
 from zope.component import getUtility
 from zope.configuration import xmlconfig
+from zope.interface import alsoProvides
+
+from ZPublisher.pubevents import PubBeforeCommit
+
 from plone.testing import Layer
-from plone.app.testing import (
-    PLONE_FIXTURE,
-    IntegrationTesting,
-    FunctionalTesting,
-    PloneSandboxLayer,
-    applyProfile
-)
-from plone.registry.interfaces import IRegistry
-from collective.xmpp.core.interfaces import (
-    IZopeReactor,
-    IAdminClient,
-    IXMPPSettings
-)
+from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing import IntegrationTesting
+from plone.app.testing import FunctionalTesting
+from plone.app.testing import PloneSandboxLayer
+from plone.app.testing import applyProfile
+ 
+from collective.xmpp.core.interfaces import IAdminClient
+from collective.xmpp.core.interfaces import IProductLayer
+from collective.xmpp.core.interfaces import IXMPPSettings
+from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.subscribers.startup import setUpAdminClient
 from collective.xmpp.core.utils.setup import registerXMPPUsers 
+from plone.registry.interfaces import IRegistry
 
 
 def wait_on_deferred(d, seconds=10):
@@ -209,11 +211,16 @@ class XMPPCoreFixture(PloneSandboxLayer):
     def setUpPloneSite(self, portal):
         # Install into Plone site using portal_setup
         applyProfile(portal, 'collective.xmpp.core:default')
+        # Manually enable the browserlayer
+        alsoProvides(portal.REQUEST, IProductLayer)
+
         registry = getUtility(IRegistry)
         settings = registry.forInterface(IXMPPSettings, check=False)
-        settings.admin_jid = 'admin@localhost'
-        settings.xmpp_domain = 'localhost'
-        setUpAdminClient(None, None)
+        settings.admin_jid = u'admin@localhost'
+        settings.xmpp_domain = u'localhost'
+
+        e = PubBeforeCommit(portal.REQUEST)
+        setUpAdminClient(e)
         client = getUtility(IAdminClient)
         wait_for_client_state(client, 'authenticated')
 
