@@ -3,17 +3,13 @@
     i18n_domain="collective.xmpp.core">
 
   <!-- Start up -->
-  <subscriber handler=".startup.setUpAdminClient" 
-              for="ZPublisher.interfaces.IPubBeforeCommit"/>
+  <subscriber for="ZPublisher.interfaces.IPubBeforeCommit"
+        handler=".startup.setUpAdminClient" />
 
-  <subscriber
-    for="collective.xmpp.core.interfaces.AdminClientConnected"
-    handler=".startup.adminConnected"
-    />
+  <subscriber for="collective.xmpp.core.interfaces.AdminClientConnected"
+        handler=".startup.adminConnected" />
 
-  <subscriber
-    for="collective.xmpp.core.interfaces.AdminClientDisconnected"
-    handler=".startup.adminDisconnected"
-    />
+  <subscriber for="collective.xmpp.core.interfaces.AdminClientDisconnected"
+        handler=".startup.adminDisconnected" />
 
 </configure>
