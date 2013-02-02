@@ -3,7 +3,7 @@ Changelog
 =========
 
 ------------------
-0.1b4 (unreleased)
+0.1b4 (2013-02-02)
 ------------------
 
 - Bugfix for "Deregister All" in @@xmpp-user-setup page. Site root was not set
