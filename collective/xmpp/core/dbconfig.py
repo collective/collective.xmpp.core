@@ -44,7 +44,7 @@ log = logging.getLogger(__name__)
 def dbconfig(event):
     """ """
     if conf is None:
-        log.error('No product config found! Configuration will not be set')
+        log.info('No product config found. Configuration will not be set')
         return
 
     if Globals.DevelopmentMode:
@@ -63,7 +63,7 @@ def dbconfig(event):
 
     plone = root_folder.get(instance_name)
     if plone is None:
-        log.error('No Plone instance with instance_name "%s" found!' % instance_name)
+        log.error('No Plone instance with instance_name "%s" found.' % instance_name)
         return
 
     setup = getToolByName(plone, 'portal_setup')
