@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
-from twisted.words.protocols.jabber.xmlstream import IQ
 from twisted.words.protocols.jabber.jid import JID
+from twisted.words.protocols.jabber.xmlstream import IQ
 from wokkel.disco import NS_DISCO_ITEMS
+import transaction
 
+import Zope2
+
+from zope.component.hooks import setSite
+from zope.component.hooks import getSite
 from zope.component import queryUtility
 from zope.component import getUtility
  
@@ -27,7 +32,6 @@ from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.utils import setup
 from collective.xmpp.core.utils import users
 from collective.xmpp.core.utils.users import escapeNode
-from collective.xmpp.core.utils.users import getXMPPDomain 
 
 UserAndGroupSelectionWidget_installed = True
 try:
@@ -113,6 +117,7 @@ class XMPPUserSetupForm(form.Form):
             "unresponsive."), "info")
 
     def deregisterAll(self):
+        portal =  getSite()
         registry = getUtility(IRegistry)
         settings = registry.forInterface(IXMPPSettings, check=False)
         status = IStatusMessage(self.request)
@@ -129,11 +134,15 @@ class XMPPUserSetupForm(form.Form):
 
         self.member_jids = []
         def resultReceived(result):
+            app = Zope2.app()
+            root = app.unrestrictedTraverse('/'.join(portal.getPhysicalPath()))
+            setSite(root)
+            transaction.begin()
             items = [item.attributes for item in result.query.children]
             if items[0].has_key('node'):
                 for item in reversed(items):
                     iq = IQ(client.admin.xmlstream, 'get')
-                    iq['to'] = getXMPPDomain() 
+                    iq['to'] = settings.xmpp_domain 
                     query = iq.addElement((NS_DISCO_ITEMS, 'query'))
                     query['node'] = item['node']
                     iq.send().addCallbacks(resultReceived)
@@ -150,6 +159,8 @@ class XMPPUserSetupForm(form.Form):
                 if self.member_jids:
                     setup.deregisterXMPPUsers(self.context, self.member_jids)
 
+            transaction.abort()
+            app._p_jar.close()
             return result
 
         d = client.admin.getRegisteredUsers()
