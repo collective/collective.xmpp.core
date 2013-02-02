@@ -6,7 +6,9 @@ Changelog
 0.1b4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Bugfix for "Deregister All" in @@xmpp-user-setup page. Site root was not set
+  in callback method.
+  [jcbrand]
 
 
 0.1b3 (2013-01-17)
