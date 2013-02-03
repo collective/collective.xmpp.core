@@ -126,7 +126,7 @@ class ReactorFixture(PloneSandboxLayer):
         zr.start()
         wait_for_reactor_state(zr.reactor, state=True)
 
-    def tearDownZope(self):
+    def tearDownPloneSite(self, portal):
         # Clean ZopeReactor
         zr = getUtility(IZopeReactor)
         for dc in zr.reactor.getDelayedCalls():
@@ -226,7 +226,7 @@ class XMPPCoreFixture(PloneSandboxLayer):
         registerXMPPUsers(portal, member_ids=['test_user_1_'])
         wait_on_client_deferreds(client)
 
-    def testTearDown(self):
+    def tearDownPloneSite(self, portal):
         client = getUtility(IAdminClient)
         client.disconnect()
         wait_for_client_state(client, u'disconnected')
