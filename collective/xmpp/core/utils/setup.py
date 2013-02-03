@@ -35,8 +35,6 @@ def registerXMPPUsers(portal, member_ids):
         ensure that the suggestion is sent only when every user has been
         registered on the XMPP server.
     """
-    site = getSite()
-
     log.info('Preparing to create XMPP users from the existing Plone users')
     client = queryUtility(IAdminClient)
     if client is None:
@@ -86,7 +84,7 @@ def registerXMPPUsers(portal, member_ids):
                     for member_jid in member_jids:
                         client.chat.sendRosterItemAddSuggestion(member_jid,
                                                                 roster_jids,
-                                                                site)
+                                                                portal)
             return result
         d = client.admin.getRegisteredUsers()
         d.addCallbacks(resultReceived)
