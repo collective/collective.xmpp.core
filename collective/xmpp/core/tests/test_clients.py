@@ -39,8 +39,10 @@ class ClientNetworkTest(unittest.TestCase):
             return d
 
         client = XMPPClient(JID('admin@localhost'), 'admin')
-        self.assertTrue(wait_for_client_state(client, 'authenticated'))
+        self.assertTrue(wait_for_client_state(client, u'authenticated'))
         d = getVersion(client.xmlstream)
         self.assertTrue(wait_on_deferred(d))
         self.assertEqual(d.result['type'], 'result')
         client.disconnect()
+        wait_for_client_state(client, u'disconnected')
+
