@@ -1,18 +1,20 @@
 import time
 import urllib2
 from twisted.words.protocols.jabber.jid import JID
+from twisted.internet.base import DelayedCall
 from zope.component import getUtility
 from zope.configuration import xmlconfig
 from zope.interface import alsoProvides
 
 from ZPublisher.pubevents import PubBeforeCommit
 
-from plone.testing import Layer
-from plone.app.testing import PLONE_FIXTURE
-from plone.app.testing import IntegrationTesting
 from plone.app.testing import FunctionalTesting
+from plone.app.testing import IntegrationTesting
+from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import applyProfile
+from plone.registry.interfaces import IRegistry
+from plone.testing import Layer
  
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IProductLayer
@@ -20,7 +22,8 @@ from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.subscribers.startup import setUpAdminClient
 from collective.xmpp.core.utils.setup import registerXMPPUsers 
-from plone.registry.interfaces import IRegistry
+
+DelayedCall.debug = True
 
 
 def wait_on_deferred(d, seconds=10):
@@ -119,13 +122,11 @@ class ReactorFixture(PloneSandboxLayer):
         import collective.xmpp.core
         xmlconfig.file('reactor.zcml', collective.xmpp.core,
                       context=configurationContext)
-
-    def testSetUp(self):
         zr = getUtility(IZopeReactor)
         zr.start()
         wait_for_reactor_state(zr.reactor, state=True)
 
-    def testTearDown(self):
+    def tearDownZope(self):
         # Clean ZopeReactor
         zr = getUtility(IZopeReactor)
         for dc in zr.reactor.getDelayedCalls():
@@ -133,7 +134,6 @@ class ReactorFixture(PloneSandboxLayer):
                 dc.cancel()
         zr.stop()
         wait_for_reactor_state(zr.reactor, state=False)
-
         #Clean normal reactor for the twisted unit tests.
         from twisted.internet import reactor
         reactor.disconnectAll()
@@ -218,28 +218,18 @@ class XMPPCoreFixture(PloneSandboxLayer):
         settings = registry.forInterface(IXMPPSettings, check=False)
         settings.admin_jid = u'admin@localhost'
         settings.xmpp_domain = u'localhost'
-
         e = PubBeforeCommit(portal.REQUEST)
         setUpAdminClient(e)
         client = getUtility(IAdminClient)
-        wait_for_client_state(client, 'authenticated')
+        wait_for_client_state(client, u'authenticated')
 
-    def testSetUp(self):
-        client = getUtility(IAdminClient)
-        if client._state == 'disconnected':
-            zr = getUtility(IZopeReactor)
-            zr.reactor.callFromThread(client.connect)
-
-        wait_for_client_state(client, 'authenticated')
-        registerXMPPUsers(client,
-            member_jids=[JID('test_user_1_@localhost')],
-            member_passwords={JID('test_user_1_@localhost'): 'secret'})
+        registerXMPPUsers(portal, member_ids=['test_user_1_'])
         wait_on_client_deferreds(client)
 
     def testTearDown(self):
         client = getUtility(IAdminClient)
         client.disconnect()
-        wait_for_client_state(client, 'disconnected')
+        wait_for_client_state(client, u'disconnected')
 
 
 XMPPCORE_FIXTURE = XMPPCoreFixture()
