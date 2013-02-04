@@ -3,6 +3,7 @@ import urllib2
 from twisted.words.protocols.jabber.jid import JID
 from twisted.internet.base import DelayedCall
 from zope.component import getUtility
+from zope.component import queryUtility
 from zope.configuration import xmlconfig
 from zope.interface import alsoProvides
 
@@ -21,6 +22,7 @@ from collective.xmpp.core.interfaces import IProductLayer
 from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.subscribers.startup import setUpAdminClient
+from collective.xmpp.core.subscribers.startup import createAdminClient
 from collective.xmpp.core.utils.setup import registerXMPPUsers 
 
 DelayedCall.debug = True
@@ -126,7 +128,12 @@ class ReactorFixture(PloneSandboxLayer):
         zr.start()
         wait_for_reactor_state(zr.reactor, state=True)
 
-    def tearDownPloneSite(self, portal):
+    def testSetUp(self):
+        zr = getUtility(IZopeReactor)
+        zr.start()
+        wait_for_reactor_state(zr.reactor, state=True)
+
+    def testTearDown(self):
         # Clean ZopeReactor
         zr = getUtility(IZopeReactor)
         for dc in zr.reactor.getDelayedCalls():
@@ -214,6 +221,11 @@ class XMPPCoreFixture(PloneSandboxLayer):
         # Manually enable the browserlayer
         alsoProvides(portal.REQUEST, IProductLayer)
 
+        # Start the reactor
+        zr = getUtility(IZopeReactor)
+        zr.start()
+        wait_for_reactor_state(zr.reactor, state=True)
+
         registry = getUtility(IRegistry)
         settings = registry.forInterface(IXMPPSettings, check=False)
         settings.admin_jid = u'admin@localhost'
@@ -227,9 +239,13 @@ class XMPPCoreFixture(PloneSandboxLayer):
         wait_on_client_deferreds(client)
 
     def tearDownPloneSite(self, portal):
+        zr = getUtility(IZopeReactor)
+        zr.start()
         client = getUtility(IAdminClient)
         client.disconnect()
-        wait_for_client_state(client, u'disconnected')
+        wait_for_reactor_state(zr.reactor, state=True)
+        wait_for_client_state(client, 'disconnected')
+        zr.stop()
 
 
 XMPPCORE_FIXTURE = XMPPCoreFixture()
