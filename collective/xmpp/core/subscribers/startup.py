@@ -30,6 +30,7 @@ def createAdminClient(callback):
     gsm.registerUtility(client, IAdminClient)
     zr = getUtility(IZopeReactor)
     zr.reactor.callLater(10, callback, client)
+    return client
 
 
 def setUpAdminClient(event):

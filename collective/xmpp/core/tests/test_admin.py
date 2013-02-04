@@ -2,14 +2,17 @@ from twisted.trial import unittest
 from twisted.words.protocols.jabber.xmlstream import toResponse
 from wokkel.test.helpers import XmlStreamStub
 from wokkel import data_form
-
+from zope.component import getUtility
+from plone.registry.interfaces import IRegistry
 from collective.xmpp.core import protocols
+from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.testing import FactoryWithJID
+from collective.xmpp.core.testing import XMPPCORE_INTEGRATION_TESTING
 
 
 class AdminCommandsProtocolTest(unittest.TestCase):
-    """
-    """
+    """ """
+    layer = XMPPCORE_INTEGRATION_TESTING
 
     def setUp(self):
         self.stub = XmlStreamStub()
@@ -17,9 +20,12 @@ class AdminCommandsProtocolTest(unittest.TestCase):
         self.protocol = protocols.AdminHandler()
         self.protocol.xmlstream = self.stub.xmlstream
         self.protocol.connectionInitialized()
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(IXMPPSettings, check=False)
+        settings.xmpp_domain = u'example.com'
 
     def test_addUser(self):
-        self.protocol.addUser(u'joe@example.com', u'secret')
+        d = self.protocol.addUser(u'joe@example.com', u'secret')
 
         iq = self.stub.output[-1]
         self.assertEqual(u'example.com', iq.getAttribute(u'to'))
