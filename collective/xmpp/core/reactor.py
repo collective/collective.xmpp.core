@@ -1,16 +1,14 @@
 import atexit
 import logging
 import threading
-from collective.xmpp.core.interfaces import (
-    IZopeReactor,
-    ReactorStarted,
-    ReactorStoped
-)
-import  twisted.internet.selectreactor
+import twisted.internet.selectreactor
 from zope.event import notify
 from zope.interface import implements
+from collective.xmpp.core.interfaces import IZopeReactor
+from collective.xmpp.core.interfaces import ReactorStarted
+from collective.xmpp.core.interfaces import ReactorStoped
 
-logger = logging.getLogger('collective.xmpp.core')
+logger = logging.getLogger(__name__)
 
 
 class ZopeReactor(object):
