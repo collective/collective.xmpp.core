@@ -1,13 +1,11 @@
 from zope import schema
 from zope.component.interfaces import IObjectEvent
-from zope.interface import (
-    Interface,
-    implements
-)
+from zope.interface import Interface
+from zope.interface import implements
 from zope.viewlet.interfaces import IViewletManager
 from z3c.form import button
-
 from collective.xmpp.core import messageFactory as _
+
 
 class IProductLayer(Interface):
     """ Marker interface for requests indicating the staralliance.theme
@@ -145,7 +143,8 @@ class IXMPPSettings(Interface):
                 default=u"Automatically register for XMPP on login"),
         description=_(u"help_xmpp_auto_register_on_login",
                 default=u"Newly created users will automatically be registered "
-                        u"on the XMPP server, but existing users won't be. "
+                        u"on the XMPP server, but existing users and LDAP "
+                        u"users won't be."
                         u"Either you have to register them manually, or you "
                         u"can check this option, and they will be registered "
                         u"on the XMPP server as soon as they log in to the "
