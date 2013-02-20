@@ -8,6 +8,8 @@ Changelog
 
 - Feature: "Completely wipe password storage" action is now traced under zope log.
   [alecghica]
+- Bugfix: fixed 'ComponentLookupError' error when adding a local user.
+  [alecghica]
 
 
 0.1b4 (2013-02-02)
