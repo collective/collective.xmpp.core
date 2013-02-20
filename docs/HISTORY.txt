@@ -6,7 +6,8 @@ Changelog
 0.1b5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Feature: "Completely wipe password storage" action is now traced under zope log.
+  [alecghica]
 
 
 0.1b4 (2013-02-02)
@@ -120,7 +121,7 @@ Changelog
   [alecghica]
 - Fixed version used for Products.UserAndGroupSelectionWidget to >2.04
   as earlier version will crash due to API changes
-  [ghicaale]
+  [alecghica]
 - Bugfix. Password utility forgets user passwords when a user is registered.
   [jcbrand]
 
