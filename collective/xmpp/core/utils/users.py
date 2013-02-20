@@ -4,13 +4,17 @@ from twisted.words.protocols.jabber.xmlstream import IQ
 
 from zope.component.hooks import getSite
 from zope.component import getUtility
+from zope.component.interfaces import ComponentLookupError
 from Products.CMFCore.utils import getToolByName
 from plone.registry.interfaces import IRegistry
 
 from collective.xmpp.core.interfaces import IXMPPSettings
 
-def getXMPPDomain():
-    registry = getUtility(IRegistry)
+def getXMPPDomain(portal=None):
+    try:
+        registry = getUtility(IRegistry)
+    except ComponentLookupError:
+        registry = getUtility(IRegistry, context=portal)
     settings = registry.forInterface(IXMPPSettings, check=False)
     return settings.xmpp_domain
 
@@ -92,7 +96,7 @@ def setupPrincipal(client, principal_jid, principal_password):
 
             return result
 
-        d = client.admin.getRegisteredUsers()
+        d = client.admin.getRegisteredUsers(site)
         d.addCallbacks(resultReceived)
         return True
 
