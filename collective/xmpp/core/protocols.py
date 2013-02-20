@@ -155,12 +155,12 @@ class AdminHandler(XMPPHandler):
         http://xmpp.org/extensions/xep-0133.html
     """
 
-    def getRegisteredUsers(self):
+    def getRegisteredUsers(self, portal=None):
         """ XXX: This is ejabberd specific. ejabberd does not implement
         the #get-registered-users-list command, instead does it with an iq/get.
         """
         iq = IQ(self.xmlstream, 'get')
-        iq['to'] = users.getXMPPDomain() 
+        iq['to'] = users.getXMPPDomain(portal) 
         query = iq.addElement((NS_DISCO_ITEMS, 'query'))
         query['node'] = 'all users'
         d = iq.send()
