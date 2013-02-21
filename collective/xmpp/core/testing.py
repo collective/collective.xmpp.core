@@ -16,14 +16,14 @@ from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import applyProfile
 from plone.registry.interfaces import IRegistry
 from plone.testing import Layer
- 
+
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IProductLayer
 from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.subscribers.startup import setUpAdminClient
 from collective.xmpp.core.subscribers.startup import createAdminClient
-from collective.xmpp.core.utils.setup import registerXMPPUsers 
+from collective.xmpp.core.utils.setup import registerXMPPUsers
 
 DelayedCall.debug = True
 

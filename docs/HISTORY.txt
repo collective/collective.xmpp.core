@@ -10,6 +10,9 @@ Changelog
   [alecghica]
 - Bugfix: fixed 'ComponentLookupError' error when adding a local user.
   [alecghica]
+- Bugfix: cleaned up unnecessary spaces, replaced tabs with spaces and
+  fixed line terminators
+  [alecghica]
 
 
 0.1b4 (2013-02-02)
@@ -38,7 +41,7 @@ Changelog
 ------------------
 
 - Add a configuration setting to turn auto-register on login on. It's disabled
-  by default. 
+  by default.
   [jcbrand]
 
 

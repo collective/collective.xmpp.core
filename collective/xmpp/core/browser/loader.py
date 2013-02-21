@@ -57,7 +57,7 @@ class XMPPLoader(BrowserView):
 
     @property
     def bosh(self):
-	    return self.context.REQUEST.get('SERVER_URL') + '/http-bind'
+        return self.context.REQUEST.get('SERVER_URL') + '/http-bind'
 
     def prebind(self):
         b_client = BOSHClient(self.jid, self.jpassword, self.bosh)

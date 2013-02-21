@@ -62,7 +62,7 @@
     padding:0;
     margin:0;
     font-size: 1.2em;
-    font-family: Georgia, Times, serif;    
+    font-family: Georgia, Times, serif;
 }
 .gritter-close {
     position:absolute;
@@ -101,7 +101,7 @@
     color: Orange;
 }
 .gritter-item div.replyForm {
-    margin-top: 1em;    
+    margin-top: 1em;
 }
 .gritter-item div.replyForm > a {
     display: block;

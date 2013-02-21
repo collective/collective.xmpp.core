@@ -168,19 +168,19 @@ div.user-details-form { *zoom: 1; }
     display: block;
 }
 .textButton {
-	display: inline-block;
-	margin: 1em 0 0;
-	border: none !important;
-	/*padding: 0.5em 1em;
-	background: #fff;
+    display: inline-block;
+    margin: 1em 0 0;
+    border: none !important;
+    /*padding: 0.5em 1em;
+    background: #fff;
     border: 1px solid #ddd;
     color: #888;
     -webkit-border-radius: 0.5em;
     -moz-border-radius: 0.5em;
     border-radius: 0.5em;
-  	-moz-background-clip: padding;
-  	-webkit-background-clip: padding-box;
-  	background-clip: padding-box;*/
+      -moz-background-clip: padding;
+      -webkit-background-clip: padding-box;
+      background-clip: padding-box;*/
 }
 form.sendXMPPMessage {
     margin-top: 1em;
@@ -202,7 +202,7 @@ form.sendXMPPMessage {
     border-radius: 0.5em;
     -moz-background-clip: padding;
     -webkit-background-clip: padding-box;
-    background-clip: padding-box; 
+    background-clip: padding-box;
 }
 form.sendXMPPMessage input[type='text'] {
     border: none;
@@ -218,11 +218,11 @@ form.sendXMPPMessage input[type='text']:focus {
     outline: none;
 }
 form.sendXMPPMessage button[type='submit'] {
-	line-height: 1em;
-	padding: 0 0.8em;
-	background: #ddd;
-	border: 1px solid #ccc;
-	border-style: none none none solid;
+    line-height: 1em;
+    padding: 0 0.8em;
+    background: #ddd;
+    border: 1px solid #ccc;
+    border-style: none none none solid;
     position: absolute;
     top: 0;
     right: 0;
@@ -233,13 +233,13 @@ form.sendXMPPMessage button[type='submit'] {
     border-radius: 0 0.3em 0.3em 0;
     -moz-background-clip: padding;
     -webkit-background-clip: padding-box;
-    background-clip: padding-box; 
+    background-clip: padding-box;
 }
 form.sendXMPPMessage input[type='text']:focus + button[type='submit'],
 form.sendXMPPMessage button[type='submit']:focus {
     background: #205c90;
     color: #fff;
-	border-color: #143a5c;
+    border-color: #143a5c;
 }
 div.replyForm > a {
     display: none;
@@ -328,7 +328,7 @@ form.pubsub-form button[type="submit"] {
     height: 75px;
 }
 .pubsubItemContent {
-	font-size: 0.9em;
+    font-size: 0.9em;
     border: 1px solid #ddd;
     -webkit-border-radius: 0.2em;
     -moz-border-radius: 0.2em;
@@ -363,8 +363,8 @@ form.pubsub-form .formControls {
 /* Threads/Comments */
 
 .pubsubItemComment {
-	padding-left:95px;
-	margin-top: 0.5em;
+    padding-left:95px;
+    margin-top: 0.5em;
 }
 .pubsubItemComment + .pubsubItemComment {
     margin-top: 0;
@@ -379,9 +379,9 @@ form.pubsub-form .formControls {
 .pubsubItemComment .pubsubItemContent {
     margin-left: 60px;
     -webkit-border-radius: 0;
-	-moz-border-radius: 0;
-	border-radius: 0;
-	padding: 6px;
+    -moz-border-radius: 0;
+    border-radius: 0;
+    padding: 6px;
 }
 .pubsubItemComment + .pubsubItemComment .pubsubItemContent {
     border-top: none;
@@ -398,7 +398,7 @@ form.pubsub-form .formControls {
     -moz-border-radius: 0;
     border-radius: 0;
     -webkit-box-shadow: ;
-    -moz-box-shadow: ; 
+    -moz-box-shadow: ;
     background-color: #FFFFE3;
 }
 
@@ -443,19 +443,19 @@ ul.pubsubNode {
 .pubsubItem .pubsubGeolocation {
     float:right;
     display:block;
-	margin-left:0.5em;
+    margin-left:0.5em;
 }
 .pubsubItem .pubsubGeolocation .location {
     background: transparent url(++resource++jarn.xmpp.core.images/location_icon.png) 0% 0% no-repeat;
     padding-left: 18px;
-	font-style: italic;
+    font-style: italic;
 }
 .pubsubItem .pubsubGeolocation .map {
     display: none;
 }
 
 .share-geolocation {
-	display: none;
+    display: none;
     padding-left: 0.5em;
     font-weight: normal;
     text-transform: lowercase;
@@ -465,18 +465,18 @@ ul.pubsubNode {
     border-bottom: 1px dashed #ccc;
 }
 .loadMoreToggle button {
-	padding: 0.5em 1em;
-	background: #fff;
+    padding: 0.5em 1em;
+    background: #fff;
     border: 1px solid #ddd !important;
     color: #888;
     -webkit-border-radius: 0.5em;
     -moz-border-radius: 0.5em;
     border-radius: 0.5em;
-  	-moz-background-clip: padding;
-  	-webkit-background-clip: padding-box;
-  	background-clip: padding-box;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
     position: relative;
-    bottom: -1.3em;    
+    bottom: -1.3em;
 }
 
 /* @end */
@@ -503,7 +503,7 @@ ul.pubsubNode {
     margin: 0;
 }
 #subscriptions-form > span {
-	display: block;
+    display: block;
     font-size: 2.5em;
     padding: 0.5em 0.5em 0.7em;
 }
@@ -511,21 +511,21 @@ ul.pubsubNode {
     margin-top: 1.5em;
 }
 #subscriptions-list label {
-	float: left;
+    float: left;
     font-weight: normal;
     margin: 0 0 .5em 1em;
     padding: 0.5em;
-	-webkit-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
     -moz-border-radius: 0.5em;
     border-radius: 0.5em;
-  	-moz-background-clip: padding;
-  	-webkit-background-clip: padding-box;
-  	background-clip: padding-box;
-  	background: #E3E3E3;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    background: #E3E3E3;
   	border: 1px solid #ccc;
     -webkit-transition: all .3s ease-in-out;
     -moz-transition: all .3s ease-in-out;
-    -ms-transition: all .3s ease-in-out;       
+    -ms-transition: all .3s ease-in-out;
     -o-transition: all .3s ease-in-out;
     transition: all .3s ease-in-out;
 }
@@ -544,7 +544,6 @@ ul.pubsubNode {
     border-color: #75AD0A;
     color: #fff;
 }
-
 
 /* @end */
 
