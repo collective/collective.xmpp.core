@@ -19,7 +19,7 @@ class VCardProtocolTest(unittest.TestCase):
     def test_vcard(self):
         """<iq type='set' id='H_0'>
                 <vCard xmlns='vcard-temp' version='3.0'>
-                    <FN>Jeremie Miller</FN> 
+                    <FN>Jeremie Miller</FN>
                     <NICKNAME>jer</NICKNAME>
                     <EMAIL><INTERNET/><PREF/><USERID>jer@jabber.org</USERID></EMAIL>
                     <JABBERID>jer@jabber.org</JABBERID>
@@ -43,7 +43,7 @@ class VCardProtocolTest(unittest.TestCase):
 
         self.assertEqual(vcard.toXml(), "<vCard xmlns='vcard-temp' version='3.0'><FN>Jeremie Miller</FN><NICKNAME>jer</NICKNAME><EMAIL><INTERNET/><PREF/><USERID>jer@jabber.org</USERID></EMAIL><JABBERID>jer@jabber.org</JABBERID></vCard>")
 
-        
+
 
 
 

@@ -10,7 +10,7 @@ from zope.component.hooks import setSite
 from zope.component.hooks import getSite
 from zope.component import queryUtility
 from zope.component import getUtility
- 
+
 from z3c.form import button
 from z3c.form import field
 from z3c.form import form
@@ -84,7 +84,7 @@ class XMPPUserSetupForm(form.Form):
     description = _("help_xmpp_user_setup", """
         This page lets you register and deregister Plone users on the XMPP
         server. You can either choose specific users, or do it for all users in
-        the site. Make sure you have set the correct settings for you XMPP 
+        the site. Make sure you have set the correct settings for you XMPP
         server before submitting.
         """)
     fields = field.Fields(IXMPPUserSetup)
@@ -110,7 +110,7 @@ class XMPPUserSetupForm(form.Form):
             return self.clearAllPasswords()
 
     def registerAll(self):
-        member_ids = users.getAllMemberIds() 
+        member_ids = users.getAllMemberIds()
         setup.registerXMPPUsers(self.context, member_ids)
         IStatusMessage(self.request).add(_(u"All users are being registered. "
             "This might take a few minutes and your site might become "
@@ -142,7 +142,7 @@ class XMPPUserSetupForm(form.Form):
             if items[0].has_key('node'):
                 for item in reversed(items):
                     iq = IQ(client.admin.xmlstream, 'get')
-                    iq['to'] = settings.xmpp_domain 
+                    iq['to'] = settings.xmpp_domain
                     query = iq.addElement((NS_DISCO_ITEMS, 'query'))
                     query['node'] = item['node']
                     iq.send().addCallbacks(resultReceived)
@@ -217,7 +217,7 @@ class XMPPUserSetupForm(form.Form):
         status = IStatusMessage(self.request)
         widget = self.widgets.get('users')
         if widget.extract() == NO_VALUE:
-            status.add(_(u"You first need to choose the users to register"), 
+            status.add(_(u"You first need to choose the users to register"),
                         "error")
             return
         member_ids = self.getChosenMembers()
