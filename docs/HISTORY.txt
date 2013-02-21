@@ -13,6 +13,9 @@ Changelog
 - Bugfix: cleaned up unnecessary spaces, replaced tabs with spaces and
   fixed line terminators
   [alecghica]
+- Feature: added error image and 'Unable to communicate with chat server' message
+  when unable to bind the user to jabber server
+  [alecghica]
 
 
 0.1b4 (2013-02-02)
