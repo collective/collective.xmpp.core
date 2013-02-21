@@ -3,7 +3,7 @@ from plone.registry.interfaces import IRegistry
 from zope.component import getGlobalSiteManager
 from zope.component import getUtility
 from zope.component import queryUtility
- 
+
 from zope.component.hooks import getSite
 from Products.CMFCore.utils import getToolByName
 from collective.xmpp.core.client import AdminClient

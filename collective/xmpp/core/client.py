@@ -139,7 +139,7 @@ class AdminClient(XMPPClient):
         super(AdminClient, self).__init__(
             jid, password,
             extra_handlers=[self.admin, self.chat, self.presence],
-            host=host, 
+            host=host,
             port=port)
 
     def _authd(self, xs):
