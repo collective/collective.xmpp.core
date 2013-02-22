@@ -203,7 +203,7 @@ class AdminHandler(XMPPHandler):
             return False
 
         iq = IQ(self.xmlstream, 'set')
-        iq['to'] = users.getXMPPDomain() 
+        iq['to'] = users.getXMPPDomain()
         command = iq.addElement((NS_COMMANDS, 'command'))
         command['action'] = 'execute'
         command['node'] = NODE_ADMIN_ADD_USER
@@ -293,7 +293,7 @@ class AdminHandler(XMPPHandler):
             return False
 
         iq = IQ(self.xmlstream, 'set')
-        iq['to'] = users.getXMPPDomain() 
+        iq['to'] = users.getXMPPDomain()
         command = iq.addElement((NS_COMMANDS, 'command'))
         command['action'] = 'execute'
         command['node'] = NODE_ADMIN_ANNOUNCE

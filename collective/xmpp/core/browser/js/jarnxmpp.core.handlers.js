@@ -258,6 +258,12 @@ $msg:false, Strophe:false, setTimeout:false, navigator:false, jarn:false, google
                                 xmpp_loader();
                             }, 1000);
                         }
+                        // When unable to bind the user to jabber server display an error message
+                        if ('unable_to_bind' in data) {
+                            var $connecting = $('span#connecting-to-chat');
+                            $connecting.html('Unable to communicate with chat server');
+                            $connecting.css('background-image', "url('/error_icon.png')");
+                        }
                         return;
                     }
                     if (!resource) {

@@ -49,7 +49,7 @@ class UserManagementTests(unittest.TestCase):
         # d = getAllChildNodes(client, 'people')
         # self.assertTrue(wait_on_deferred(d))
         # self.assertTrue('stpeter' in d.result['people'])
-         
+
         pass_storage = getUtility(IXMPPPasswordStorage)
         self.assertTrue(pass_storage.get('stpeter') is not None)
 

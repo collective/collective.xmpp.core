@@ -13,7 +13,7 @@ class IProductLayer(Interface):
     """
 
 class IXMPPUserSetup(Interface):
-    """ 
+    """
     """
     users = schema.List(
         title=_(u"label_users", default=u"Choose Users"),
@@ -27,7 +27,7 @@ class IXMPPUserSetup(Interface):
     register_selected = button.Button(
                             title=_(u'label_register_selected',
                                 default=u"Register Selected Users"),
-                            description=_(u"help_register_selected", 
+                            description=_(u"help_register_selected",
                                 default=u"Click this button to let the above "
                                 "selected users be registered on the XMPP "
                                 "server."),
@@ -46,7 +46,7 @@ class IXMPPUserSetup(Interface):
     register_all = button.Button(
                             title=_(u'label_register_all',
                                 default=u"Register ALL Users"),
-                            description=_(u"help_register_all", 
+                            description=_(u"help_register_all",
                                 default=u"Click this button to register ALL "
                                 "the users in the site on the XMPP "
                                 "server. WARNING: Don't call this method if "
@@ -68,7 +68,7 @@ class IXMPPUserSetup(Interface):
                                 "the users in the site from the XMPP server."),
                             required=False,
                             )
-                             
+
     clear_all_passwords = button.Button(
                             title=_(u'label_clear_passwords',
                                 default=u"Completely wipe password storage"),
@@ -138,7 +138,7 @@ class IXMPPSettings(Interface):
         default=u'admin',
         )
 
-    auto_register_on_login = schema.Bool( 
+    auto_register_on_login = schema.Bool(
         title=_(u"label_xmpp_auto_register_on_login",
                 default=u"Automatically register for XMPP on login"),
         description=_(u"help_xmpp_auto_register_on_login",
@@ -152,7 +152,7 @@ class IXMPPSettings(Interface):
         default=False,
         )
 
-    auto_subscribe = schema.Bool( 
+    auto_subscribe = schema.Bool(
         title=_(u"label_xmpp_auto_subscribe",
                 default=u"Auto-subscribe XMPP users"),
         description=_(u"help_xmpp_auto_subscribe",

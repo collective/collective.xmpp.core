@@ -13,7 +13,7 @@ zope-conf-additional +=
         port 5222
         admin_jid admin@localhost
         admin_password secret
-        auto_subscribe 0 
+        auto_subscribe 0
     </product-config>
 
 WARNING: If you put the above in your buildout.cfg, your plone.registry entries

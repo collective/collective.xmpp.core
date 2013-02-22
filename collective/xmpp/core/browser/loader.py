@@ -57,7 +57,7 @@ class XMPPLoader(BrowserView):
 
     @property
     def bosh(self):
-	    return self.context.REQUEST.get('SERVER_URL') + '/http-bind'
+        return self.context.REQUEST.get('SERVER_URL') + '/http-bind'
 
     def prebind(self):
         b_client = BOSHClient(self.jid, self.jpassword, self.bosh)
@@ -84,11 +84,15 @@ class XMPPLoader(BrowserView):
                     'jid': self.jid.full(),
                 }
             else:
+                bosh_credentials = {
+                    'unable_to_bind': True,
+                }
                 logger.warning('Unable to pre-bind %s' % self.jid)
 
         response = self.request.response
         response.setHeader('content-type', 'application/json')
-        response.setHeader('Cache-Control', 'max-age=0, must-revalidate, private')
+        response.setHeader('Cache-Control',
+                           'max-age=0, must-revalidate, private')
         response.setBody(json.dumps(bosh_credentials))
         return response
 

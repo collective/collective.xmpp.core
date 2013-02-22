@@ -227,7 +227,7 @@ Some of the included tests are functional tests that require a XMPP server runni
     ./bin/test -a 2 -s collective.xmpp.core
 
 You'll also have to configure ejabberd to listen on port 5347 for external
-components. 
+components.
 
 The minimum requirement would be to add the following entry to the `listen` keyword:::
 
