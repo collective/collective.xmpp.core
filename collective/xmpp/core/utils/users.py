@@ -93,7 +93,6 @@ def setupPrincipal(client, principal_jid, principal_password):
                     client.chat.sendRosterItemAddSuggestion(principal_jid,
                                                             roster_jids,
                                                             site)
-
             return result
 
         d = client.admin.getRegisteredUsers(site)
@@ -101,12 +100,10 @@ def setupPrincipal(client, principal_jid, principal_password):
         return True
 
     d = client.admin.addUser(principal_jid.userhost(), principal_password)
-
     registry = getUtility(IRegistry)
     settings = registry.forInterface(IXMPPSettings, check=False)
     if settings.auto_subscribe:
         d.addCallback(subscribeToAllUsers)
-
     return d
 
 
