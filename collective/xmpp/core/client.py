@@ -13,7 +13,8 @@ from collective.xmpp.core.interfaces import AdminClientDisconnected
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IDeferredXMPPClient
 from collective.xmpp.core.interfaces import IZopeReactor
-from collective.xmpp.core import protocols
+from collective.xmpp.core.protocols import AdminHandler
+from collective.xmpp.core.protocols import VCardHandler
 
 logger = logging.getLogger(__name__)
 
@@ -115,6 +116,23 @@ class XMPPClient(StreamManager):
         super(XMPPClient, self)._disconnected(_)
 
 
+class UserClient(XMPPClient):
+
+    def __init__(self, jid, host, password, port):
+        try:
+            jid = JID(jid)
+        except RuntimeError, e:
+            logger.warn(e)
+            return
+        self.vcard = VCardHandler()
+        self.presence = PresenceClientProtocol()
+        super(UserClient, self).__init__(
+            jid, password,
+            extra_handlers=[self.vcard, self.presence],
+            host=host,
+            port=port)
+
+
 class AdminClient(XMPPClient):
     implements(IAdminClient)
 
@@ -125,7 +143,7 @@ class AdminClient(XMPPClient):
             logger.warn(e)
             return
 
-        self.admin = protocols.AdminHandler()
+        self.admin = AdminHandler()
         self.presence = PresenceClientProtocol()
         super(AdminClient, self).__init__(
             jid, password,
