@@ -118,7 +118,7 @@ class ChatHandler(XMPPHandler):
 class VCardHandler(XMPPHandler):
     """ """
 
-    def createVCardIQ(self, udict):
+    def createIQ(self, udict):
         """ <FN>Jeremie Miller</FN>
             <NICKNAME>jer</NICKNAME>
             <EMAIL><INTERNET/><PREF/><USERID>jeremie@jabber.org</USERID></EMAIL>
@@ -136,7 +136,7 @@ class VCardHandler(XMPPHandler):
         vcard.addElement('JABBERID', content=udict.get('jabberid'))
         return iq
 
-    def sendVCard(self, udict):
+    def send(self, udict):
         def resultReceived(iq):
             log.info("Result received for vcard set")
             return True
@@ -145,7 +145,7 @@ class VCardHandler(XMPPHandler):
             log.error(failure.getTraceback())
             return False
 
-        iq = self.createVCardIQ(udict)
+        iq = self.createIQ(udict)
         d = iq.send()
         d.addCallbacks(resultReceived, error)
 
