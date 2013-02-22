@@ -1,14 +1,15 @@
+import logging
 from wokkel.disco import NS_DISCO_ITEMS
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
-
 from zope.component.hooks import getSite
 from zope.component import getUtility
 from zope.component.interfaces import ComponentLookupError
 from Products.CMFCore.utils import getToolByName
 from plone.registry.interfaces import IRegistry
-
 from collective.xmpp.core.interfaces import IXMPPSettings
+
+log = logging.getLogger(__name__)
 
 def getXMPPDomain(portal=None):
     try:
@@ -78,7 +79,7 @@ def setupPrincipal(client, principal_jid, principal_password):
             if items[0].has_key('node'):
                 for item in reversed(items):
                     iq = IQ(client.admin.xmlstream, 'get')
-                    iq['to'] = getXMPPDomain() 
+                    iq['to'] = getXMPPDomain(site) 
                     query = iq.addElement((NS_DISCO_ITEMS, 'query'))
                     query['node'] = item['node']
                     iq.send().addCallbacks(resultReceived)
@@ -123,3 +124,43 @@ def deletePrincipal(client, principal_jid):
     # d.addCallback(deleteUser)
     # return d
     pass
+
+
+def setVCard(member, event):
+    from collective.xmpp.core.client import UserClient
+    from collective.xmpp.core.interfaces import IXMPPUsers
+    from collective.xmpp.core.interfaces import IZopeReactor
+    xmpp_users = getUtility(IXMPPUsers)
+    user_id = member.getId()
+    fullname = member.getProperty('fullname')
+    user_jid = xmpp_users.getUserJID(user_id)
+    user_pass  = xmpp_users.getUserPassword(user_id)
+    registry = getUtility(IRegistry)
+    settings = registry.forInterface(IXMPPSettings, check=False)
+    # TODO:
+    # portrait_url = pm.getPersonalPortrait(user_id).absolute_url()
+    # portal_url = getToolByName(self.context, 'portal_url')
+    # user_profile_url = '%s/author/%s' % (portal_url(), user_id)
+    udict = {
+        'fullname': fullname,
+        'nickname': user_id,
+        'email': member.getProperty('email'),
+        'userid': user_jid.userhost(),
+        'jabberid': user_jid.userhost(),
+        }
+    userclient = UserClient(
+                        user_jid, 
+                        settings.hostname, 
+                        user_pass, 
+                        settings.port)
+
+    def checkClientConnected(client):
+        if client.state != 'authenticated':
+            log.warn('XMPP user client has not been able to authenticate. ' \
+                'This means the VCard could not be set. ' \
+                'Client state is "%s".' % client.state)
+        else:
+            client.vcard.send(udict)
+    zr = getUtility(IZopeReactor)
+    zr.reactor.callLater(10, checkClientConnected, userclient)
+
