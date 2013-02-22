@@ -11,9 +11,9 @@ class VCardProtocolTest(unittest.TestCase):
     def setUp(self):
         self.stub = XmlStreamStub()
         self.stub.xmlstream.factory = FactoryWithJID()
-        self.protocol = protocols.VCardHandler()
-        self.protocol.xmlstream = self.stub.xmlstream
-        self.protocol.connectionInitialized()
+        self.vcard = protocols.VCardHandler()
+        self.vcard.xmlstream = self.stub.xmlstream
+        self.vcard.connectionInitialized()
 
     def test_vcard(self):
         """<iq type='set' id='H_0'>
@@ -32,7 +32,7 @@ class VCardProtocolTest(unittest.TestCase):
             'userid': 'jer@jabber.org',
             'jabberid': 'jer@jabber.org',
             }
-        iq = self.protocol.createVCardIQ(udict)
+        iq = self.vcard.createIQ(udict)
         self.assertEqual(iq.attributes.get('type'), 'set')
         vcard = iq.children[0]
         self.assertEqual(vcard.name, 'vCard')
@@ -48,7 +48,7 @@ class VCardProtocolTest(unittest.TestCase):
             'userid': 'jer@jabber.org',
             'jabberid': 'jer@jabber.org',
             }
-        iq = self.protocol.sendVCard(udict)
+        iq = self.vcard.send(udict)
         vcard = self.stub.output[-1]
         self.assertEqual(vcard.name, u'iq', vcard.name)
 
