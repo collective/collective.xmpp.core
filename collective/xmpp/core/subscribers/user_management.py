@@ -1,6 +1,7 @@
 import logging
 from zope.component import adapter
 from zope.component import getUtility
+from zope.component.hooks import getSite
 from zope.globalrequest import getRequest
 from Products.PluggableAuthService.interfaces.events import IPrincipalCreatedEvent
 from Products.PluggableAuthService.interfaces.events import IPrincipalDeletedEvent
@@ -17,6 +18,7 @@ log = logging.getLogger(__name__)
 def onUserCreation(event):
     """ Create a jabber account for new user.
     """
+    from collective.xmpp.core.utils import setup
     request = getRequest()
     if not IProductLayer.providedBy(request):
         return
@@ -26,9 +28,8 @@ def onUserCreation(event):
     principal_id = principal.getUserId()
     principal_jid = xmpp_users.getUserJID(principal_id)
     pass_storage = getUtility(IXMPPPasswordStorage)
-    principal_pass = pass_storage.set(principal_id)
-    users.setupPrincipal(client, principal_jid, principal_pass)
-
+    pass_storage.set(principal_id)
+    setup.registerXMPPUsers(getSite(), [principal_jid.user])
 
 
 @adapter(IPrincipalDeletedEvent)

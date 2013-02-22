@@ -12,11 +12,13 @@ from zope.component.hooks import getSite
 from zope.component.hooks import setSite
 
 from plone.registry.interfaces import IRegistry
+from Products.CMFCore.utils import getToolByName
 
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IXMPPUsers
+from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.subscribers.startup import createAdminClient
 from collective.xmpp.core.utils.users import escapeNode
 from collective.xmpp.core.utils.users import getXMPPDomain 
@@ -53,10 +55,12 @@ def registerXMPPUsers(portal, member_ids):
         createAdminClient(checkAdminClientConnected)
         return
 
+    mtool = getToolByName(portal, 'portal_membership')
     registry = getUtility(IRegistry)
     settings = registry.forInterface(IXMPPSettings, check=False)
     xmpp_users = getUtility(IXMPPUsers)
     pass_storage = getUtility(IXMPPPasswordStorage)
+    zr = getUtility(IZopeReactor)
     member_jids = []
     member_passwords = {}
 
@@ -69,7 +73,7 @@ def registerXMPPUsers(portal, member_ids):
             if items[0].has_key('node'):
                 for item in reversed(items):
                     iq = IQ(client.admin.xmlstream, 'get')
-                    iq['to'] = getXMPPDomain() 
+                    iq['to'] = getXMPPDomain(portal) 
                     query = iq.addElement((NS_DISCO_ITEMS, 'query'))
                     query['node'] = item['node']
                     iq.send().addCallbacks(resultReceived)
@@ -90,6 +94,38 @@ def registerXMPPUsers(portal, member_ids):
         d.addCallbacks(resultReceived)
         return True
 
+    def setVCard(member, callback):
+        from collective.xmpp.core.client import UserClient
+        user_id = member.getId()
+        fullname = member.getProperty('fullname')
+        user_jid = xmpp_users.getUserJID(user_id)
+        user_pass  = xmpp_users.getUserPassword(user_id)
+        # TODO:
+        # portrait_url = pm.getPersonalPortrait(user_id).absolute_url()
+        # portal_url = getToolByName(self.context, 'portal_url')
+        # user_profile_url = '%s/author/%s' % (portal_url(), user_id)
+        udict = {
+            'fullname': fullname,
+            'nickname': user_id,
+            'email': member.getProperty('email'),
+            'userid': user_jid.userhost(),
+            'jabberid': user_jid.userhost(),
+            }
+        userclient = UserClient(
+                            user_jid, 
+                            settings.hostname, 
+                            user_pass, 
+                            settings.port)
+
+        def checkClientConnected(client):
+            if client.state != 'authenticated':
+                log.warn('XMPP user client has not been able to authenticate. ' \
+                    'This means the VCard could not be set. ' \
+                    'Client state is "%s".' % client.state)
+            else:
+                client.vcard.send(udict, callback)
+        zr.reactor.callLater(10, checkClientConnected, userclient)
+
     def registerUser():
         if not member_ids:
             if settings.auto_subscribe:
@@ -100,9 +136,12 @@ def registerXMPPUsers(portal, member_ids):
         member_jids.append(member_jid)
         member_pass = pass_storage.set(member_id)
         d = client.admin.addUser(member_jid.userhost(), member_pass)
-        d.addCallback(registerNextUser)
+        member = mtool.getMemberById(member_id)
+        setVCard(member, registerNextUser)
 
     def registerNextUser(result):
+        if hasattr(result, 'handled') and result.handled:
+            log.info('Successfully added a VCard')
         if result is False:
             return 
         if getSite():

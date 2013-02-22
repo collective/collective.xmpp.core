@@ -61,54 +61,6 @@ def unescapeNode(node):
     node = node.replace("\\40", '@')
     return node
 
-def setupPrincipal(client, principal_jid, principal_password):
-    """ Create a jabber account for a new user as well
-        as create and configure its associated nodes
-    """
-    site = getSite()
-
-    def subscribeToAllUsers(result):
-        if result == False:
-            return False
-
-        def getUserJID(user_id):
-            settings = registry.forInterface(IXMPPSettings, check=False)
-            return JID("%s@%s" % (escapeNode(user_id), settings.xmpp_domain))
-
-        def resultReceived(result):
-            items = [item.attributes for item in result.query.children]
-            if items[0].has_key('node'):
-                for item in reversed(items):
-                    iq = IQ(client.admin.xmlstream, 'get')
-                    iq['to'] = getXMPPDomain(site) 
-                    query = iq.addElement((NS_DISCO_ITEMS, 'query'))
-                    query['node'] = item['node']
-                    iq.send().addCallbacks(resultReceived)
-            else:
-                member_jids = [item['jid'] for item in items]
-                if settings.admin_jid in member_jids:
-                    member_jids.remove(settings.admin_jid)
-                if member_jids:
-                    roster_jids = [getUserJID(user_id.split('@')[0])
-                                     for user_id in member_jids]
-
-                    client.chat.sendRosterItemAddSuggestion(principal_jid,
-                                                            roster_jids,
-                                                            site)
-            return result
-
-        d = client.admin.getRegisteredUsers(site)
-        d.addCallbacks(resultReceived)
-        return True
-
-    d = client.admin.addUser(principal_jid.userhost(), principal_password)
-    registry = getUtility(IRegistry)
-    settings = registry.forInterface(IXMPPSettings, check=False)
-    if settings.auto_subscribe:
-        d.addCallback(subscribeToAllUsers)
-    return d
-
-
 def deletePrincipal(client, principal_jid):
     """ Delete a jabber account as well as remove its associated nodes
     """
@@ -125,43 +77,4 @@ def deletePrincipal(client, principal_jid):
     # d.addCallback(deleteUser)
     # return d
     pass
-
-
-def setVCard(member, event):
-    from collective.xmpp.core.client import UserClient
-    from collective.xmpp.core.interfaces import IXMPPUsers
-    from collective.xmpp.core.interfaces import IZopeReactor
-    xmpp_users = getUtility(IXMPPUsers)
-    user_id = member.getId()
-    fullname = member.getProperty('fullname')
-    user_jid = xmpp_users.getUserJID(user_id)
-    user_pass  = xmpp_users.getUserPassword(user_id)
-    registry = getUtility(IRegistry)
-    settings = registry.forInterface(IXMPPSettings, check=False)
-    # TODO:
-    # portrait_url = pm.getPersonalPortrait(user_id).absolute_url()
-    # portal_url = getToolByName(self.context, 'portal_url')
-    # user_profile_url = '%s/author/%s' % (portal_url(), user_id)
-    udict = {
-        'fullname': fullname,
-        'nickname': user_id,
-        'email': member.getProperty('email'),
-        'userid': user_jid.userhost(),
-        'jabberid': user_jid.userhost(),
-        }
-    userclient = UserClient(
-                        user_jid, 
-                        settings.hostname, 
-                        user_pass, 
-                        settings.port)
-
-    def checkClientConnected(client):
-        if client.state != 'authenticated':
-            log.warn('XMPP user client has not been able to authenticate. ' \
-                'This means the VCard could not be set. ' \
-                'Client state is "%s".' % client.state)
-        else:
-            client.vcard.send(udict)
-    zr = getUtility(IZopeReactor)
-    zr.reactor.callLater(10, checkClientConnected, userclient)
 

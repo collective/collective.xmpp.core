@@ -95,7 +95,7 @@ class ChatHandler(XMPPHandler):
                     info = mt.getMemberInfo(member_id)
                     fullname = info.get('fullname', member_id).decode('utf-8')
                 else:
-                    log.warn('Could not get user fullname')
+                    log.warn('Could not get user fullname: %s' % member_id)
                     fullname = ''
 
                 item = x.addElement('item')
@@ -136,18 +136,10 @@ class VCardHandler(XMPPHandler):
         vcard.addElement('JABBERID', content=udict.get('jabberid'))
         return iq
 
-    def send(self, udict):
-        def resultReceived(iq):
-            log.info("VCard succesfully set for %s" % iq.attributes['from'])
-            return True
-
-        def error(failure):
-            log.error(failure.getTraceback())
-            return False
-
+    def send(self, udict, callback):
         iq = self.createIQ(udict)
         d = iq.send()
-        d.addCallbacks(resultReceived, error)
+        d.addCallbacks(callback)
         return True
 
 

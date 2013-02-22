@@ -48,7 +48,9 @@ class VCardProtocolTest(unittest.TestCase):
             'userid': 'jer@jabber.org',
             'jabberid': 'jer@jabber.org',
             }
-        iq = self.vcard.send(udict)
+        def result(iq):
+            return True
+        iq = self.vcard.send(udict, result)
         vcard = self.stub.output[-1]
         self.assertEqual(vcard.name, u'iq', vcard.name)
 
