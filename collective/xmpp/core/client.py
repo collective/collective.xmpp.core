@@ -8,19 +8,12 @@ from wokkel.xmppim import PresenceClientProtocol
 from zope.component import getUtility
 from zope.event import notify
 from zope.interface import implements
-from collective.xmpp.core.interfaces import (
-    IZopeReactor,
-    IDeferredXMPPClient
-)
-from collective.xmpp.core.protocols import (
-    AdminHandler,
-    ChatHandler
-)
-from collective.xmpp.core.interfaces import (
-    IAdminClient,
-    AdminClientConnected,
-    AdminClientDisconnected
-)
+from collective.xmpp.core.interfaces import AdminClientConnected
+from collective.xmpp.core.interfaces import AdminClientDisconnected
+from collective.xmpp.core.interfaces import IAdminClient
+from collective.xmpp.core.interfaces import IDeferredXMPPClient
+from collective.xmpp.core.interfaces import IZopeReactor
+from collective.xmpp.core import protocols
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +66,6 @@ class XMPPClient(StreamManager):
 
     def __init__(self, jid, password, extra_handlers=[],
                  host='localhost', port=5222):
-
         jid.resource=randomResource()
         self.jid = jid
         self.domain = jid.host
@@ -133,12 +125,11 @@ class AdminClient(XMPPClient):
             logger.warn(e)
             return
 
-        self.admin = AdminHandler()
-        self.chat = ChatHandler()
+        self.admin = protocols.AdminHandler()
         self.presence = PresenceClientProtocol()
         super(AdminClient, self).__init__(
             jid, password,
-            extra_handlers=[self.admin, self.chat, self.presence],
+            extra_handlers=[self.admin, self.presence],
             host=host,
             port=port)
 
