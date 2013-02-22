@@ -14,9 +14,10 @@ from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IDeferredXMPPClient
 from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.protocols import AdminHandler
+from collective.xmpp.core.protocols import ChatHandler
 from collective.xmpp.core.protocols import VCardHandler
 
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 def randomResource():
     chars = string.letters + string.digits
@@ -44,8 +45,8 @@ class DeferredXMPPClient(object):
             return result
 
         def defaultErrBack(error_stanza):
-            logger.error(error_stanza.getErrorMessage())
-            logger.error("StanzaError: %s" % error_stanza.value.stanza.toXml())
+            log.error(error_stanza.getErrorMessage())
+            log.error("StanzaError: %s" % error_stanza.value.stanza.toXml())
 
         d.addCallback(callback)
         d.addCallback(disconnect)
@@ -119,11 +120,6 @@ class XMPPClient(StreamManager):
 class UserClient(XMPPClient):
 
     def __init__(self, jid, host, password, port):
-        try:
-            jid = JID(jid)
-        except RuntimeError, e:
-            logger.warn(e)
-            return
         self.vcard = VCardHandler()
         self.presence = PresenceClientProtocol()
         super(UserClient, self).__init__(
@@ -131,6 +127,11 @@ class UserClient(XMPPClient):
             extra_handlers=[self.vcard, self.presence],
             host=host,
             port=port)
+
+    def initializationFailed(self, reason):
+        """ """
+        log.warn("Initialization failed for %s. %s" \
+            % (self.jid.userhost(), reason.printBriefTraceback()))
 
 
 class AdminClient(XMPPClient):
@@ -140,14 +141,15 @@ class AdminClient(XMPPClient):
         try:
             jid = JID(jid)
         except RuntimeError, e:
-            logger.warn(e)
+            log.warn(e)
             return
 
         self.admin = AdminHandler()
+        self.chat = ChatHandler()
         self.presence = PresenceClientProtocol()
         super(AdminClient, self).__init__(
             jid, password,
-            extra_handlers=[self.admin, self.presence],
+            extra_handlers=[self.admin, self.chat, self.presence],
             host=host,
             port=port)
 
