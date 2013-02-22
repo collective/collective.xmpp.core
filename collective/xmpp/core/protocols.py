@@ -129,14 +129,14 @@ class VCardHandler(XMPPHandler):
         vcard['version'] = '3.0'
         fn = vcard.addElement('FN', content=udict.get('fullname'))
         vcard.addElement('NICKNAME', content=udict.get('nickname'))
-        email = vcard.addElement('EMAIL')
+        email = vcard.addElement('EMAIL', content=udict.get('email'))
         email.addElement('INTERNET')
         email.addElement('PREF')
         email.addElement('USERID', content=udict.get('userid'))
         vcard.addElement('JABBERID', content=udict.get('jabberid'))
         return iq
 
-    def sendVCard(self):
+    def sendVCard(self, udict):
         def resultReceived(iq):
             log.info("Result received for vcard set")
             return True
@@ -145,7 +145,7 @@ class VCardHandler(XMPPHandler):
             log.error(failure.getTraceback())
             return False
 
-        iq = self.createVCardIQ()
+        iq = self.createVCardIQ(udict)
         d = iq.send()
         d.addCallbacks(resultReceived, error)
 
