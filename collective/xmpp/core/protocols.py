@@ -138,7 +138,7 @@ class VCardHandler(XMPPHandler):
 
     def send(self, udict):
         def resultReceived(iq):
-            log.info("Result received for vcard set")
+            log.info("VCard succesfully set for %s" % iq.attributes['from'])
             return True
 
         def error(failure):
@@ -148,6 +148,7 @@ class VCardHandler(XMPPHandler):
         iq = self.createIQ(udict)
         d = iq.send()
         d.addCallbacks(resultReceived, error)
+        return True
 
 
 class AdminHandler(XMPPHandler):
