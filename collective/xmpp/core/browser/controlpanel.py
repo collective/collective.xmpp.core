@@ -157,7 +157,7 @@ class XMPPUserSetupForm(form.Form):
                                for item in self.member_jids]
 
                 if self.member_jids:
-                    setup.deregisterXMPPUsers(self.context, self.member_jids)
+                    setup.deregisterXMPPUsers(root, self.member_jids)
 
             transaction.abort()
             app._p_jar.close()
