@@ -8,14 +8,13 @@ Changelog
 
 - Feature: "Completely wipe password storage" action is now traced under zope log.
   [alecghica]
-- Bugfix: fixed 'ComponentLookupError' error when adding a local user.
-  [alecghica]
-- Bugfix: cleaned up unnecessary spaces, replaced tabs with spaces and
-  fixed line terminators
+- Bugfix: 'ComponentLookupError' error when adding a local user.
   [alecghica]
 - Feature: added error image and 'Unable to communicate with chat server' message
   when unable to bind the user to jabber server
   [alecghica]
+- Feature: Add a VCard when registering a user on the XMPP server.
+  [jcbrand]
 
 
 0.1b4 (2013-02-02)
