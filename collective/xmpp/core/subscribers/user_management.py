@@ -22,14 +22,8 @@ def onUserCreation(event):
     request = getRequest()
     if not IProductLayer.providedBy(request):
         return
-    client = getUtility(IAdminClient)
-    xmpp_users = getUtility(IXMPPUsers)
-    principal = event.principal
-    principal_id = principal.getUserId()
-    principal_jid = xmpp_users.getUserJID(principal_id)
-    pass_storage = getUtility(IXMPPPasswordStorage)
-    pass_storage.set(principal_id)
-    setup.registerXMPPUsers(getSite(), [principal_jid.user])
+    principal_id = event.principal.getUserId()
+    setup.registerXMPPUsers(getSite(), [principal_id])
 
 
 @adapter(IPrincipalDeletedEvent)
