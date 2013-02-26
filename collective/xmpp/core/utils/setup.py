@@ -8,7 +8,6 @@ from wokkel.disco import NS_DISCO_ITEMS
 from zope.component import getGlobalSiteManager
 from zope.component import getUtility
 from zope.component import queryUtility
-from zope.component.hooks import getSite
 from zope.component.hooks import setSite
 
 from plone.registry.interfaces import IRegistry
@@ -59,15 +58,29 @@ def registerXMPPUsers(portal, member_ids):
     registry = getUtility(IRegistry)
     settings = registry.forInterface(IXMPPSettings, check=False)
     xmpp_users = getUtility(IXMPPUsers)
-    pass_storage = getUtility(IXMPPPasswordStorage)
     zr = getUtility(IZopeReactor)
     member_jids = []
     member_passwords = {}
 
-    def subscribeToAllUsers():
-        def getUserJID(user_id):
-            return JID("%s@%s" % (escapeNode(user_id), settings.xmpp_domain))
+    member_dicts = []
+    for member_id in member_ids:
+        member = mtool.getMemberById(member_id)
+        fullname = member.getProperty('fullname').decode('utf-8')
+        user_jid = xmpp_users.getUserJID(member_id)
+        # TODO:
+        # portrait_url = pm.getPersonalPortrait(member_id).absolute_url()
+        # portal_url = getToolByName(self.context, 'portal_url')
+        # user_profile_url = '%s/author/%s' % (portal_url(), member_id)
+        udict = {
+            'fullname': fullname,
+            'nickname': member_id,
+            'email': member.getProperty('email'),
+            'userid': user_jid.userhost(),
+            'jabberid': user_jid.userhost(),
+            }
+        member_dicts.append(udict)
 
+    def subscribeToAllUsers():
         def resultReceived(result):
             items = [item.attributes for item in result.query.children]
             if items[0].has_key('node'):
@@ -81,8 +94,10 @@ def registerXMPPUsers(portal, member_ids):
                 subscribe_jids = [item['jid'] for item in items]
                 if settings.admin_jid in subscribe_jids:
                     subscribe_jids.remove(settings.admin_jid)
+
                 if subscribe_jids:
-                    roster_jids = [getUserJID(user_id.split('@')[0])
+                    getJID = lambda uid: JID("%s@%s" % (escapeNode(uid), settings.xmpp_domain))
+                    roster_jids = [getJID(user_id.split('@')[0])
                                      for user_id in subscribe_jids]
 
                     for member_jid in member_jids:
@@ -94,37 +109,45 @@ def registerXMPPUsers(portal, member_ids):
         d.addCallbacks(resultReceived)
         return True
 
-    def setVCard(member, callback):
-        from collective.xmpp.core.client import UserClient
-        user_id = member.getId()
-        fullname = member.getProperty('fullname')
-        user_jid = xmpp_users.getUserJID(user_id)
-        user_pass  = xmpp_users.getUserPassword(user_id)
-        # TODO:
-        # portrait_url = pm.getPersonalPortrait(user_id).absolute_url()
-        # portal_url = getToolByName(self.context, 'portal_url')
-        # user_profile_url = '%s/author/%s' % (portal_url(), user_id)
-        udict = {
-            'fullname': fullname,
-            'nickname': user_id,
-            'email': member.getProperty('email'),
-            'userid': user_jid.userhost(),
-            'jabberid': user_jid.userhost(),
-            }
-        userclient = UserClient(
-                            user_jid, 
-                            settings.hostname, 
-                            user_pass, 
-                            settings.port)
 
-        def checkClientConnected(client):
-            if client.state != 'authenticated':
-                log.warn('XMPP user client has not been able to authenticate. ' \
-                    'This means the VCard could not be set. ' \
-                    'Client state is "%s".' % client.state)
-            else:
-                client.vcard.send(udict, callback)
-        zr.reactor.callLater(10, checkClientConnected, userclient)
+    def setVCard(udict, jid, password, callback):
+        def onAuth():
+            client.vcard.send(udict, disconnect)
+
+        from collective.xmpp.core.client import UserClient
+        client = UserClient(jid, settings.hostname, password, settings.port, onAuth)
+
+        def disconnect(result):
+            client.disconnect()
+            callback(result)
+
+
+    def setState(callback, *args, **kw):
+        """ In callback methods, we don't have an open ZODB connection, so we
+            have to create one.
+        """
+        setSite(None)
+        app = Zope2.app()
+        root = app.unrestrictedTraverse('/'.join(portal.getPhysicalPath()))
+        setSite(root)
+        transaction.begin()
+        try:
+            callback(*args, **kw)
+            transaction.commit()
+        except Exception, e:
+            log.error(e)
+            transaction.abort()
+        finally:
+            setSite(None)
+            app._p_jar.close()
+
+    def registerNextUser(result):
+        if hasattr(result, 'handled') and result.handled:
+            log.info('Successfully added a VCard')
+        if result is False:
+            return 
+        setState(registerUser)
+        return True
 
     def registerUser():
         if not member_ids:
@@ -134,35 +157,14 @@ def registerXMPPUsers(portal, member_ids):
         member_id = member_ids.pop()
         member_jid = xmpp_users.getUserJID(member_id)
         member_jids.append(member_jid)
+        pass_storage = getUtility(IXMPPPasswordStorage)
         member_pass = pass_storage.set(member_id)
         d = client.admin.addUser(member_jid.userhost(), member_pass)
-        member = mtool.getMemberById(member_id)
-        setVCard(member, registerNextUser)
+        def afterUserAdd(*args):
+            setState(setVCard, member_dicts.pop(), member_jid, member_pass, registerNextUser)
+        d.addCallback(afterUserAdd)
 
-    def registerNextUser(result):
-        if hasattr(result, 'handled') and result.handled:
-            log.info('Successfully added a VCard')
-        if result is False:
-            return 
-        if getSite():
-            registerUser()
-        else:
-            app = Zope2.app()
-            root = app.unrestrictedTraverse('/'.join(portal.getPhysicalPath()))
-            setSite(root)
-            transaction.begin()
-            try:
-                registerUser()
-                transaction.commit()
-            except Exception, e:
-                log.error(e)
-                transaction.abort()
-            finally:
-                setSite(None)
-                app._p_jar.close()
-        return True
-
-    registerNextUser(True)
+    registerUser()
 
 
 def deregisterXMPPUsers(portal, member_jids):
