@@ -15,6 +15,7 @@ def getXMPPDomain(portal=None):
     try:
         registry = getUtility(IRegistry)
     except ComponentLookupError:
+        portal = portal or getSite()
         registry = getUtility(IRegistry, context=portal)
     settings = registry.forInterface(IXMPPSettings, check=False)
     return settings.xmpp_domain
