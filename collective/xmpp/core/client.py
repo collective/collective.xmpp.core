@@ -119,7 +119,8 @@ class XMPPClient(StreamManager):
 
 class UserClient(XMPPClient):
 
-    def __init__(self, jid, host, password, port):
+    def __init__(self, jid, host, password, port, authcallback):
+        self.authcallback = authcallback
         self.vcard = VCardHandler()
         self.presence = PresenceClientProtocol()
         super(UserClient, self).__init__(
@@ -132,6 +133,10 @@ class UserClient(XMPPClient):
         """ """
         log.warn("Initialization failed for %s. %s" \
             % (self.jid.userhost(), reason.printBriefTraceback()))
+
+    def _authd(self, xs):
+        super(UserClient, self)._authd(xs)
+        self.authcallback()
 
 
 class AdminClient(XMPPClient):
