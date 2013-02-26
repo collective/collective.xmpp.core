@@ -3,7 +3,6 @@ import urllib2
 from twisted.words.protocols.jabber.jid import JID
 from twisted.internet.base import DelayedCall
 from zope.component import getUtility
-from zope.component import queryUtility
 from zope.configuration import xmlconfig
 from zope.interface import alsoProvides
 
@@ -22,7 +21,6 @@ from collective.xmpp.core.interfaces import IProductLayer
 from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.subscribers.startup import setUpAdminClient
-from collective.xmpp.core.subscribers.startup import createAdminClient
 from collective.xmpp.core.utils.setup import registerXMPPUsers
 
 DelayedCall.debug = True
@@ -237,8 +235,8 @@ class XMPPCoreFixture(PloneSandboxLayer):
         setUpAdminClient(e)
         client = getUtility(IAdminClient)
         wait_for_client_state(client, u'authenticated')
-
-        registerXMPPUsers(portal, member_ids=['test_user_1_'])
+        # XXX: This doesn't seem necessary...
+        # registerXMPPUsers(portal, member_ids=['test_user_1_'])
         wait_on_client_deferreds(client)
 
     def tearDownPloneSite(self, portal):
