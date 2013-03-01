@@ -3,11 +3,9 @@ from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
 from wokkel.disco import NS_DISCO_ITEMS
 import transaction
-
 import Zope2
 
 from zope.component.hooks import setSite
-from zope.component.hooks import getSite
 from zope.component import queryUtility
 from zope.component import getUtility
 
@@ -96,18 +94,15 @@ class XMPPUserSetupForm(form.Form):
         super(XMPPUserSetupForm, self).update()
         if self.request.form.get('form.widgets.register_all'):
             return self.registerAll()
-
         elif self.request.form.get('form.widgets.deregister_all'):
             return self.deregisterAll()
-
         elif self.request.form.get('form.widgets.register_selected'):
             return self.registerSelected()
-
         elif self.request.form.get('form.widgets.deregister_selected'):
             return self.deregisterSelected()
-
         elif self.request.form.get('form.widgets.clear_all_passwords'):
             return self.clearAllPasswords()
+
 
     def registerAll(self):
         member_ids = users.getAllMemberIds()
@@ -117,11 +112,10 @@ class XMPPUserSetupForm(form.Form):
             "unresponsive."), "info")
 
     def deregisterAll(self):
-        portal =  getSite()
+        portal = self.context
         registry = getUtility(IRegistry)
         settings = registry.forInterface(IXMPPSettings, check=False)
         status = IStatusMessage(self.request)
-
         client = queryUtility(IAdminClient)
         if client is None:
             status.add(_(u"The XMPP Twisted utility could not be "
@@ -165,8 +159,7 @@ class XMPPUserSetupForm(form.Form):
 
         d = client.admin.getRegisteredUsers()
         d.addCallbacks(resultReceived)
-
-        status.add(_(u"The XMPP users is being instructed to deregister all "
+        status.add(_(u"The XMPP server is being instructed to deregister all "
                     u"the users. This might take some minutes to complete."), "info")
 
     def getChosenMembers(self):
