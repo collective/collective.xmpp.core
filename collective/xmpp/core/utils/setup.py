@@ -139,6 +139,10 @@ def registerXMPPUsers(portal, member_ids):
         member_jid = xmpp_users.getUserJID(member_id)
         member_jids.append(member_jid)
         pass_storage = getUtility(IXMPPPasswordStorage)
+        if pass_storage.get(member_id):
+            log.info('%s is already registered' % member_id)
+            zr.reactor.callFromThread(registerNextUser, True)
+            return
         member_pass = pass_storage.set(member_id)
         d = client.admin.addUser(member_jid.userhost(), member_pass)
         def afterUserAdd(*args):
@@ -169,7 +173,6 @@ def deregisterXMPPUsers(portal, member_jids):
         createAdminClient(checkAdminClientConnected)
         return
 
-    # Clear passwords
     passwords = queryUtility(IXMPPPasswordStorage, context=portal)
     if passwords:
         for member_jid in member_jids:
