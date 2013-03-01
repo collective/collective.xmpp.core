@@ -58,7 +58,6 @@ def adminConnected(event):
     # Register user subscribers
     import user_management
     gsm = getGlobalSiteManager()
-    gsm.registerHandler(user_management.onUserCreation)
     gsm.registerHandler(user_management.onUserDeletion)
 
 

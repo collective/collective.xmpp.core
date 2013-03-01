@@ -1,9 +1,7 @@
 import logging
 from zope.component import adapter
 from zope.component import getUtility
-from zope.component.hooks import getSite
 from zope.globalrequest import getRequest
-from Products.PluggableAuthService.interfaces.events import IPrincipalCreatedEvent
 from Products.PluggableAuthService.interfaces.events import IPrincipalDeletedEvent
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IProductLayer
@@ -12,18 +10,6 @@ from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.utils import users
 
 log = logging.getLogger(__name__)
-
-
-@adapter(IPrincipalCreatedEvent)
-def onUserCreation(event):
-    """ Create a jabber account for new user.
-    """
-    from collective.xmpp.core.utils import setup
-    request = getRequest()
-    if not IProductLayer.providedBy(request):
-        return
-    principal_id = event.principal.getUserId()
-    setup.registerXMPPUsers(getSite(), [principal_id])
 
 
 @adapter(IPrincipalDeletedEvent)
