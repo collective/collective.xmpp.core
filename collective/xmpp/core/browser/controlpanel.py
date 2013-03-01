@@ -2,8 +2,15 @@
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
 from wokkel.disco import NS_DISCO_ITEMS
+<<<<<<< HEAD
 
 from zope.component.hooks import getSite
+=======
+import transaction
+import Zope2
+
+from zope.component.hooks import setSite
+>>>>>>> Fix info message
 from zope.component import queryUtility
 from zope.component import getUtility
 
