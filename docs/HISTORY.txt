@@ -15,6 +15,12 @@ Changelog
   [alecghica]
 - Feature: Add a VCard when registering a user on the XMPP server.
   [jcbrand]
+- Feature: Make manual user registration idempotent (ignore already registered
+  users).
+  [jcbrand]
+- Users are no longer registered upon creation. They must either be registered
+  manually, or upon next logged in visit.
+  [jcbrand]
 
 
 0.1b4 (2013-02-02)
