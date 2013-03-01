@@ -30,7 +30,8 @@ class IXMPPUserSetup(Interface):
                             description=_(u"help_register_selected",
                                 default=u"Click this button to let the above "
                                 "selected users be registered on the XMPP "
-                                "server."),
+                                "server. Already registered users will be "
+                                "ignored."),
                             required=False,
                             )
 
@@ -49,10 +50,8 @@ class IXMPPUserSetup(Interface):
                             description=_(u"help_register_all",
                                 default=u"Click this button to register ALL "
                                 "the users in the site on the XMPP "
-                                "server. WARNING: Don't call this method if "
-                                "you already have some users registered for "
-                                "XMPP. Their passwords will change and become "
-                                "invalid. Also be aware, if you register lots "
+                                "server. Already registered users will be "
+                                "ignored. BE AWARE: if you register lots "
                                 "of users and have auto-subscribe turned on, "
                                 "your Plone server will be very busy with multiple "
                                 "threads and may become unresponsive for some "
@@ -142,13 +141,12 @@ class IXMPPSettings(Interface):
         title=_(u"label_xmpp_auto_register_on_login",
                 default=u"Automatically register for XMPP on login"),
         description=_(u"help_xmpp_auto_register_on_login",
-                default=u"Newly created users will automatically be registered "
-                        u"on the XMPP server, but existing users and LDAP "
-                        u"users won't be."
-                        u"Either you have to register them manually, or you "
-                        u"can check this option, and they will be registered "
-                        u"on the XMPP server as soon as they log in to the "
-                        u"site."),
+                default=u"Check this option if you want users to be "
+                        u"automatically registered on the XMPP server."
+                        u"They will be registered once they visit "
+                        u"this Plone site while logged in."
+                        u"You can also register users manually on the XMPP "
+                        u"user setup page."),
         default=False,
         )
 
