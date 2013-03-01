@@ -12,6 +12,7 @@ from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.testing import XMPPCORE_INTEGRATION_TESTING
 from collective.xmpp.core.testing import wait_on_client_deferreds
 from collective.xmpp.core.testing import wait_on_deferred
+from collective.xmpp.core.utils import setup
 # from collective.xmpp.core.utils.pubsub import getAllChildNodes
 
 
@@ -30,6 +31,10 @@ class UserManagementTests(unittest.TestCase):
 
         mt = getToolByName(portal, 'portal_membership')
         mt.addMember('stpeter', 'secret', ['Member'], [])
+        
+        # Users aren't manually registered upon creation anymore, so lets do it
+        # here.
+        setup.registerXMPPUsers(portal, ['stpeter'])
         wait_on_client_deferreds(client)
 
         # User has been added
@@ -44,6 +49,9 @@ class UserManagementTests(unittest.TestCase):
         self.assertTrue(len(result.children[0].children), 3)
         user_jids = [u.attributes[u'jid'] for u in result.children[0].children]
         self.assertTrue('stpeter@localhost' in user_jids)
+
+        # TODO:
+        # Check user's VCard
 
         # # User's pubsub node has been added
         # d = getAllChildNodes(client, 'people')
