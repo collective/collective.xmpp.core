@@ -9,6 +9,7 @@ from zope.component import getGlobalSiteManager
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.component.hooks import setSite
+from zope.component.hooks import getSite
 
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
@@ -158,12 +159,15 @@ def registerXMPPUsers(portal, member_ids):
         member_jid = xmpp_users.getUserJID(member_id)
         member_jids.append(member_jid)
         pass_storage = getUtility(IXMPPPasswordStorage)
+        if pass_storage.get(member_id):
+            log.info('%s is already registered' % member_id)
+            zr.reactor.callFromThread(registerNextUser, True)
+            return
         member_pass = pass_storage.set(member_id)
         d = client.admin.addUser(member_jid.userhost(), member_pass)
         def afterUserAdd(*args):
             setState(setVCard, member_dicts.pop(), member_jid, member_pass, registerNextUser)
         d.addCallback(afterUserAdd)
-
     registerUser()
 
 
@@ -188,14 +192,7 @@ def deregisterXMPPUsers(portal, member_jids):
         createAdminClient(checkAdminClientConnected)
         return
 
-    # Clear passwords
     passwords = queryUtility(IXMPPPasswordStorage, context=portal)
-    if passwords:
-        for member_jid in member_jids:
-            if isinstance(member_jid, JID):
-                member_jid = member_jid.userhost()
-            member_id = member_jid.rsplit('@')[0]
-            passwords.remove(member_id)
-
+    passwords.clear()
     client.admin.deleteUsers(member_jids)
     transaction.commit()
