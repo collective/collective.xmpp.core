@@ -6,7 +6,7 @@ version = '0.1b6.dev0'
 setup(name='collective.xmpp.core',
       version=version,
       description="Enables core functionality for XMPP-enabled Plone add-ons.",
-      long_description=open("README.rst").read() + "\n" +
+      long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       classifiers=[
         "Development Status :: 3 - Alpha",
