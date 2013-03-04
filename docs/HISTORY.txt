@@ -2,7 +2,7 @@
 Changelog
 =========
 
-0.1b6 (unreleased)
+0.1b6 (2013-03-04)
 ------------------
 
 - Fixed rst issues when read by pypi which combines readme.rst and history.txt
