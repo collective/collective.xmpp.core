@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.1b5'
+version = '0.1b6.dev0'
 
 setup(name='collective.xmpp.core',
       version=version,
