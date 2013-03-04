@@ -12,6 +12,7 @@ Changelog
 ------------------
 
 - Fixed rst issues when read by pypi which combines readme.rst and history.txt
+  [ichim-david]
 
 0.1b5 (2013-03-04)
 ------------------
