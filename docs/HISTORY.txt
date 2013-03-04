@@ -2,7 +2,7 @@
 Changelog
 =========
 
-0.1b5 (unreleased)
+0.1b5 (2013-03-04)
 ------------------
 
 - Feature: "Completely wipe password storage" action is now traced under zope log.
