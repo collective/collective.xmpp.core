@@ -5,7 +5,9 @@ Changelog
 0.1b7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Bug fix: Modified MANIFEST.in to global include *.zcml since the previous 
+  rules didn't package them with the zip of the egg
+  [ichim-david]
 
 
 0.1b6 (2013-03-04)
