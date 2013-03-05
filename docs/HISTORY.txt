@@ -5,7 +5,7 @@ Changelog
 0.1b7 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Previous release was broken. Didn't include ZCML files. [jcbrand]
 
 
 0.1b6 (2013-03-04)
