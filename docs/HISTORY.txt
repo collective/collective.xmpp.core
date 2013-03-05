@@ -2,7 +2,7 @@
 Changelog
 =========
 
-0.1b7 (unreleased)
+0.1b7 (2013-03-05)
 ------------------
 
 - Bug fix: Modified MANIFEST.in to global include *.zcml since the previous 
