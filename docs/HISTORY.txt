@@ -3,7 +3,6 @@ Changelog
 =========
 
 0.1b9 (unreleased)
-------------------
 
 - Nothing changed yet.
 
