@@ -1,8 +1,10 @@
-import transaction
-import string
-import random
-import logging
 import Zope2
+import base64
+import hashlib
+import logging
+import random
+import string
+import transaction
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
 from twisted.words.xish.domish import Element
@@ -17,6 +19,7 @@ from Products.CMFCore.utils import getToolByName
 from collective.xmpp.core.utils import users
 
 NS_VCARD_TEMP = 'vcard-temp'
+NS_VCARD_TEMP_UPDATE = 'vcard-temp:x:update'
 NS_CLIENT = 'jabber:client'
 NS_ROSTER_X = 'http://jabber.org/protocol/rosterx'
 NS_COMMANDS = 'http://jabber.org/protocol/commands'
@@ -122,7 +125,14 @@ class VCardHandler(XMPPHandler):
         """ <FN>Jeremie Miller</FN>
             <NICKNAME>jer</NICKNAME>
             <EMAIL><INTERNET/><PREF/><USERID>jeremie@jabber.org</USERID></EMAIL>
+            <URL>http://www.xmpp.org/xsf/people</URL>
             <JABBERID>jer@jabber.org</JABBERID>
+            <PHOTO>
+                <TYPE>image/jpeg</TYPE>
+                <BINVAL>
+                    Base64-encoded-avatar-file-here!
+                </BINVAL>
+            </PHOTO>
         """
         iq = IQ(self.xmlstream, 'set')
         vcard = iq.addElement((NS_VCARD_TEMP, 'vCard'))
@@ -134,12 +144,35 @@ class VCardHandler(XMPPHandler):
         email.addElement('PREF')
         email.addElement('USERID', content=udict.get('userid'))
         vcard.addElement('JABBERID', content=udict.get('jabberid'))
+        vcard.addElement('URL', content=udict.get('url'))
+        photo = vcard.addElement('PHOTO')
+        if udict.get('image_type') and udict.get('raw_image'):
+            photo.addElement('TYPE', content=udict.get('image_type'))
+            photo.addElement('BINVAL', content=base64.b64encode(udict['raw_image']))
         return iq
 
     def send(self, udict, callback):
+
+        def sendImageHash(*args, **kw):
+            """ After updating the VCard, the client must include the Avatar
+                Hash in a Presence broadcast.
+
+                http://xmpp.org/extensions/xep-0153.html#publish
+            """ 
+            presence = Element((None, "presence",))
+            x = presence.addElement((NS_VCARD_TEMP_UPDATE, 'x'))
+            photo = x.addElement('photo', 
+                                 content=hashlib.sha1(udict.get('raw_image')).hexdigest())
+            self.xmlstream.send(presence)
+            callback(*args, **kw)
+            return True
+
         iq = self.createIQ(udict)
         d = iq.send()
-        d.addCallbacks(callback)
+        if udict.get('raw_image') and udict.get('image_type'):
+            d.addCallbacks(sendImageHash)
+        else:
+            d.addCallbacks(callback)
         return True
 
 

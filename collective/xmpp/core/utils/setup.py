@@ -1,6 +1,6 @@
+import Zope2
 import logging
 import transaction
-import Zope2
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
 
@@ -54,6 +54,7 @@ def registerXMPPUsers(portal, member_ids):
         createAdminClient(checkAdminClientConnected)
         return
 
+    portal_url = getToolByName(portal, 'portal_url')()
     mtool = getToolByName(portal, 'portal_membership')
     registry = getUtility(IRegistry)
     settings = registry.forInterface(IXMPPSettings, check=False)
@@ -67,16 +68,16 @@ def registerXMPPUsers(portal, member_ids):
         member = mtool.getMemberById(member_id)
         fullname = member.getProperty('fullname').decode('utf-8')
         user_jid = xmpp_users.getUserJID(member_id)
-        # TODO:
-        # portrait_url = pm.getPersonalPortrait(member_id).absolute_url()
-        # portal_url = getToolByName(self.context, 'portal_url')
-        # user_profile_url = '%s/author/%s' % (portal_url(), member_id)
+        portrait = mtool.getPersonalPortrait(member_id)
         udict = {
             'fullname': fullname,
             'nickname': member_id,
             'email': member.getProperty('email'),
             'userid': user_jid.userhost(),
             'jabberid': user_jid.userhost(),
+            'url': '%s/author/%s' % (portal_url, member_id),
+            'image_type': portrait.content_type,
+            'raw_image': portrait._data
             }
         member_dicts.append(udict)
 
