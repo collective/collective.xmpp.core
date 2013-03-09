@@ -38,7 +38,7 @@ class VCardProtocolTest(unittest.TestCase):
         self.assertEqual(vcard.name, 'vCard')
         self.assertEqual(vcard.uri, 'vcard-temp')
         self.assertEqual(vcard.attributes.get('version'), '3.0')
-        self.assertEqual(vcard.toXml(), "<vCard xmlns='vcard-temp' version='3.0'><FN>Jeremie Miller</FN><NICKNAME>jer</NICKNAME><EMAIL>jeremie@jabber.org<INTERNET/><PREF/><USERID>jer@jabber.org</USERID></EMAIL><JABBERID>jer@jabber.org</JABBERID></vCard>")
+        self.assertEqual(vcard.toXml(), u"<vCard xmlns='vcard-temp' version='3.0'><FN>Jeremie Miller</FN><NICKNAME>jer</NICKNAME><EMAIL>jeremie@jabber.org<INTERNET/><PREF/><USERID>jer@jabber.org</USERID></EMAIL><JABBERID>jer@jabber.org</JABBERID><URL/><PHOTO/></vCard>")
 
     def test_sendVCard(self):
         udict = {
