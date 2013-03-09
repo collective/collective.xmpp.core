@@ -6,11 +6,13 @@ from wokkel.disco import NS_DISCO_ITEMS
 from zope.component import getGlobalSiteManager
 from zope.component import getUtility
 from zope.component import queryUtility
-from zope.component.hooks import setSite
+from zope.component.hooks import getSite
 
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 
+from collective.xmpp.core.decorators import newzodbconnection
+from collective.xmpp.core.exceptions import AdminClientNotConnected 
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPSettings
@@ -19,7 +21,6 @@ from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.subscribers.startup import createAdminClient
 from collective.xmpp.core.utils.users import escapeNode
 from collective.xmpp.core.utils.users import getXMPPDomain 
-from collective.xmpp.core.decorators import newzodbconnection
 
 log = logging.getLogger(__name__)
 
@@ -38,20 +39,7 @@ def registerXMPPUsers(portal, member_ids):
     log.info('Preparing to create XMPP users from the existing Plone users')
     client = queryUtility(IAdminClient)
     if client is None:
-        log.info('We first have to create the XMPP admin client. '
-                 'This might take a few seconds')
-
-        def checkAdminClientConnected(client):
-            if client.state != 'authenticated':
-                log.warn('XMPP admin client has not been able to authenticate. ' \
-                    'Client state is "%s". Will retry on the next request.' % client.state)
-                gsm = getGlobalSiteManager()
-                gsm.unregisterUtility(client, IAdminClient)
-            registerXMPPUsers(portal, member_ids)
-            setSite(None)
-
-        createAdminClient(checkAdminClientConnected)
-        return
+        raise AdminClientNotConnected()
 
     portal_url = getToolByName(portal, 'portal_url')()
     mtool = getToolByName(portal, 'portal_membership')
@@ -80,7 +68,11 @@ def registerXMPPUsers(portal, member_ids):
             }
         member_dicts.append(udict)
 
+    @newzodbconnection()
     def subscribeToAllUsers():
+        site = getSite()
+    
+        @newzodbconnection(portal=site)
         def resultReceived(result):
             items = [item.attributes for item in result.query.children]
             if items[0].has_key('node'):
@@ -105,11 +97,12 @@ def registerXMPPUsers(portal, member_ids):
                                                                 roster_jids,
                                                                 portal)
             return result
+
         d = client.admin.getRegisteredUsers()
         d.addCallbacks(resultReceived)
         return True
 
-    @newzodbconnection
+    @newzodbconnection()
     def setVCard(udict, jid, password):
         def onAuth():
             client.vcard.send(udict, disconnect)
@@ -142,7 +135,7 @@ def registerXMPPUsers(portal, member_ids):
         d.addCallback(afterUserAdd)
         return d
 
-    @newzodbconnection
+    @newzodbconnection()
     def registerUser():
         return _registerUser()
 
@@ -164,14 +157,14 @@ def deregisterXMPPUsers(portal, member_ids):
         log.info('We first have to create the XMPP admin client. '
                  'This might take a few seconds')
 
+        @newzodbconnection(portal=portal)
         def checkAdminClientConnected(client):
             if client.state != 'authenticated':
                 log.warn('XMPP admin client has not been able to authenticate. ' \
                     'Client state is "%s". Will retry on the next request.' % client.state)
                 gsm = getGlobalSiteManager()
                 gsm.unregisterUtility(client, IAdminClient)
-            deregisterXMPPUsers(portal, member_jids)
-            setSite(None)
+            deregisterXMPPUsers(portal, member_ids)
         createAdminClient(checkAdminClientConnected)
         return
 
