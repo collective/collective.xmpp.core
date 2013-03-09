@@ -1,10 +1,8 @@
-import Zope2
 import base64
 import hashlib
 import logging
 import random
 import string
-import transaction
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
 from twisted.words.xish.domish import Element
@@ -13,10 +11,9 @@ from wokkel.disco import NS_DISCO_INFO, NS_DISCO_ITEMS
 from wokkel.pubsub import NS_PUBSUB_OWNER, NS_PUBSUB_NODE_CONFIG
 from wokkel.pubsub import PubSubClient as WokkelPubSubClient
 from wokkel.subprotocols import XMPPHandler
-
-from zope.component.hooks import setSite
 from Products.CMFCore.utils import getToolByName
 from collective.xmpp.core.utils import users
+from collective.xmpp.core.decorators import newzodbconnection
 
 NS_VCARD_TEMP = 'vcard-temp'
 NS_VCARD_TEMP_UPDATE = 'vcard-temp:x:update'
@@ -78,13 +75,9 @@ class ChatHandler(XMPPHandler):
     def sendRosterItemAddSuggestion(self, to, items, portal, group=None):
         """ Suggest a user(s) to be added in the roster.
         """
-        # TODO: use @newzodbconnection decorator
-        app = Zope2.app()
-        root = app.unrestrictedTraverse('/'.join(portal.getPhysicalPath()))
-        setSite(root)
-        transaction.begin()
-        try:
-            mt = getToolByName(root, 'portal_membership', None)
+        @newzodbconnection(portal=portal)
+        def _send():
+            mt = getToolByName(portal, 'portal_membership', None)
             message = Element((None, "message", ))
             message["id"] = getRandomId()
             message["from"] = self.xmlstream.factory.authenticator.jid.full()
@@ -109,13 +102,7 @@ class ChatHandler(XMPPHandler):
                 if group:
                     item.addElement('group', content=group)
             self.xmlstream.send(message)
-            transaction.commit()
-        except Exception, e:
-            log.error(e)
-            transaction.abort()
-        finally:
-            setSite(None)
-            app._p_jar.close()
+        _send()
         return True
 
 

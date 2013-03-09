@@ -26,6 +26,7 @@ from collective.xmpp.core.interfaces import IXMPPUserSetup
 from collective.xmpp.core.utils import setup
 from collective.xmpp.core.utils import users
 from collective.xmpp.core.decorators import newzodbconnection
+from collective.xmpp.core.exceptions import AdminClientNotConnected 
 
 UserAndGroupSelectionWidget_installed = True
 try:
@@ -102,9 +103,19 @@ class XMPPUserSetupForm(form.Form):
 
 
     def registerAll(self):
+        status = IStatusMessage(self.request)
         member_ids = users.getAllMemberIds()
-        setup.registerXMPPUsers(self.context, member_ids)
-        IStatusMessage(self.request).add(_(u"All users are being registered "
+        try:
+            setup.registerXMPPUsers(self.context, member_ids)
+        except AdminClientNotConnected:
+            status.add(
+                _(u"We are not yet connected to the XMPP "
+                  u"server. Either your settings are incorrect, or "
+                  u"you're trying to register users immediately after the "
+                  u"ZServer has been restarted. If your settings are correct, "
+                  u"then try again, it should work now. "), "warn")
+            return
+        status.add(_(u"All users are being registered "
             "in the background. "
             "This might take a few minutes and your site might become "
             "unresponsive."), "info")
@@ -124,7 +135,7 @@ class XMPPUserSetupForm(form.Form):
             "settings."), "error")
             return
 
-        @newzodbconnection
+        @newzodbconnection(portal=portal)
         def resultReceived(result):
             items = [item.attributes for item in result.query.children]
             if items[0].has_key('node'):
@@ -183,7 +194,8 @@ class XMPPUserSetupForm(form.Form):
                         "error")
             return
         setup.deregisterXMPPUsers(self.context, self.getChosenMembers())
-        return status.add(_(u"The selected users were deregistered"), "info")
+        return status.add(_(u"The selected users are being deregistered in "
+                            u"the background."), "info")
 
     def registerSelected(self):
         status = IStatusMessage(self.request)
@@ -192,8 +204,18 @@ class XMPPUserSetupForm(form.Form):
             status.add(_(u"You first need to choose the users to register"),
                         "error")
             return
-        setup.registerXMPPUsers(self.context, self.getChosenMembers())
-        return status.add(_(u"The selected users where registered"), "info")
+        try:
+            setup.registerXMPPUsers(self.context, self.getChosenMembers())
+        except AdminClientNotConnected:
+            status.add(
+                _(u"We are not yet connected to the XMPP "
+                  u"server. Either your settings are incorrect, or "
+                  u"you're trying to register users immediately after the "
+                  u"ZServer has been restarted. If your settings are correct, "
+                  u"then try again, it should work now. "), "warn")
+            return
+        return status.add(_(u"The selected users are being registered "
+                            u"in the background."), "info")
 
     def clearAllPasswords(self):
         status = IStatusMessage(self.request)
