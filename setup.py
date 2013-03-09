@@ -1,7 +1,11 @@
 from setuptools import setup, find_packages
 import os
 
+<<<<<<< HEAD
 version = '0.1b9.dev0'
+=======
+version = '0.1b8.dev0'
+>>>>>>> 38b3f17fd8ae4a5e54065b67fa5be78f7fe66e4b
 
 setup(name='collective.xmpp.core',
       version=version,
@@ -9,11 +13,17 @@ setup(name='collective.xmpp.core',
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       classifiers=[
+<<<<<<< HEAD
         "Development Status :: 4 - Beta",
         "Framework :: Plone :: 4.1",
         "Framework :: Plone :: 4.2",
         "Framework :: Plone :: 4.3",
         "Intended Audience :: Developers",
+=======
+        "Development Status :: 3 - Beta",
+        "Framework :: Plone",
+        "Intended Audience :: Developers Integrators",
+>>>>>>> 38b3f17fd8ae4a5e54065b67fa5be78f7fe66e4b
         "Programming Language :: Python",
         ],
       keywords='plone xmpp twisted',
