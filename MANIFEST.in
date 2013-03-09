@@ -6,6 +6,7 @@ global-include *po
 global-include *.zcml
 graft docs
 prune docs/.build
+recursive-include collective/xmpp/core/locales *.pot
 graft collective/xmpp/core/profiles
 graft collective/xmpp/core/browser
 graft collective/xmpp/core/browser/css
