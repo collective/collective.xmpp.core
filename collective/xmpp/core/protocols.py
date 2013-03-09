@@ -75,6 +75,7 @@ class ChatHandler(XMPPHandler):
     def sendRosterItemAddSuggestion(self, to, items, portal, group=None):
         """ Suggest a user(s) to be added in the roster.
         """
+
         @newzodbconnection(portal=portal)
         def _send():
             mt = getToolByName(portal, 'portal_membership', None)
