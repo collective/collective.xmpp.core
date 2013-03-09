@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
 from wokkel.disco import NS_DISCO_ITEMS
 
@@ -24,10 +23,8 @@ from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IXMPPUserSetup
-from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.utils import setup
 from collective.xmpp.core.utils import users
-from collective.xmpp.core.utils.users import escapeNode
 from collective.xmpp.core.decorators import newzodbconnection
 
 UserAndGroupSelectionWidget_installed = True
@@ -38,6 +35,7 @@ try:
 except ImportError:
     # UserAndGroupSelectionWidget > 2.0.4 not found
     UserAndGroupSelectionWidget_installed = False
+
 
 class XMPPSettingsEditForm(controlpanel.RegistryEditForm):
     """ XMPP settings form.
@@ -126,7 +124,6 @@ class XMPPUserSetupForm(form.Form):
             "settings."), "error")
             return
 
-        self.member_jids = []
         @newzodbconnection
         def resultReceived(result):
             items = [item.attributes for item in result.query.children]
@@ -138,24 +135,20 @@ class XMPPUserSetupForm(form.Form):
                     query['node'] = item['node']
                     iq.send().addCallbacks(resultReceived)
             else:
-                self.member_jids = [item['jid'] for item in items]
-
-                if settings.admin_jid in self.member_jids:
-                    self.member_jids.remove(settings.admin_jid)
-
-                self.member_jids = [JID("%s@%s" % (escapeNode(item.split('@')[0]),
-                                              settings.xmpp_domain))
-                               for item in self.member_jids]
-
-                if self.member_jids:
+                member_jids = [item['jid'] for item in items]
+                if settings.admin_jid in member_jids:
+                    member_jids.remove(settings.admin_jid)
+                member_ids = [item.split('@')[0] for item in member_jids]
+                if member_ids:
                     portal = getSite()
-                    setup.deregisterXMPPUsers(portal, self.member_jids)
+                    setup.deregisterXMPPUsers(portal, member_ids)
             return result
 
         d = client.admin.getRegisteredUsers()
         d.addCallbacks(resultReceived)
         status.add(_(u"The XMPP server is being instructed to deregister all "
                     u"the users. This might take some minutes to complete."), "info")
+        return d
 
     def getChosenMembers(self):
         """ The Products.UserAndGroupSelectionWidget can return users and groups.
@@ -180,7 +173,6 @@ class XMPPUserSetupForm(form.Form):
             # Case when Products.UserAndGroupSelectionWidget is not installed/used
             members = [member for member in members_and_groups.split('\r\n')
                            if member]
-
         return members
 
     def deregisterSelected(self):
@@ -190,15 +182,7 @@ class XMPPUserSetupForm(form.Form):
             status.add(_(u"You first need to choose the users to deregister"),
                         "error")
             return
-
-        member_jids = []
-        member_ids = self.getChosenMembers()
-        xmpp_users = getUtility(IXMPPUsers)
-        for member_id in member_ids:
-            member_jid = xmpp_users.getUserJID(member_id)
-            member_jids.append(member_jid)
-
-        setup.deregisterXMPPUsers(self.context, member_jids)
+        setup.deregisterXMPPUsers(self.context, self.getChosenMembers())
         return status.add(_(u"The selected users were deregistered"), "info")
 
     def registerSelected(self):
@@ -208,8 +192,7 @@ class XMPPUserSetupForm(form.Form):
             status.add(_(u"You first need to choose the users to register"),
                         "error")
             return
-        member_ids = self.getChosenMembers()
-        setup.registerXMPPUsers(self.context, member_ids)
+        setup.registerXMPPUsers(self.context, self.getChosenMembers())
         return status.add(_(u"The selected users where registered"), "info")
 
     def clearAllPasswords(self):
