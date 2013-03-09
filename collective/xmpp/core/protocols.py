@@ -78,6 +78,7 @@ class ChatHandler(XMPPHandler):
     def sendRosterItemAddSuggestion(self, to, items, portal, group=None):
         """ Suggest a user(s) to be added in the roster.
         """
+        # TODO: use @newzodbconnection decorator
         app = Zope2.app()
         root = app.unrestrictedTraverse('/'.join(portal.getPhysicalPath()))
         setSite(root)
