@@ -192,6 +192,11 @@ def deregisterXMPPUsers(portal, member_jids):
         return
 
     passwords = queryUtility(IXMPPPasswordStorage, context=portal)
-    passwords.clear()
+    if passwords:
+        for member_jid in member_jids:
+            if isinstance(member_jid, JID):
+                member_jid = member_jid.userhost()
+            member_id = member_jid.rsplit('@')[0]
+            passwords.remove(member_id)
     client.admin.deleteUsers(member_jids)
     transaction.commit()
