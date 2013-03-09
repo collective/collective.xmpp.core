@@ -4,7 +4,8 @@ Changelog
 
 0.1b9 (unreleased)
 
-- Nothing changed yet.
+- Bugfix. All xmpp passwords were cleared when deregistering a subset of users.
+  [jcbrand]
 
 
 0.1b8 (2013-03-09)
