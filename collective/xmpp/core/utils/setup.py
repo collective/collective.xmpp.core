@@ -140,19 +140,25 @@ def registerXMPPUsers(portal, member_ids):
         def afterUserAdd(*args):
             setVCard(member_dicts.pop(), member_jid, member_pass)
         d.addCallback(afterUserAdd)
+        return d
 
     @newzodbconnection
     def registerUser():
-        _registerUser()
+        return _registerUser()
 
-    _registerUser()
-    return
+    return _registerUser()
 
 
-def deregisterXMPPUsers(portal, member_jids):
+def deregisterXMPPUsers(portal, member_ids):
     """ Deregister each Plone user from the XMPP
     """
     log.info('Preparing to remove XMPP users')
+    member_jids = []
+    xmpp_users = getUtility(IXMPPUsers)
+    for member_id in member_ids:
+        member_jid = xmpp_users.getUserJID(member_id)
+        member_jids.append(member_jid)
+
     client = queryUtility(IAdminClient, context=portal)
     if client is None:
         log.info('We first have to create the XMPP admin client. '
@@ -176,4 +182,4 @@ def deregisterXMPPUsers(portal, member_jids):
                 member_jid = member_jid.userhost()
             member_id = member_jid.rsplit('@')[0]
             passwords.remove(member_id)
-    client.admin.deleteUsers(member_jids)
+    return client.admin.deleteUsers(member_jids)
