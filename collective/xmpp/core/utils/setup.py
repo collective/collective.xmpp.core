@@ -1,6 +1,4 @@
-import Zope2
 import logging
-import transaction
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
 
@@ -21,6 +19,7 @@ from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.subscribers.startup import createAdminClient
 from collective.xmpp.core.utils.users import escapeNode
 from collective.xmpp.core.utils.users import getXMPPDomain 
+from collective.xmpp.core.decorators import newzodbconnection
 
 log = logging.getLogger(__name__)
 
@@ -110,7 +109,7 @@ def registerXMPPUsers(portal, member_ids):
         d.addCallbacks(resultReceived)
         return True
 
-
+    @newzodbconnection
     def setVCard(udict, jid, password, callback):
         def onAuth():
             client.vcard.send(udict, disconnect)
@@ -122,34 +121,15 @@ def registerXMPPUsers(portal, member_ids):
             client.disconnect()
             callback(result)
 
-
-    def setState(callback, *args, **kw):
-        """ In callback methods, we don't have an open ZODB connection, so we
-            have to create one.
-        """
-        setSite(None)
-        app = Zope2.app()
-        root = app.unrestrictedTraverse('/'.join(portal.getPhysicalPath()))
-        setSite(root)
-        transaction.begin()
-        try:
-            callback(*args, **kw)
-            transaction.commit()
-        except Exception, e:
-            log.error(e)
-            transaction.abort()
-        finally:
-            setSite(None)
-            app._p_jar.close()
-
     def registerNextUser(result):
         if hasattr(result, 'handled') and result.handled:
             log.info('Successfully added a VCard')
         if result is False:
             return 
-        setState(registerUser)
+        registerUser()
         return True
 
+    @newzodbconnection
     def registerUser():
         if not member_ids:
             if settings.auto_subscribe:
@@ -166,9 +146,10 @@ def registerXMPPUsers(portal, member_ids):
         member_pass = pass_storage.set(member_id)
         d = client.admin.addUser(member_jid.userhost(), member_pass)
         def afterUserAdd(*args):
-            setState(setVCard, member_dicts.pop(), member_jid, member_pass, registerNextUser)
+            setVCard(member_dicts.pop(), member_jid, member_pass, registerNextUser)
         d.addCallback(afterUserAdd)
-    registerUser()
+    zr.reactor.callInThread(registerUser)
+    return
 
 
 def deregisterXMPPUsers(portal, member_jids):
@@ -188,7 +169,6 @@ def deregisterXMPPUsers(portal, member_jids):
                 gsm.unregisterUtility(client, IAdminClient)
             deregisterXMPPUsers(portal, member_jids)
             setSite(None)
-
         createAdminClient(checkAdminClientConnected)
         return
 
@@ -200,4 +180,3 @@ def deregisterXMPPUsers(portal, member_jids):
             member_id = member_jid.rsplit('@')[0]
             passwords.remove(member_id)
     client.admin.deleteUsers(member_jids)
-    transaction.commit()

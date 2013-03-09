@@ -2,10 +2,8 @@
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
 from wokkel.disco import NS_DISCO_ITEMS
-import transaction
-import Zope2
 
-from zope.component.hooks import setSite
+from zope.component.hooks import getSite
 from zope.component import queryUtility
 from zope.component import getUtility
 
@@ -30,6 +28,7 @@ from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.utils import setup
 from collective.xmpp.core.utils import users
 from collective.xmpp.core.utils.users import escapeNode
+from collective.xmpp.core.decorators import newzodbconnection
 
 UserAndGroupSelectionWidget_installed = True
 try:
@@ -128,11 +127,8 @@ class XMPPUserSetupForm(form.Form):
             return
 
         self.member_jids = []
+        @newzodbconnection
         def resultReceived(result):
-            app = Zope2.app()
-            root = app.unrestrictedTraverse('/'.join(portal.getPhysicalPath()))
-            setSite(root)
-            transaction.begin()
             items = [item.attributes for item in result.query.children]
             if items[0].has_key('node'):
                 for item in reversed(items):
@@ -152,10 +148,8 @@ class XMPPUserSetupForm(form.Form):
                                for item in self.member_jids]
 
                 if self.member_jids:
-                    setup.deregisterXMPPUsers(root, self.member_jids)
-
-            transaction.abort()
-            app._p_jar.close()
+                    portal = getSite()
+                    setup.deregisterXMPPUsers(portal, self.member_jids)
             return result
 
         d = client.admin.getRegisteredUsers()
