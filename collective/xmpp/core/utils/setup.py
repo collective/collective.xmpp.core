@@ -1,4 +1,5 @@
 import logging
+import time
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
 
@@ -78,7 +79,7 @@ def registerXMPPUsers(portal, member_ids):
             if items[0].has_key('node'):
                 for item in reversed(items):
                     iq = IQ(client.admin.xmlstream, 'get')
-                    iq['to'] = getXMPPDomain(portal) 
+                    iq['to'] = getXMPPDomain(site) 
                     query = iq.addElement((NS_DISCO_ITEMS, 'query'))
                     query['node'] = item['node']
                     iq.send().addCallbacks(resultReceived)
@@ -95,7 +96,11 @@ def registerXMPPUsers(portal, member_ids):
                     for member_jid in member_jids:
                         client.chat.sendRosterItemAddSuggestion(member_jid,
                                                                 roster_jids,
-                                                                portal)
+                                                                site)
+                        log.info('Roster suggestion sent for %s' % member_jid)
+                    # XXX: Somehow the last user's roster suggestions is
+                    # dropped, unless we rest here for a bit.
+                    time.sleep(3)
             return result
 
         d = client.admin.getRegisteredUsers()
