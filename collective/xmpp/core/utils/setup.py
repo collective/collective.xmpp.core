@@ -110,7 +110,7 @@ def registerXMPPUsers(portal, member_ids):
         return True
 
     @newzodbconnection
-    def setVCard(udict, jid, password, callback):
+    def setVCard(udict, jid, password):
         def onAuth():
             client.vcard.send(udict, disconnect)
 
@@ -119,18 +119,10 @@ def registerXMPPUsers(portal, member_ids):
 
         def disconnect(result):
             client.disconnect()
-            callback(result)
-
-    def registerNextUser(result):
-        if hasattr(result, 'handled') and result.handled:
             log.info('Successfully added a VCard')
-        if result is False:
-            return 
-        registerUser()
-        return True
+            registerUser()
 
-    @newzodbconnection
-    def registerUser():
+    def _registerUser():
         if not member_ids:
             if settings.auto_subscribe:
                 subscribeToAllUsers()
@@ -141,14 +133,19 @@ def registerXMPPUsers(portal, member_ids):
         pass_storage = getUtility(IXMPPPasswordStorage)
         if pass_storage.get(member_id):
             log.info('%s is already registered' % member_id)
-            zr.reactor.callFromThread(registerNextUser, True)
+            zr.reactor.callInThread(registerUser)
             return
         member_pass = pass_storage.set(member_id)
         d = client.admin.addUser(member_jid.userhost(), member_pass)
         def afterUserAdd(*args):
-            setVCard(member_dicts.pop(), member_jid, member_pass, registerNextUser)
+            setVCard(member_dicts.pop(), member_jid, member_pass)
         d.addCallback(afterUserAdd)
-    zr.reactor.callInThread(registerUser)
+
+    @newzodbconnection
+    def registerUser():
+        _registerUser()
+
+    _registerUser()
     return
 
 
