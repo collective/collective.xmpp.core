@@ -112,7 +112,8 @@ class XMPPUserSetupForm(form.Form):
     def registerAll(self):
         member_ids = users.getAllMemberIds()
         setup.registerXMPPUsers(self.context, member_ids)
-        IStatusMessage(self.request).add(_(u"All users are being registered. "
+        IStatusMessage(self.request).add(_(u"All users are being registered "
+            "in the background. "
             "This might take a few minutes and your site might become "
             "unresponsive."), "info")
 
@@ -211,7 +212,7 @@ class XMPPUserSetupForm(form.Form):
             member_jids.append(member_jid)
 
         setup.deregisterXMPPUsers(self.context, member_jids)
-        status.add(_(u"The selected users were deregistered"), "info")
+        return status.add(_(u"The selected users were deregistered"), "info")
 
     def registerSelected(self):
         status = IStatusMessage(self.request)
@@ -222,7 +223,7 @@ class XMPPUserSetupForm(form.Form):
             return
         member_ids = self.getChosenMembers()
         setup.registerXMPPUsers(self.context, member_ids)
-        status.add(_(u"The selected users where registered"), "info")
+        return status.add(_(u"The selected users where registered"), "info")
 
     def clearAllPasswords(self):
         status = IStatusMessage(self.request)
