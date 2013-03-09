@@ -197,7 +197,7 @@ class AdminHandler(XMPPHandler):
         """
 
         def resultReceived(iq):
-            log.info("Added user %s %s" % (userjid, password))
+            log.info("Added user %s" % userjid)
             return True
 
         def formReceived(iq):
