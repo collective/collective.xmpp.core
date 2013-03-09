@@ -9,8 +9,10 @@ setup(name='collective.xmpp.core',
       long_description=open("README.txt").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       classifiers=[
-        "Development Status :: 3 - Alpha",
-        "Framework :: Plone",
+        "Development Status :: 4 - Beta",
+        "Framework :: Plone :: 4.1",
+        "Framework :: Plone :: 4.2",
+        "Framework :: Plone :: 4.3",
         "Intended Audience :: Developers",
         "Programming Language :: Python",
         ],
