@@ -5,16 +5,15 @@ Changelog
 0.1b8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Bugfix. All xmpp passwords were cleared when deregistering a subset of users.
+  [jcbrand]
 
 
 0.1b7 (2013-03-05)
 ------------------
 
-- Bug fix: Modified MANIFEST.in to global include *.zcml since the previous 
-  rules didn't package them with the zip of the egg
-  [ichim-david]
-- Previous release was broken. Didn't include ZCML files. [jcbrand]
+- Previous release was broken. Didn't include ZCML files.
+  [jcbrand]
 
 
 0.1b6 (2013-03-04)
