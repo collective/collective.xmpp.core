@@ -2,6 +2,7 @@
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
 from wokkel.disco import NS_DISCO_ITEMS
+
 from zope.component.hooks import getSite
 from zope.component import queryUtility
 from zope.component import getUtility
