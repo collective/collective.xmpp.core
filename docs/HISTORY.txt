@@ -2,10 +2,10 @@
 Changelog
 =========
 
-0.1b9 (unreleased)
+0.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Released. [jcbrand] 
 
 
 0.1b8 (2013-03-09)
