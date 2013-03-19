@@ -13,7 +13,7 @@ from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 
 from collective.xmpp.core.decorators import newzodbconnection
-from collective.xmpp.core.exceptions import AdminClientNotConnected 
+from collective.xmpp.core.exceptions import AdminClientNotConnected
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPSettings
@@ -21,7 +21,7 @@ from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.subscribers.startup import createAdminClient
 from collective.xmpp.core.utils.users import escapeNode
-from collective.xmpp.core.utils.users import getXMPPDomain 
+from collective.xmpp.core.utils.users import getXMPPDomain
 
 log = logging.getLogger(__name__)
 
@@ -49,8 +49,6 @@ def registerXMPPUsers(portal, member_ids):
     xmpp_users = getUtility(IXMPPUsers)
     zr = getUtility(IZopeReactor)
     member_jids = []
-    member_passwords = {}
-
     member_dicts = []
     for member_id in member_ids:
         member = mtool.getMemberById(member_id)
@@ -66,20 +64,20 @@ def registerXMPPUsers(portal, member_ids):
             'url': '%s/author/%s' % (portal_url, member_id),
             'image_type': portrait.content_type,
             'raw_image': portrait._data
-            }
+        }
         member_dicts.append(udict)
 
     @newzodbconnection()
     def subscribeToAllUsers():
         site = getSite()
-    
+
         @newzodbconnection(portal=site)
         def resultReceived(result):
             items = [item.attributes for item in result.query.children]
             if items[0].has_key('node'):
                 for item in reversed(items):
                     iq = IQ(client.admin.xmlstream, 'get')
-                    iq['to'] = getXMPPDomain(site) 
+                    iq['to'] = getXMPPDomain(site)
                     query = iq.addElement((NS_DISCO_ITEMS, 'query'))
                     query['node'] = item['node']
                     iq.send().addCallbacks(resultReceived)
@@ -89,9 +87,10 @@ def registerXMPPUsers(portal, member_ids):
                     subscribe_jids.remove(settings.admin_jid)
 
                 if subscribe_jids:
-                    getJID = lambda uid: JID("%s@%s" % (escapeNode(uid), settings.xmpp_domain))
+                    getJID = lambda uid: JID(
+                        "%s@%s" % (escapeNode(uid), settings.xmpp_domain))
                     roster_jids = [getJID(user_id.split('@')[0])
-                                     for user_id in subscribe_jids]
+                                   for user_id in subscribe_jids]
 
                     for member_jid in member_jids:
                         client.chat.sendRosterItemAddSuggestion(member_jid,
@@ -113,7 +112,13 @@ def registerXMPPUsers(portal, member_ids):
             client.vcard.send(udict, disconnect)
 
         from collective.xmpp.core.client import UserClient
-        client = UserClient(jid, settings.hostname, password, settings.port, onAuth)
+        client = UserClient(
+            jid,
+            settings.hostname,
+            password,
+            settings.port,
+            onAuth
+        )
 
         def disconnect(result):
             client.disconnect()
@@ -135,6 +140,7 @@ def registerXMPPUsers(portal, member_ids):
             return
         member_pass = pass_storage.set(member_id)
         d = client.admin.addUser(member_jid.userhost(), member_pass)
+
         def afterUserAdd(*args):
             setVCard(member_dicts.pop(), member_jid, member_pass)
         d.addCallback(afterUserAdd)
@@ -165,8 +171,10 @@ def deregisterXMPPUsers(portal, member_ids):
         @newzodbconnection(portal=portal)
         def checkAdminClientConnected(client):
             if client.state != 'authenticated':
-                log.warn('XMPP admin client has not been able to authenticate. ' \
-                    'Client state is "%s". Will retry on the next request.' % client.state)
+                log.warn(
+                    u'XMPP admin client has not been able to authenticate. ' \
+                    u'Client state is "%s". Will retry on the next request.' \
+                    % client.state)
                 gsm = getGlobalSiteManager()
                 gsm.unregisterUtility(client, IAdminClient)
             deregisterXMPPUsers(portal, member_ids)
