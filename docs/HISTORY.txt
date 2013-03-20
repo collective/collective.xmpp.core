@@ -5,7 +5,13 @@ Changelog
 0.2 (unreleased)
 ----------------
 
-- Nothing yet
+- Feature: Include the user's portrait in their vCard.
+  [jcbrand]
+- Feature: Update the user's vCard when they change their personal preferences.
+  [jcbrand]
+- Bugfix: Last user's roster suggestions ignored by XMPP server.
+  [jcbrand]
+
 
 0.1 (2013-03-15)
 ----------------
