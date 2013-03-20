@@ -1,17 +1,4 @@
-import logging
-import time
-from twisted.words.protocols.jabber.jid import JID
-from twisted.words.protocols.jabber.xmlstream import IQ
-
-from wokkel.disco import NS_DISCO_ITEMS
-from zope.component import getGlobalSiteManager
-from zope.component import getUtility
-from zope.component import queryUtility
-from zope.component.hooks import getSite
-
-from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
-
 from collective.xmpp.core.decorators import newzodbconnection
 from collective.xmpp.core.exceptions import AdminClientNotConnected
 from collective.xmpp.core.interfaces import IAdminClient
@@ -22,6 +9,16 @@ from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.subscribers.startup import createAdminClient
 from collective.xmpp.core.utils.users import escapeNode
 from collective.xmpp.core.utils.users import getXMPPDomain
+from plone.registry.interfaces import IRegistry
+from twisted.words.protocols.jabber.jid import JID
+from twisted.words.protocols.jabber.xmlstream import IQ
+from wokkel.disco import NS_DISCO_ITEMS
+from zope.component import getGlobalSiteManager
+from zope.component import getUtility
+from zope.component import queryUtility
+from zope.component.hooks import getSite
+import logging
+import time
 
 log = logging.getLogger(__name__)
 

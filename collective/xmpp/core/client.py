@@ -1,13 +1,3 @@
-import logging
-import random
-import string
-from twisted.words.protocols.jabber.jid import JID
-from wokkel import client
-from wokkel.subprotocols import StreamManager
-from wokkel.xmppim import PresenceClientProtocol
-from zope.component import getUtility
-from zope.event import notify
-from zope.interface import implements
 from collective.xmpp.core.interfaces import AdminClientConnected
 from collective.xmpp.core.interfaces import AdminClientDisconnected
 from collective.xmpp.core.interfaces import IAdminClient
@@ -16,8 +6,19 @@ from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.protocols import AdminHandler
 from collective.xmpp.core.protocols import ChatHandler
 from collective.xmpp.core.protocols import VCardHandler
+from twisted.words.protocols.jabber.jid import JID
+from wokkel import client
+from wokkel.subprotocols import StreamManager
+from wokkel.xmppim import PresenceClientProtocol
+from zope.component import getUtility
+from zope.event import notify
+from zope.interface import implements
+import logging
+import random
+import string
 
 log = logging.getLogger(__name__)
+
 
 def randomResource():
     chars = string.letters + string.digits
@@ -31,7 +32,7 @@ class DeferredXMPPClient(object):
     def execute(self, jid, password, host,
                 callback, extra_handlers=[], errback=None):
 
-        jid.resource=randomResource()
+        jid.resource = randomResource()
 
         factory = client.DeferredClientFactory(jid, password)
         for handler in extra_handlers:
@@ -68,7 +69,7 @@ class XMPPClient(StreamManager):
 
     def __init__(self, jid, password, extra_handlers=[],
                  host='localhost', port=5222):
-        jid.resource=randomResource()
+        jid.resource = randomResource()
         self.jid = jid
         self.domain = jid.host
         self.host = host
@@ -131,8 +132,8 @@ class UserClient(XMPPClient):
 
     def initializationFailed(self, reason):
         """ """
-        log.warn("Initialization failed for %s. %s" \
-            % (self.jid.userhost(), reason.printBriefTraceback()))
+        log.warn("Initialization failed for %s. %s"
+                 % (self.jid.userhost(), reason.printBriefTraceback()))
 
     def _authd(self, xs):
         super(UserClient, self)._authd(xs)

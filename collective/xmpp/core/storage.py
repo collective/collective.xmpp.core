@@ -1,13 +1,14 @@
-import string
-import random
-import logging
 from BTrees.OOBTree import OOBTree
+from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from persistent import Persistent
 from zope.interface import implements
-from collective.xmpp.core.interfaces import IXMPPPasswordStorage
+import logging
+import random
+import string
 
 logger = logging.getLogger(__name__)
 chars = string.letters + string.digits
+
 
 class XMPPPasswordStorage(Persistent):
     implements(IXMPPPasswordStorage)

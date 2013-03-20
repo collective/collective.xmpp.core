@@ -1,36 +1,32 @@
 # -*- coding: utf-8 -*-
-from twisted.words.protocols.jabber.xmlstream import IQ
-from wokkel.disco import NS_DISCO_ITEMS
-
-from zope.component.hooks import getSite
-from zope.component import queryUtility
-from zope.component import getUtility
-
-from z3c.form import button
-from z3c.form import field
-from z3c.form import form
-from z3c.form.interfaces import NO_VALUE
-
-from Products.statusmessages.interfaces import IStatusMessage
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.CMFCore.utils import getToolByName
-
-from plone.registry.interfaces import IRegistry
-from plone.app.registry.browser import controlpanel
-
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.statusmessages.interfaces import IStatusMessage
 from collective.xmpp.core import messageFactory as _
+from collective.xmpp.core.decorators import newzodbconnection
+from collective.xmpp.core.exceptions import AdminClientNotConnected
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IXMPPUserSetup
 from collective.xmpp.core.utils import setup
 from collective.xmpp.core.utils import users
-from collective.xmpp.core.decorators import newzodbconnection
-from collective.xmpp.core.exceptions import AdminClientNotConnected 
+from plone.app.registry.browser import controlpanel
+from plone.registry.interfaces import IRegistry
+from twisted.words.protocols.jabber.xmlstream import IQ
+from wokkel.disco import NS_DISCO_ITEMS
+from z3c.form import button
+from z3c.form import field
+from z3c.form import form
+from z3c.form.interfaces import NO_VALUE
+from zope.component import getUtility
+from zope.component import queryUtility
+from zope.component.hooks import getSite
 
 UserAndGroupSelectionWidget_installed = True
 try:
-    # We have installed UserAndGroupSelectionWidget with version greated then 2.0.4
+    # We have installed UserAndGroupSelectionWidget with version greated
+    # then 2.0.4
     from Products.UserAndGroupSelectionWidget.z3cform.widget import \
         UsersAndGroupsSelectionWidgetFactory
 except ImportError:
@@ -101,7 +97,6 @@ class XMPPUserSetupForm(form.Form):
         elif self.request.form.get('form.widgets.clear_all_passwords'):
             return self.clearAllPasswords()
 
-
     def registerAll(self):
         status = IStatusMessage(self.request)
         member_ids = users.getAllMemberIds()
@@ -115,8 +110,8 @@ class XMPPUserSetupForm(form.Form):
                   u"ZServer has been restarted. If your settings are correct, "
                   u"then try again, it should work now. "), "warn")
             return
-        status.add(_(u"All users are being registered "
-            "in the background. "
+        status.add(_(
+            u"All users are being registered in the background. "
             "This might take a few minutes and your site might become "
             "unresponsive."), "info")
 
@@ -127,12 +122,13 @@ class XMPPUserSetupForm(form.Form):
         status = IStatusMessage(self.request)
         client = queryUtility(IAdminClient)
         if client is None:
-            status.add(_(u"The XMPP Twisted utility could not be "
-            "found. Either your XMPP settings are incorrect, or the Zope "
-            "server was just restarted and the utility not yet registered "
-            "again (it's registered upon page load). If it's the "
-            "second case, please try again. Otherwise, check your XMPP "
-            "settings."), "error")
+            status.add(_(
+                u"The XMPP Twisted utility could not be "
+                u"found. Either your XMPP settings are incorrect, or the Zope "
+                u"server was just restarted and the utility not yet "
+                u"registered again (it's registered upon page load). If "
+                u"it's the second case, please try again. Otherwise, check "
+                u"your XMPP settings."), "error")
             return
 
         @newzodbconnection(portal=portal)
@@ -158,11 +154,13 @@ class XMPPUserSetupForm(form.Form):
         d = client.admin.getRegisteredUsers()
         d.addCallbacks(resultReceived)
         status.add(_(u"The XMPP server is being instructed to deregister all "
-                    u"the users. This might take some minutes to complete."), "info")
+                     u"the users. This might take some minutes to complete."),
+                   "info")
         return d
 
     def getChosenMembers(self):
-        """ The Products.UserAndGroupSelectionWidget can return users and groups.
+        """ The Products.UserAndGroupSelectionWidget can return users and
+            groups.
 
             Identify the chosen groups and return their members as well as the
             individually chosen members (while removing duplicates).
@@ -173,17 +171,20 @@ class XMPPUserSetupForm(form.Form):
         if UserAndGroupSelectionWidget_installed:
             pg = getToolByName(self.context, 'portal_groups')
             groups = pg.getGroupIds()
-            chosen_groups = list(set(members_and_groups).intersection(set(groups)))
-            chosen_members = list(set(members_and_groups).difference(set(groups)))
+            chosen_groups = \
+                list(set(members_and_groups).intersection(set(groups)))
+            chosen_members = \
+                list(set(members_and_groups).difference(set(groups)))
 
             for g in chosen_groups:
                 chosen_members += pg.getGroupById(g).getGroupMemberIds()
 
             members = list(set(chosen_members))
         else:
-            # Case when Products.UserAndGroupSelectionWidget is not installed/used
+            # Case when Products.UserAndGroupSelectionWidget is not
+            # installed/used
             members = [member for member in members_and_groups.split('\r\n')
-                           if member]
+                       if member]
         return members
 
     def deregisterSelected(self):
@@ -191,7 +192,7 @@ class XMPPUserSetupForm(form.Form):
         widget = self.widgets.get('users')
         if widget.extract() == NO_VALUE:
             status.add(_(u"You first need to choose the users to deregister"),
-                        "error")
+                       "error")
             return
         setup.deregisterXMPPUsers(self.context, self.getChosenMembers())
         return status.add(_(u"The selected users are being deregistered in "
@@ -202,7 +203,7 @@ class XMPPUserSetupForm(form.Form):
         widget = self.widgets.get('users')
         if widget.extract() == NO_VALUE:
             status.add(_(u"You first need to choose the users to register"),
-                        "error")
+                       "error")
             return
         try:
             setup.registerXMPPUsers(self.context, self.getChosenMembers())

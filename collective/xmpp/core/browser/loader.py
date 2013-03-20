@@ -1,24 +1,20 @@
-import logging
-import json
-
-from zope.component import getUtility
-from zope.component import queryUtility
-from zope.component.hooks import getSite
-
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser import BrowserView
-
-from plone.registry.interfaces import IRegistry
-
 from collective.xmpp.core.client import randomResource
 from collective.xmpp.core.httpb import BOSHClient
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.utils import setup
-
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
+from zope.component import queryUtility
+from zope.component.hooks import getSite
+import json
+import logging
 
 logger = logging.getLogger(__name__)
+
 
 class XMPPLoader(BrowserView):
     """ """

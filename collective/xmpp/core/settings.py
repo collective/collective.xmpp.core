@@ -10,6 +10,7 @@ from collective.xmpp.core.utils.users import escapeNode
 
 log = logging.getLogger(__name__)
 
+
 class XMPPUsers(object):
     implements(IXMPPUsers)
 

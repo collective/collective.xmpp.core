@@ -1,8 +1,8 @@
+from zope.component.hooks import getSite
+from zope.component.hooks import setSite
 import Zope2
 import logging
 import transaction
-from zope.component.hooks import setSite
-from zope.component.hooks import getSite
 
 log = logging.getLogger(__name__)
 
@@ -15,13 +15,14 @@ def newzodbconnection(portal=None):
         you need this decorator.
 
         WARNING: this decorator discards the previous connection and loads a
-        new one. Methods with this decorator must therefore allways  be called 
+        new one. Methods with this decorator must therefore allways  be called
         in a separate thread.
 
-        This does not work when you need to access the global request 
+        This does not work when you need to access the global request
         object (i.e there won't be one).
     """
     portal = portal or getSite()
+
     def decorate(func):
         def wrapper(*args, **kw):
             result = None
@@ -41,5 +42,5 @@ def newzodbconnection(portal=None):
                 setSite(None)
                 app._p_jar.close()
             return result
-        return wrapper 
+        return wrapper
     return decorate

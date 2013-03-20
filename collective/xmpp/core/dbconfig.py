@@ -21,17 +21,17 @@ will be overridden with those values every time you restart your zope server.
 In other words, you basically lose the ability to configure your xmpp settings
 via Plone itself.
 """
-import logging
-import transaction
+from App.config import getConfiguration
+from Products.CMFCore.utils import getToolByName
+from collective.xmpp.core.interfaces import IXMPPSettings
+from plone.registry.interfaces import IRegistry
 from zope.app.publication.zopepublication import ZopePublication
 from zope.component import getUtility
 from zope.component.hooks import setSite
 import Globals
 import Zope2
-from App.config import getConfiguration
-from Products.CMFCore.utils import getToolByName
-from plone.registry.interfaces import IRegistry
-from collective.xmpp.core.interfaces import IXMPPSettings
+import logging
+import transaction
 
 configuration = getConfiguration()
 if not hasattr(configuration, 'product_config'):
@@ -41,6 +41,7 @@ else:
 
 log = logging.getLogger(__name__)
 
+
 def dbconfig(event):
     """ """
     if conf is None:
@@ -49,7 +50,7 @@ def dbconfig(event):
 
     if Globals.DevelopmentMode:
         log.info('Configuration settings for collective.xmpp.core are ignored '
-                'because Zope is starting up in debug_mode')
+                 'because Zope is starting up in debug_mode')
         return
 
     db = Zope2.DB
@@ -58,12 +59,13 @@ def dbconfig(event):
     instance_name = conf.get('instance_name')
     if not instance_name:
         log.error('"instance_name" needs to be set if you want to configure '
-                'collective.xmpp.core from buildout.')
+                  'collective.xmpp.core from buildout.')
         return
 
     plone = root_folder.get(instance_name)
     if plone is None:
-        log.error('No Plone instance with instance_name "%s" found.' % instance_name)
+        log.error('No Plone instance with instance_name "%s" found.'
+                  % instance_name)
         return
 
     setup = getToolByName(plone, 'portal_setup')
@@ -76,12 +78,16 @@ def dbconfig(event):
     try:
         version = int(info.get('version', 0))
     except KeyError:
-        log.error('Could not get intelligible profile version for collective.xmpp.core')
+        log.error('Could not get intelligible profile version for '
+                  'collective.xmpp.core')
         return
 
     if version < 2 or True:
         setSite(plone)
-        setup.runImportStepFromProfile('profile-collective.xmpp.core:default', 'plone.app.registry')
+        setup.runImportStepFromProfile(
+            'profile-collective.xmpp.core:default',
+            'plone.app.registry'
+        )
         setSite(None)
 
     registry = getUtility(IRegistry, context=plone)
