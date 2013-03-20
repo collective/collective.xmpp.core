@@ -1,6 +1,5 @@
 import logging
-import transaction
-import Zope2
+import time
 from twisted.words.protocols.jabber.jid import JID
 from twisted.words.protocols.jabber.xmlstream import IQ
 
@@ -8,11 +7,13 @@ from wokkel.disco import NS_DISCO_ITEMS
 from zope.component import getGlobalSiteManager
 from zope.component import getUtility
 from zope.component import queryUtility
-from zope.component.hooks import setSite
+from zope.component.hooks import getSite
 
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 
+from collective.xmpp.core.decorators import newzodbconnection
+from collective.xmpp.core.exceptions import AdminClientNotConnected
 from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPSettings
@@ -20,9 +21,32 @@ from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.subscribers.startup import createAdminClient
 from collective.xmpp.core.utils.users import escapeNode
-from collective.xmpp.core.utils.users import getXMPPDomain 
+from collective.xmpp.core.utils.users import getXMPPDomain
 
 log = logging.getLogger(__name__)
+
+
+def setVCard(udict, jid, password, callback=None):
+
+    def onAuth():
+        client.vcard.send(udict, disconnect)
+
+    from collective.xmpp.core.client import UserClient
+    registry = getUtility(IRegistry)
+    settings = registry.forInterface(IXMPPSettings, check=False)
+    client = UserClient(
+        jid,
+        settings.hostname,
+        password,
+        settings.port,
+        onAuth
+    )
+
+    def disconnect(result):
+        client.disconnect()
+        log.info('Successfully added a VCard')
+        if callback and hasattr(callback, '__call__'):
+            callback()
 
 
 def registerXMPPUsers(portal, member_ids):
@@ -39,54 +63,48 @@ def registerXMPPUsers(portal, member_ids):
     log.info('Preparing to create XMPP users from the existing Plone users')
     client = queryUtility(IAdminClient)
     if client is None:
-        log.info('We first have to create the XMPP admin client. '
-                 'This might take a few seconds')
-
-        def checkAdminClientConnected(client):
-            if client.state != 'authenticated':
-                log.warn('XMPP admin client has not been able to authenticate. ' \
-                    'Client state is "%s". Will retry on the next request.' % client.state)
-                gsm = getGlobalSiteManager()
-                gsm.unregisterUtility(client, IAdminClient)
-            registerXMPPUsers(portal, member_ids)
-            setSite(None)
-
-        createAdminClient(checkAdminClientConnected)
-        return
-
-    mtool = getToolByName(portal, 'portal_membership')
+        raise AdminClientNotConnected()
     registry = getUtility(IRegistry)
     settings = registry.forInterface(IXMPPSettings, check=False)
     xmpp_users = getUtility(IXMPPUsers)
     zr = getUtility(IZopeReactor)
+    portal_url = getToolByName(portal, 'portal_url')()
+    mtool = getToolByName(portal, 'portal_membership')
     member_jids = []
-    member_passwords = {}
-
     member_dicts = []
+    # We have to create all the vcard dicts upfront here.
+    # The reason for this is that getPersonalPortrait looks inside the current
+    # skin folder for a portrait, but to get the currently applied skin, it
+    # requires a legitimate request obj, which doesn't exist in callback
+    # methods.
     for member_id in member_ids:
         member = mtool.getMemberById(member_id)
         fullname = member.getProperty('fullname').decode('utf-8')
         user_jid = xmpp_users.getUserJID(member_id)
-        # TODO:
-        # portrait_url = pm.getPersonalPortrait(member_id).absolute_url()
-        # portal_url = getToolByName(self.context, 'portal_url')
-        # user_profile_url = '%s/author/%s' % (portal_url(), member_id)
+        portrait = mtool.getPersonalPortrait(member_id)
         udict = {
             'fullname': fullname,
             'nickname': member_id,
             'email': member.getProperty('email'),
             'userid': user_jid.userhost(),
             'jabberid': user_jid.userhost(),
-            }
+            'url': '%s/author/%s' % (portal_url, member_id),
+            'image_type': portrait.content_type,
+            'raw_image': portrait._data
+        }
         member_dicts.append(udict)
 
+    @newzodbconnection()
     def subscribeToAllUsers():
+        site = getSite()
+
+        @newzodbconnection(portal=site)
         def resultReceived(result):
             items = [item.attributes for item in result.query.children]
             if items[0].has_key('node'):
                 for item in reversed(items):
                     iq = IQ(client.admin.xmlstream, 'get')
-                    iq['to'] = getXMPPDomain(portal) 
+                    iq['to'] = getXMPPDomain(site)
                     query = iq.addElement((NS_DISCO_ITEMS, 'query'))
                     query['node'] = item['node']
                     iq.send().addCallbacks(resultReceived)
@@ -96,60 +114,26 @@ def registerXMPPUsers(portal, member_ids):
                     subscribe_jids.remove(settings.admin_jid)
 
                 if subscribe_jids:
-                    getJID = lambda uid: JID("%s@%s" % (escapeNode(uid), settings.xmpp_domain))
+                    getJID = lambda uid: JID(
+                        "%s@%s" % (escapeNode(uid), settings.xmpp_domain))
                     roster_jids = [getJID(user_id.split('@')[0])
-                                     for user_id in subscribe_jids]
+                                   for user_id in subscribe_jids]
 
                     for member_jid in member_jids:
                         client.chat.sendRosterItemAddSuggestion(member_jid,
                                                                 roster_jids,
-                                                                portal)
+                                                                site)
+                        log.info('Roster suggestion sent for %s' % member_jid)
+                    # XXX: Somehow the last user's roster suggestions is
+                    # dropped, unless we rest here for a bit.
+                    time.sleep(3)
             return result
+
         d = client.admin.getRegisteredUsers()
         d.addCallbacks(resultReceived)
         return True
 
-
-    def setVCard(udict, jid, password, callback):
-        def onAuth():
-            client.vcard.send(udict, disconnect)
-
-        from collective.xmpp.core.client import UserClient
-        client = UserClient(jid, settings.hostname, password, settings.port, onAuth)
-
-        def disconnect(result):
-            client.disconnect()
-            callback(result)
-
-
-    def setState(callback, *args, **kw):
-        """ In callback methods, we don't have an open ZODB connection, so we
-            have to create one.
-        """
-        setSite(None)
-        app = Zope2.app()
-        root = app.unrestrictedTraverse('/'.join(portal.getPhysicalPath()))
-        setSite(root)
-        transaction.begin()
-        try:
-            callback(*args, **kw)
-            transaction.commit()
-        except Exception, e:
-            log.error(e)
-            transaction.abort()
-        finally:
-            setSite(None)
-            app._p_jar.close()
-
-    def registerNextUser(result):
-        if hasattr(result, 'handled') and result.handled:
-            log.info('Successfully added a VCard')
-        if result is False:
-            return 
-        setState(registerUser)
-        return True
-
-    def registerUser():
+    def _registerUser():
         if not member_ids:
             if settings.auto_subscribe:
                 subscribeToAllUsers()
@@ -160,34 +144,49 @@ def registerXMPPUsers(portal, member_ids):
         pass_storage = getUtility(IXMPPPasswordStorage)
         if pass_storage.get(member_id):
             log.info('%s is already registered' % member_id)
-            zr.reactor.callFromThread(registerNextUser, True)
+            zr.reactor.callInThread(registerUser)
             return
         member_pass = pass_storage.set(member_id)
         d = client.admin.addUser(member_jid.userhost(), member_pass)
+
+        @newzodbconnection(portal=portal)
         def afterUserAdd(*args):
-            setState(setVCard, member_dicts.pop(), member_jid, member_pass, registerNextUser)
+            setVCard(member_dicts.pop(), member_jid, member_pass, registerUser)
         d.addCallback(afterUserAdd)
-    registerUser()
+        return d
+
+    @newzodbconnection()
+    def registerUser():
+        return _registerUser()
+
+    return _registerUser()
 
 
-def deregisterXMPPUsers(portal, member_jids):
+def deregisterXMPPUsers(portal, member_ids):
     """ Deregister each Plone user from the XMPP
     """
     log.info('Preparing to remove XMPP users')
+    member_jids = []
+    xmpp_users = getUtility(IXMPPUsers)
+    for member_id in member_ids:
+        member_jid = xmpp_users.getUserJID(member_id)
+        member_jids.append(member_jid)
+
     client = queryUtility(IAdminClient, context=portal)
     if client is None:
         log.info('We first have to create the XMPP admin client. '
                  'This might take a few seconds')
 
+        @newzodbconnection(portal=portal)
         def checkAdminClientConnected(client):
             if client.state != 'authenticated':
-                log.warn('XMPP admin client has not been able to authenticate. ' \
-                    'Client state is "%s". Will retry on the next request.' % client.state)
+                log.warn(
+                    u'XMPP admin client has not been able to authenticate. ' \
+                    u'Client state is "%s". Will retry on the next request.' \
+                    % client.state)
                 gsm = getGlobalSiteManager()
                 gsm.unregisterUtility(client, IAdminClient)
-            deregisterXMPPUsers(portal, member_jids)
-            setSite(None)
-
+            deregisterXMPPUsers(portal, member_ids)
         createAdminClient(checkAdminClientConnected)
         return
 
@@ -198,5 +197,4 @@ def deregisterXMPPUsers(portal, member_jids):
                 member_jid = member_jid.userhost()
             member_id = member_jid.rsplit('@')[0]
             passwords.remove(member_id)
-    client.admin.deleteUsers(member_jids)
-    transaction.commit()
+    return client.admin.deleteUsers(member_jids)
