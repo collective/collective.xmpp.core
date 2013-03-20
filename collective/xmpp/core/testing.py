@@ -235,13 +235,14 @@ class XMPPCoreFixture(PloneSandboxLayer):
         wait_on_client_deferreds(client)
 
     def tearDownPloneSite(self, portal):
+        client = queryUtility(IAdminClient)
+        if not client:
+            # XXX: When running tests on runlevel 1, the IAdminClient is not
+            # registered here.
+            return
         zr = getUtility(IZopeReactor)
         zr.start()
-        # XXX: When running tests on runlevel 1, the IAdminClient is not
-        # registered here.
-        client = queryUtility(IAdminClient)
-        if client:
-            client.disconnect()
+        client.disconnect()
         wait_for_reactor_state(zr.reactor, state=True)
         wait_for_client_state(client, 'disconnected')
         zr.stop()
