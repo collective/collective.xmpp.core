@@ -59,6 +59,7 @@ def adminConnected(event):
     import user_management
     gsm = getGlobalSiteManager()
     gsm.registerHandler(user_management.onUserDeletion)
+    gsm.registerHandler(user_management.onUserPreferencesChanged)
 
 
 def adminDisconnected(event):
