@@ -26,6 +26,29 @@ from collective.xmpp.core.utils.users import getXMPPDomain
 log = logging.getLogger(__name__)
 
 
+def setVCard(udict, jid, password, callback=None):
+
+    def onAuth():
+        client.vcard.send(udict, disconnect)
+
+    from collective.xmpp.core.client import UserClient
+    registry = getUtility(IRegistry)
+    settings = registry.forInterface(IXMPPSettings, check=False)
+    client = UserClient(
+        jid,
+        settings.hostname,
+        password,
+        settings.port,
+        onAuth
+    )
+
+    def disconnect(result):
+        client.disconnect()
+        log.info('Successfully added a VCard')
+        if callback and hasattr(callback, '__call__'):
+            callback()
+
+
 def registerXMPPUsers(portal, member_ids):
     """ Register each Plone user in the XMPP server and save his/her password.
 
@@ -41,15 +64,19 @@ def registerXMPPUsers(portal, member_ids):
     client = queryUtility(IAdminClient)
     if client is None:
         raise AdminClientNotConnected()
-
-    portal_url = getToolByName(portal, 'portal_url')()
-    mtool = getToolByName(portal, 'portal_membership')
     registry = getUtility(IRegistry)
     settings = registry.forInterface(IXMPPSettings, check=False)
     xmpp_users = getUtility(IXMPPUsers)
     zr = getUtility(IZopeReactor)
+    portal_url = getToolByName(portal, 'portal_url')()
+    mtool = getToolByName(portal, 'portal_membership')
     member_jids = []
     member_dicts = []
+    # We have to create all the vcard dicts upfront here.
+    # The reason for this is that getPersonalPortrait looks inside the current
+    # skin folder for a portrait, but to get the currently applied skin, it
+    # requires a legitimate request obj, which doesn't exist in callback
+    # methods.
     for member_id in member_ids:
         member = mtool.getMemberById(member_id)
         fullname = member.getProperty('fullname').decode('utf-8')
@@ -106,25 +133,6 @@ def registerXMPPUsers(portal, member_ids):
         d.addCallbacks(resultReceived)
         return True
 
-    @newzodbconnection()
-    def setVCard(udict, jid, password):
-        def onAuth():
-            client.vcard.send(udict, disconnect)
-
-        from collective.xmpp.core.client import UserClient
-        client = UserClient(
-            jid,
-            settings.hostname,
-            password,
-            settings.port,
-            onAuth
-        )
-
-        def disconnect(result):
-            client.disconnect()
-            log.info('Successfully added a VCard')
-            registerUser()
-
     def _registerUser():
         if not member_ids:
             if settings.auto_subscribe:
@@ -141,8 +149,9 @@ def registerXMPPUsers(portal, member_ids):
         member_pass = pass_storage.set(member_id)
         d = client.admin.addUser(member_jid.userhost(), member_pass)
 
+        @newzodbconnection(portal=portal)
         def afterUserAdd(*args):
-            setVCard(member_dicts.pop(), member_jid, member_pass)
+            setVCard(member_dicts.pop(), member_jid, member_pass, registerUser)
         d.addCallback(afterUserAdd)
         return d
 
