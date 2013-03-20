@@ -2,7 +2,7 @@
 Changelog
 =========
 
-0.2 (unreleased)
+0.2 (2013-03-20)
 ----------------
 
 - Feature: Include the user's portrait in their vCard.
