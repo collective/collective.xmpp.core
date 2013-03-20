@@ -1,13 +1,9 @@
-import time
-import urllib2
-from twisted.words.protocols.jabber.jid import JID
-from twisted.internet.base import DelayedCall
-from zope.component import getUtility
-from zope.configuration import xmlconfig
-from zope.interface import alsoProvides
-
 from ZPublisher.pubevents import PubBeforeCommit
-
+from collective.xmpp.core.interfaces import IAdminClient
+from collective.xmpp.core.interfaces import IProductLayer
+from collective.xmpp.core.interfaces import IXMPPSettings
+from collective.xmpp.core.interfaces import IZopeReactor
+from collective.xmpp.core.subscribers.startup import setUpAdminClient
 from plone.app.testing import FunctionalTesting
 from plone.app.testing import IntegrationTesting
 from plone.app.testing import PLONE_FIXTURE
@@ -15,13 +11,14 @@ from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import applyProfile
 from plone.registry.interfaces import IRegistry
 from plone.testing import Layer
-
-from collective.xmpp.core.interfaces import IAdminClient
-from collective.xmpp.core.interfaces import IProductLayer
-from collective.xmpp.core.interfaces import IXMPPSettings
-from collective.xmpp.core.interfaces import IZopeReactor
-from collective.xmpp.core.subscribers.startup import setUpAdminClient
-from collective.xmpp.core.utils.setup import registerXMPPUsers
+from twisted.internet.base import DelayedCall
+from twisted.words.protocols.jabber.jid import JID
+from zope.component import getUtility
+from zope.component import queryUtility
+from zope.configuration import xmlconfig
+from zope.interface import alsoProvides
+import time
+import urllib2
 
 DelayedCall.debug = True
 
@@ -235,15 +232,16 @@ class XMPPCoreFixture(PloneSandboxLayer):
         setUpAdminClient(e)
         client = getUtility(IAdminClient)
         wait_for_client_state(client, u'authenticated')
-        # XXX: This doesn't seem necessary...
-        # registerXMPPUsers(portal, member_ids=['test_user_1_'])
         wait_on_client_deferreds(client)
 
     def tearDownPloneSite(self, portal):
         zr = getUtility(IZopeReactor)
         zr.start()
-        client = getUtility(IAdminClient)
-        client.disconnect()
+        # XXX: When running tests on runlevel 1, the IAdminClient is not
+        # registered here.
+        client = queryUtility(IAdminClient)
+        if client:
+            client.disconnect()
         wait_for_reactor_state(zr.reactor, state=True)
         wait_for_client_state(client, 'disconnected')
         zr.stop()
@@ -251,7 +249,9 @@ class XMPPCoreFixture(PloneSandboxLayer):
 
 XMPPCORE_FIXTURE = XMPPCoreFixture()
 
-XMPPCORE_INTEGRATION_TESTING = IntegrationTesting(bases=(XMPPCORE_FIXTURE, ),
+XMPPCORE_INTEGRATION_TESTING = IntegrationTesting(
+    bases=(XMPPCORE_FIXTURE, ),
     name="XMPPCoreFixture:Integration")
-XMPPCORE_FUNCTIONAL_TESTING = FunctionalTesting(bases=(XMPPCORE_FIXTURE, ),
+XMPPCORE_FUNCTIONAL_TESTING = FunctionalTesting(
+    bases=(XMPPCORE_FIXTURE, ),
     name="XMPPCoreFixture:Functional")
