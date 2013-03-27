@@ -45,7 +45,16 @@ class XMPPLoader(BrowserView):
             self.jid.resource = randomResource()
         else:
             self.jid.resource = resource
-        self.jpassword = self.xmpp_users.getUserPassword(self.user_id)
+
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(IXMPPSettings, check=False)
+        if self.jid.userhost() == settings.admin_jid:
+            # The admin user's password is not stored in the
+            # IXMPPPasswordStorage utility, so we get it from IXMPPSettings
+            self.jpassword = settings.admin_password
+        else:
+            self.jpassword = self.xmpp_users.getUserPassword(self.user_id)
+
         if self.jpassword is None:
             self._available = False
             self.autoRegister(client)

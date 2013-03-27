@@ -5,7 +5,8 @@ Changelog
 0.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Bugfix: When pre-binding, fetch admin user's password from IXMPPSettings. 
+  [jcbrand]
 
 
 0.2 (2013-03-20)
