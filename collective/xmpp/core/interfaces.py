@@ -74,18 +74,32 @@ class IXMPPUserSetup(Interface):
         required=False,
     )
 
-    clear_all_passwords = button.Button(
-        title=_(u'label_clear_passwords',
-                default=u"Completely wipe password storage"),
+    update_vcards = button.Button(
+        title=_(u'label_update_vcards',
+                default=u"Update ALL Users' vCards"),
         description=_(
-            u"help_clear_passwords",
-            default=u"DON'T CLICK THIS UNLESS YOU KNOW WHAT "
-            u"YOU'RE DOING! This will remove ALL the "
-            u"entries in the XMPP password storage "
-            u"utility in Plone and should only be useful "
-            u"in very rare cases or while developing."),
+            u"help_update_vcards",
+            default=u"Click here to update the vCards of ALL "
+            "the users in the site."),
         required=False,
     )
+
+
+    # XXX: Useful in certain circumstances, but dangerous and should probably
+    # not be available by default.
+    #
+    # clear_all_passwords = button.Button(
+    #     title=_(u'label_clear_passwords',
+    #             default=u"Completely wipe password storage"),
+    #     description=_(
+    #         u"help_clear_passwords",
+    #         default=u"DON'T CLICK THIS UNLESS YOU KNOW WHAT "
+    #         u"YOU'RE DOING! This will remove ALL the "
+    #         u"entries in the XMPP password storage "
+    #         u"utility in Plone and should only be useful "
+    #         u"in very rare cases or while developing."),
+    #     required=False,
+    # )
 
 
 class IXMPPSettings(Interface):

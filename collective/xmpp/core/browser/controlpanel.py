@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.FSImage import FSImage
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from collective.xmpp.core import messageFactory as _
@@ -9,6 +10,8 @@ from collective.xmpp.core.interfaces import IAdminClient
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IXMPPUserSetup
+from collective.xmpp.core.interfaces import IXMPPUsers
+from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.utils import setup
 from collective.xmpp.core.utils import users
 from plone.app.registry.browser import controlpanel
@@ -32,6 +35,15 @@ try:
 except ImportError:
     # UserAndGroupSelectionWidget > 2.0.4 not found
     UserAndGroupSelectionWidget_installed = False
+
+
+UTILITY_NOT_FOUND_MESSAGE = _(
+    u"The XMPP Twisted utility could not be "
+    u"found. Either your XMPP settings are incorrect, or the Zope "
+    u"server was just restarted and the utility not yet "
+    u"registered again (it's registered upon page load). If "
+    u"it's the second case, please try again. Otherwise, check "
+    u"your XMPP settings.")
 
 
 class XMPPSettingsEditForm(controlpanel.RegistryEditForm):
@@ -90,6 +102,8 @@ class XMPPUserSetupForm(form.Form):
             return self.registerAll()
         elif self.request.form.get('form.widgets.deregister_all'):
             return self.deregisterAll()
+        elif self.request.form.get('form.widgets.update_vcards'):
+            return self.updateVCards()
         elif self.request.form.get('form.widgets.register_selected'):
             return self.registerSelected()
         elif self.request.form.get('form.widgets.deregister_selected'):
@@ -122,13 +136,7 @@ class XMPPUserSetupForm(form.Form):
         status = IStatusMessage(self.request)
         client = queryUtility(IAdminClient)
         if client is None:
-            status.add(_(
-                u"The XMPP Twisted utility could not be "
-                u"found. Either your XMPP settings are incorrect, or the Zope "
-                u"server was just restarted and the utility not yet "
-                u"registered again (it's registered upon page load). If "
-                u"it's the second case, please try again. Otherwise, check "
-                u"your XMPP settings."), "error")
+            status.add(UTILITY_NOT_FOUND_MESSAGE, "error")
             return
 
         @newzodbconnection(portal=portal)
@@ -155,6 +163,89 @@ class XMPPUserSetupForm(form.Form):
         d.addCallbacks(resultReceived)
         status.add(_(u"The XMPP server is being instructed to deregister all "
                      u"the users. This might take some minutes to complete."),
+                   "info")
+        return d
+
+    def updateVCards(self):
+        """
+        """
+        portal = self.context
+        registry = getUtility(IRegistry)
+        settings = registry.forInterface(IXMPPSettings, check=False)
+        status = IStatusMessage(self.request)
+        client = queryUtility(IAdminClient)
+        portal_url = getToolByName(portal, 'portal_url')()
+        member_dicts = []
+        pass_storage = getUtility(IXMPPPasswordStorage)
+        if client is None:
+            status.add(UTILITY_NOT_FOUND_MESSAGE, "error")
+            return
+
+        # XXX: This is a hack. We get vcard data for all users in the site,
+        # without yet knowing whether they are actually registered in the
+        # XMPP server. We do this here because getPersonalPortrait doesn't
+        # work in callbacks (due to Request not being set up properly).
+        xmpp_users = getUtility(IXMPPUsers)
+        mtool = getToolByName(portal, 'portal_membership')
+        member_ids = users.getAllMemberIds()
+        for member_id in member_ids:
+            member = mtool.getMemberById(member_id)
+            fullname = member.getProperty('fullname').decode('utf-8')
+            user_jid = xmpp_users.getUserJID(member_id)
+            portrait = mtool.getPersonalPortrait(member_id)
+            if isinstance(portrait, FSImage):
+                raw_image = portrait._data
+            else:
+                raw_image = portrait.data
+            udict = {
+                'fullname': fullname,
+                'nickname': member_id,
+                'email': member.getProperty('email'),
+                'userid': user_jid.userhost(),
+                'jabberid': user_jid.userhost(),
+                'url': '%s/author/%s' % (portal_url, member_id),
+                'image_type': portrait.content_type,
+                'raw_image': raw_image,
+                'jid_obj': user_jid,
+                'pass': pass_storage.get(member_id)
+            }
+            member_dicts.append(udict)
+
+        @newzodbconnection(portal=portal)
+        def resultReceived(result):
+            items = [item.attributes for item in result.query.children]
+            if 'node' in items[0]:
+                for item in reversed(items):
+                    iq = IQ(client.admin.xmlstream, 'get')
+                    iq['to'] = settings.xmpp_domain
+                    query = iq.addElement((NS_DISCO_ITEMS, 'query'))
+                    query['node'] = item['node']
+                    iq.send().addCallbacks(resultReceived)
+            else:
+                member_jids = [item['jid'] for item in items]
+                if settings.admin_jid in member_jids:
+                    member_jids.remove(settings.admin_jid)
+                registered_member_dicts = \
+                    [d for d in member_dicts if d['jabberid'] in member_jids]
+
+                @newzodbconnection(portal=portal)
+                def updateVCard():
+                    mdict = registered_member_dicts.pop()
+                    setup.setVCard(
+                        mdict,
+                        mdict['jid_obj'],
+                        mdict['pass'],
+                        updateVCard)
+
+                if len(registered_member_dicts):
+                    zr = getUtility(IZopeReactor)
+                    zr.reactor.callInThread(updateVCard)
+            return
+
+        d = client.admin.getRegisteredUsers()
+        d.addCallbacks(resultReceived)
+        status.add(_(u"Each XMPP-registered user is having their vCard "
+                     u"updated. This might take some minutes to complete."),
                    "info")
         return d
 
