@@ -5,7 +5,8 @@ Changelog
 0.3 (unreleased)
 ----------------
 
-- Nothing changed yet.
+- Bugfix: Could not get portrait data for users with custom profile pictures.
+  [jcbrand]
 
 
 0.2 (2013-03-20)

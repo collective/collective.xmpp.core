@@ -1,4 +1,5 @@
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.FSImage import FSImage
 from collective.xmpp.core.decorators import newzodbconnection
 from collective.xmpp.core.exceptions import AdminClientNotConnected
 from collective.xmpp.core.interfaces import IAdminClient
@@ -79,6 +80,10 @@ def registerXMPPUsers(portal, member_ids):
         fullname = member.getProperty('fullname').decode('utf-8')
         user_jid = xmpp_users.getUserJID(member_id)
         portrait = mtool.getPersonalPortrait(member_id)
+        if isinstance(portrait, FSImage):
+            raw_image = portrait._data
+        else:
+            raw_image = portrait.data
         udict = {
             'fullname': fullname,
             'nickname': member_id,
@@ -87,7 +92,7 @@ def registerXMPPUsers(portal, member_ids):
             'jabberid': user_jid.userhost(),
             'url': '%s/author/%s' % (portal_url, member_id),
             'image_type': portrait.content_type,
-            'raw_image': portrait._data
+            'raw_image': raw_image
         }
         member_dicts.append(udict)
 
