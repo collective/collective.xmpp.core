@@ -126,7 +126,7 @@ class VCardHandler(XMPPHandler):
         iq = IQ(self.xmlstream, 'set')
         vcard = iq.addElement((NS_VCARD_TEMP, 'vCard'))
         vcard['version'] = '3.0'
-        fn = vcard.addElement('FN', content=udict.get('fullname'))
+        vcard.addElement('FN', content=udict.get('fullname'))
         vcard.addElement('NICKNAME', content=udict.get('nickname'))
         email = vcard.addElement('EMAIL', content=udict.get('email'))
         email.addElement('INTERNET')

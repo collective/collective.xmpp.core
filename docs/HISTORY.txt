@@ -5,6 +5,10 @@ Changelog
 0.3 (unreleased)
 ----------------
 
+- Bugfix: Could not get portrait data for users with custom profile pictures.
+  [jcbrand]
+- Feature: Add a new controlpanel option to update all user's vCards.
+  [jcbrand]
 - Bugfix: When pre-binding, fetch admin user's password from IXMPPSettings. 
   [jcbrand]
 

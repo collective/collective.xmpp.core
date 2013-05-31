@@ -1,15 +1,15 @@
-import logging
+from Products.CMFCore.utils import getToolByName
+from collective.xmpp.core.client import AdminClient
+from collective.xmpp.core.interfaces import IAdminClient
+from collective.xmpp.core.interfaces import IProductLayer
+from collective.xmpp.core.interfaces import IXMPPSettings
+from collective.xmpp.core.interfaces import IZopeReactor
 from plone.registry.interfaces import IRegistry
 from zope.component import getGlobalSiteManager
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.component.hooks import getSite
-from Products.CMFCore.utils import getToolByName
-from collective.xmpp.core.client import AdminClient
-from collective.xmpp.core.interfaces import IAdminClient
-from collective.xmpp.core.interfaces import IXMPPSettings
-from collective.xmpp.core.interfaces import IProductLayer
-from collective.xmpp.core.interfaces import IZopeReactor
+import logging
 
 log = logging.getLogger(__name__)
 
@@ -70,5 +70,4 @@ def adminDisconnected(event):
         log.warn('XMPP admin client disconnected.')
     gsm = getGlobalSiteManager()
     gsm.unregisterUtility(client, IAdminClient)
-
 
