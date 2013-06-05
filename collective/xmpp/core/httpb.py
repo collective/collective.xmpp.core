@@ -2,6 +2,7 @@ import random
 import httplib
 import base64
 from urlparse import urlparse
+import logging
 from xml.dom.minidom import Document, Element, parseString
 
 NS_HTTPBIND = 'http://jabber.org/protocol/httpbind'
@@ -11,6 +12,8 @@ NS_BIND = 'urn:ietf:params:xml:ns:xmpp-bind'
 NS_SESSION = 'urn:ietf:params:xml:ns:xmpp-session'
 NS_XMPP_BOSH = 'urn:xmpp:xbosh'
 NS_JABBER = 'jabber:client'
+
+logger = logging.getLogger(__name__)
 
 
 class BOSHClient(object):
@@ -100,6 +103,8 @@ class BOSHClient(object):
         body = self.buildBody(child=auth)
         response = self.sendRequest(body)
         if not response or not response.getElementsByTagName('success'):
+            logger.warning("Failed authentication with the following"
+                           " response: %s" % response.toxml())
             return False
         return self.bindResource()
 
