@@ -88,7 +88,7 @@ class BOSHClient(object):
 
         if 'PLAIN' in mechanisms:
             return self.authenticatePlain()
-        return False
+        return False, "404"
 
     def authenticatePlain(self):
         dom = Document()
@@ -105,7 +105,11 @@ class BOSHClient(object):
         if not response or not response.getElementsByTagName('success'):
             logger.warning("Failed authentication with the following"
                            " response: %s" % response.toxml())
-            return False
+            failure = response.getElementsByTagName('failure')
+            if failure:
+                if response.getElementsByTagName("not-authorized"):
+                    return False, "401"
+            return False, "404"
         return self.bindResource()
 
     def bindResource(self):
@@ -131,7 +135,7 @@ class BOSHClient(object):
         body = self.buildBody(child=iq)
         response = self.sendRequest(body)
         if not response or not response.getElementsByTagName('jid'):
-            return False
+            return False, '404'
 
         iq = Element('iq')
         iq.setAttribute('id', str(random.randint(0, 1000000)))
@@ -141,4 +145,4 @@ class BOSHClient(object):
         iq.appendChild(session)
         body = self.buildBody(child=iq)
         response = self.sendRequest(body)
-        return True
+        return True, '200'
