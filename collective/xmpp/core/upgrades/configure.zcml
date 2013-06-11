@@ -23,13 +23,4 @@
             handler=".v2.updatePloneRegistry"/>
   </genericsetup:upgradeSteps>
 
-    <genericsetup:upgradeSteps
-            source="3"
-            destination="*"
-            profile="collective.xmpp.core:default">
-        <genericsetup:upgradeStep
-                title="Add optional auto join channel to the Plone registry"
-                description=""
-                handler=".v2.updatePloneRegistry"/>
-    </genericsetup:upgradeSteps>
 </configure>

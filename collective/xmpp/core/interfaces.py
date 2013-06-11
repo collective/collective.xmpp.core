@@ -6,6 +6,7 @@ from zope.interface import Interface
 from zope.interface import implements
 from zope.viewlet.interfaces import IViewletManager
 
+
 class IProductLayer(Interface):
     """ Marker interface for requests indicating the staralliance.theme
         package has been installed.
@@ -187,17 +188,6 @@ class IXMPPSettings(Interface):
             u"in. Be aware that this is probably a bad idea on "
             u"sites with many users!"),
         default=False,
-    )
-
-    auto_join = schema.List(
-        title=_(u"label_xmpp_auto_join",
-                default=u"Auto-join the following chat rooms"),
-        description=_(
-            u"help_xmpp_auto_join",
-            default=u"Users will automatically subscribe to the selected "
-            u"chat rooms"),
-        value_type=schema.TextLine(required=False),
-        required=False
     )
 
 

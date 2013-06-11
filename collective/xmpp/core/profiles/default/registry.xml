@@ -1,11 +1,4 @@
 <?xml version="1.0"?>
 <registry>
     <records interface="collective.xmpp.core.browser.controlpanel.IXMPPSettings" />
-
- <record name="collective.xmpp.core.interfaces.IXMPPSettings.auto_join">
-        <field type="plone.registry.field.List">
-            <title>Auto Join Channels</title>
-            <value_type type="plone.registry.field.TextLine" />
-        </field>
-    </record>
 </registry>
