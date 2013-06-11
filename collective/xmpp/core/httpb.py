@@ -77,11 +77,11 @@ class BOSHClient(object):
 
         response = self.sendRequest(body)
         if not response:
-            return False
+            return False, "404"
 
         body = response.getElementsByTagName('body')[0]
         if not body.hasAttribute('sid'):
-            return False
+            return False, "404"
         self.sid = body.getAttribute('sid')
         mechanism_elems = body.getElementsByTagNameNS(NS_SASL, 'mechanism')
         mechanisms = [elem.firstChild.nodeValue for elem in mechanism_elems]
