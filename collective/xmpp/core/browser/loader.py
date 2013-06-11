@@ -68,11 +68,10 @@ class XMPPLoader(BrowserView):
     def prebind(self):
         b_client = BOSHClient(self.jid, self.jpassword, self.bosh)
         session, session_code = b_client.startSession()
-        if session and session_code:
-            if session_code == "200":
+        if session_code == "200":
                 return b_client.rid, b_client.sid
-            if session_code == "401":
-                return ("401", "401")
+        if session_code == "401":
+            return ("401", "401")
         return ('', '')
 
     def __call__(self, resource=None):
