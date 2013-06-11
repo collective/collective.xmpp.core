@@ -5,6 +5,13 @@ Changelog
 0.3 (unreleased)
 ----------------
 
+- Feature: Remove password from storage if jabber server returns not-authorized
+  in order to try to create the user again as this error comes up when the 
+  password is still present but the jabber server doesn't have the user anymore
+  [ichim-david]
+- Feature: Log response from the jabber server when trying to bind client and 
+  it fails
+  [ichim-david]
 - Bugfix: Could not get portrait data for users with custom profile pictures.
   [jcbrand]
 - Feature: Add a new controlpanel option to update all user's vCards.
