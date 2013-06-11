@@ -244,7 +244,11 @@ $msg:false, Strophe:false, setTimeout:false, navigator:false, jarn:false, google
         } else {
             data = {};
         }
-        var xmpp_loader = function () {
+        var count = 0;
+        var xmpp_loader = function (retried) {
+            if (retried) {
+                data['retried'] = true;
+            }
             return $.ajax({
                 'url':portal_url + '/@@xmpp-loader',
                 'dataType': 'json',
@@ -255,7 +259,7 @@ $msg:false, Strophe:false, setTimeout:false, navigator:false, jarn:false, google
                         if ('bind_retry' in data) {
                             // Set 1 sec timeout to give time for the new user be registered
                             setTimeout(function() {
-                                xmpp_loader();
+                                xmpp_loader(true);
                             }, 1000);
                         }
                         // When unable to bind the user to jabber server display an error message
