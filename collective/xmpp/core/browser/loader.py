@@ -23,7 +23,7 @@ class XMPPLoader(BrowserView):
     def autoRegister(self, client):
         registry = getUtility(IRegistry)
         settings = registry.forInterface(IXMPPSettings, check=False)
-        if not settings.auto_register_on_login:
+        if not settings.auto_register_on_login or client._state == 'connecting':
             return
         setup.registerXMPPUsers(getSite(), [self.user_id])
         self.bind_retry = True
