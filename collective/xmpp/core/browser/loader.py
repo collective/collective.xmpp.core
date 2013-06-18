@@ -3,6 +3,7 @@ from Products.Five.browser import BrowserView
 from collective.xmpp.core.client import randomResource
 from collective.xmpp.core.httpb import BOSHClient
 from collective.xmpp.core.interfaces import IAdminClient
+from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IXMPPUsers
 from collective.xmpp.core.utils import setup
@@ -66,9 +67,12 @@ class XMPPLoader(BrowserView):
 
     def prebind(self):
         b_client = BOSHClient(self.jid, self.jpassword, self.bosh)
-        if b_client.startSession():
+        session = b_client.startSession()
+        if session:
+            if type(session) == tuple:
+                return session[1], session[1]
             return b_client.rid, b_client.sid
-        return ('', '')
+        return '', ''
 
     def __call__(self, resource=None):
         bosh_credentials = {}
@@ -80,7 +84,8 @@ class XMPPLoader(BrowserView):
             }
         if available:
             rid, sid = self.prebind()
-            if rid and sid:
+            bad_codes = ["401", "404"]
+            if (rid and sid) and sid not in bad_codes:
                 logger.info('Pre-binded %s' % self.jid.full())
                 bosh_credentials = {
                     'BOSH_SERVICE': self.bosh,
@@ -92,6 +97,23 @@ class XMPPLoader(BrowserView):
                 bosh_credentials = {
                     'unable_to_bind': True,
                 }
+                # if session code is 401 then we might have a case where plone
+                # has the user in plone.registry however it is no longer present
+                # on ejabbered
+                # therefore we delete the user and password from xmpp and send
+                # the bind_retry in order for prebind to be called again
+                if rid == "401":
+                    portal = getSite()
+                    member_id = self.jid.user
+
+                    pass_storage = queryUtility(IXMPPPasswordStorage,
+                                                context=portal)
+                    if pass_storage:
+                            pass_storage.remove(member_id)
+                    logger.info("Reseting password for %s" % self.jid.user)
+                if not self.request.get('retried'):
+                    # Try one more time to bind users registered on login
+                    bosh_credentials['bind_retry'] = True,
                 logger.warning('Unable to pre-bind %s' % self.jid)
 
         response = self.request.response
