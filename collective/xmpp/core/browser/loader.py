@@ -100,19 +100,22 @@ class XMPPLoader(BrowserView):
                     'unable_to_bind': True,
                 }
                 # if session code is 401 then we might have a case where plone
-                # has the user in plone.registry however it is no longer
-                # present on ejabbered
+                # has the user in IXMPPPasswordStorage however it is no longer
+                # present on the XMPP server.
                 # therefore we delete the user and password from xmpp and send
                 # the bind_retry in order for prebind to be called again
                 if rid == "401":
+                    log.warning('User %s could not prebind to the XMPP '
+                                'server, status code 401 returned.'
+                                % self.jid.user)
                     portal = getSite()
                     member_id = self.jid.user
-
                     pass_storage = queryUtility(IXMPPPasswordStorage,
                                                 context=portal)
                     if pass_storage:
-                            pass_storage.remove(member_id)
-                    log.info("Reseting password for %s" % self.jid.user)
+                        pass_storage.remove(member_id)
+                        log.info("Removing XMPP password for %s"
+                                 % self.jid.user)
                 if not self.request.get('retried'):
                     # Try one more time to bind users registered on login
                     bosh_credentials['bind_retry'] = True,

@@ -247,7 +247,7 @@ $msg:false, Strophe:false, setTimeout:false, navigator:false, jarn:false, google
         var count = 0;
         var xmpp_loader = function (retried) {
             if (retried) {
-                data['retried'] = true;
+                data.retried = true;
             }
             return $.ajax({
                 'url':portal_url + '/@@xmpp-loader',
