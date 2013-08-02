@@ -24,6 +24,8 @@ Changelog
   [jcbrand]
 - Bugfix: When pre-binding, fetch admin user's password from IXMPPSettings. 
   [jcbrand]
+- Remove dependency on jarn.i18njs
+  [jcbrand]
 
 
 0.2 (2013-03-20)

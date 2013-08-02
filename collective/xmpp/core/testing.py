@@ -158,11 +158,7 @@ class XMPPCoreNoReactorFixture(PloneSandboxLayer):
 
     def setUpZope(self, app, configurationContext):
         # Load ZCML
-        import jarn.jsi18n
         import collective.xmpp.core
-        xmlconfig.file('configure.zcml', jarn.jsi18n,
-                       context=configurationContext)
-
         xmlconfig.file('configure.zcml', collective.xmpp.core,
                        context=configurationContext)
 
@@ -196,11 +192,8 @@ class XMPPCoreFixture(PloneSandboxLayer):
 
     def setUpZope(self, app, configurationContext):
         # Load ZCML
-        import jarn.jsi18n
         import Products.UserAndGroupSelectionWidget
         import collective.xmpp.core
-        xmlconfig.file('configure.zcml', jarn.jsi18n,
-                       context=configurationContext)
         xmlconfig.file('configure.zcml', Products.UserAndGroupSelectionWidget,
                        context=configurationContext)
 

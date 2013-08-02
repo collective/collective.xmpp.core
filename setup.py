@@ -31,7 +31,6 @@ setup(name='collective.xmpp.core',
           'Twisted',
           'wokkel>0.6.3',
           'Products.UserAndGroupSelectionWidget',
-          'jarn.jsi18n'
       ],
       extras_require = {
           'test': [

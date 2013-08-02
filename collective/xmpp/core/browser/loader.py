@@ -14,7 +14,7 @@ from zope.component.hooks import getSite
 import json
 import logging
 
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 class XMPPLoader(BrowserView):
@@ -24,7 +24,8 @@ class XMPPLoader(BrowserView):
     def autoRegister(self, client):
         registry = getUtility(IRegistry)
         settings = registry.forInterface(IXMPPSettings, check=False)
-        if not settings.auto_register_on_login or client._state == 'connecting':
+        if not settings.auto_register_on_login or \
+                client._state == 'connecting':
             return
         setup.registerXMPPUsers(getSite(), [self.user_id])
         self.bind_retry = True
@@ -86,20 +87,21 @@ class XMPPLoader(BrowserView):
             rid, sid = self.prebind()
             bad_codes = ["401", "404"]
             if (rid and sid) and sid not in bad_codes:
-                logger.info('Pre-binded %s' % self.jid.full())
+                log.info('Pre-binded %s' % self.jid.full())
                 bosh_credentials = {
                     'BOSH_SERVICE': self.bosh,
                     'rid': int(rid),
                     'sid': sid,
                     'jid': self.jid.full(),
                 }
+                log.info('Succesfully prebinded %s' % self.jid)
             else:
                 bosh_credentials = {
                     'unable_to_bind': True,
                 }
                 # if session code is 401 then we might have a case where plone
-                # has the user in plone.registry however it is no longer present
-                # on ejabbered
+                # has the user in plone.registry however it is no longer
+                # present on ejabbered
                 # therefore we delete the user and password from xmpp and send
                 # the bind_retry in order for prebind to be called again
                 if rid == "401":
@@ -110,11 +112,11 @@ class XMPPLoader(BrowserView):
                                                 context=portal)
                     if pass_storage:
                             pass_storage.remove(member_id)
-                    logger.info("Reseting password for %s" % self.jid.user)
+                    log.info("Reseting password for %s" % self.jid.user)
                 if not self.request.get('retried'):
                     # Try one more time to bind users registered on login
                     bosh_credentials['bind_retry'] = True,
-                logger.warning('Unable to pre-bind %s' % self.jid)
+                log.warning('Unable to pre-bind %s' % self.jid)
 
         response = self.request.response
         response.setHeader('content-type', 'application/json')
@@ -122,4 +124,3 @@ class XMPPLoader(BrowserView):
                            'max-age=0, must-revalidate, private')
         response.setBody(json.dumps(bosh_credentials))
         return response
-
