@@ -283,4 +283,4 @@ $msg:false, Strophe:false, setTimeout:false, navigator:false, jarn:false, google
         xmpp_loader();
     });
 
-})(window.jarnxmpp = window.jarnxmpp || {}, jQuery);
+})({}, jQuery);
