@@ -17,7 +17,7 @@ CATALOGNAME="collective.xmpp.core"
 JSCATALOGNAME="collective.xmpp.core.js"
 
 # List of languages
-LANGUAGES="en no el es"
+LANGUAGES="en no el es fr"
 
 # Create locales folder structure for languages
 install -d locales
