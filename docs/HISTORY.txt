@@ -7,6 +7,11 @@ Changelog
 
 - Remove dependency on jarn.i18njs
   [jcbrand]
+- Bugfix. XMPP passwords weren't being deleted for users with escaped
+  characters in their JIDs.
+  [jcbrand]
+- Add control panel option to renew vCards of a selection of users.
+  [jcbrand]
 
 
 0.3 (2013-06-28)
@@ -21,7 +26,7 @@ Changelog
   [ichim-david]
 - Bugfix: Could not get portrait data for users with custom profile pictures.
   [jcbrand]
-- Feature: Add a new controlpanel option to update all user's vCards.
+- Feature: Add a new control panel option to update all user's vCards.
   [jcbrand]
 - Bugfix: When pre-binding, fetch admin user's password from IXMPPSettings. 
   [jcbrand]
