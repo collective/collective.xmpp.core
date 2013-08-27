@@ -104,6 +104,8 @@ class XMPPUserSetupForm(form.Form):
             return self.deregisterAll()
         elif self.request.form.get('form.widgets.update_vcards'):
             return self.updateVCards()
+        elif self.request.form.get('form.widgets.update_selected_vcards'):
+            return self.updateSelectedVCards()
         elif self.request.form.get('form.widgets.register_selected'):
             return self.registerSelected()
         elif self.request.form.get('form.widgets.deregister_selected'):
@@ -166,9 +168,8 @@ class XMPPUserSetupForm(form.Form):
                    "info")
         return d
 
-    def updateVCards(self):
-        """
-        """
+    def updateVCards(self, member_ids=[]):
+        """ """
         portal = self.context
         registry = getUtility(IRegistry)
         settings = registry.forInterface(IXMPPSettings, check=False)
@@ -187,7 +188,7 @@ class XMPPUserSetupForm(form.Form):
         # work in callbacks (due to Request not being set up properly).
         xmpp_users = getUtility(IXMPPUsers)
         mtool = getToolByName(portal, 'portal_membership')
-        member_ids = users.getAllMemberIds()
+        member_ids = member_ids or users.getAllMemberIds()
         for member_id in member_ids:
             member = mtool.getMemberById(member_id)
             fullname = member.getProperty('fullname').decode('utf-8')
@@ -277,6 +278,16 @@ class XMPPUserSetupForm(form.Form):
             members = [member for member in members_and_groups.split('\r\n')
                        if member]
         return members
+
+    def updateSelectedVCards(self):
+        status = IStatusMessage(self.request)
+        widget = self.widgets.get('users')
+        if widget.extract() == NO_VALUE:
+            status.add(_(u"You first need to choose the users"), "error")
+            return
+        self.updateVCards(member_ids=self.getChosenMembers())
+        return status.add(_(u"The selected users' vCards are being updated in "
+                            u"the background."), "info")
 
     def deregisterSelected(self):
         status = IStatusMessage(self.request)

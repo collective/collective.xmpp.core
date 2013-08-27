@@ -48,6 +48,16 @@ class IXMPPUserSetup(Interface):
         required=False,
     )
 
+    update_selected_vcards = button.Button(
+        title=_(u'label_update_selected_vcards',
+                default=u"Update selected users' vCards"),
+        description=_(
+            u"help_update_selected_vcards",
+            default=u"Click here to update the vCards of the above selected "
+            "users in the site."),
+        required=False,
+    )
+
     register_all = button.Button(
         title=_(u'label_register_all',
                 default=u"Register ALL Users"),
@@ -83,6 +93,7 @@ class IXMPPUserSetup(Interface):
             "the users in the site."),
         required=False,
     )
+
 
 
     # XXX: Useful in certain circumstances, but dangerous and should probably
