@@ -128,6 +128,8 @@ class UserClient(XMPPClient):
         self.authcallback = authcallback
         self.vcard = VCardHandler()
         self.presence = PresenceClientProtocol()
+        # XXX: This is a hack. See https://github.com/ralphm/wokkel/issues/5
+        # Not yet sure what the best way of dealing with this is.
         jid = JID(jid.full().replace('\\40', '\\\\40'))
         super(UserClient, self).__init__(
             jid, password,
