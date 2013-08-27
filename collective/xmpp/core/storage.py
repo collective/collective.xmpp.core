@@ -1,5 +1,6 @@
 from BTrees.OOBTree import OOBTree
 from collective.xmpp.core.interfaces import IXMPPPasswordStorage
+from collective.xmpp.core.utils.users import unescapeNode
 from persistent import Persistent
 from zope.interface import implements
 import logging
@@ -27,6 +28,7 @@ class XMPPPasswordStorage(Persistent):
         return password
 
     def remove(self, user_id):
+        user_id = unescapeNode(user_id)
         if user_id in self._passwords:
             del self._passwords[user_id]
 
