@@ -63,36 +63,43 @@ class DeferredXMPPClient(object):
         return d
 
 
-class XMPPClient(StreamManager):
+class XMPPClient(client.XMPPClient):
     """ Service that initiates an XMPP client connection.
     """
 
     def __init__(self, jid, password, extra_handlers=[],
                  host='localhost', port=5222):
-        jid.resource = randomResource()
-        self.jid = jid
-        self.domain = jid.host
-        self.host = host
-        self.port = port
-        self._state = None
-        self._connector = None
 
-        factory = client.HybridClientFactory(jid, password)
-
-        # Setup StreamManager
-        StreamManager.__init__(self, factory)
+        super(XMPPClient, self).__init__(jid, password, host, port)
+        # jid.resource = randomResource()
+        # self.jid = jid
+        # self.domain = jid.host
+        # self.host = host
+        # self.port = port
+        # self._state = None
+        # self._connector = None
+        # factory = client.HybridClientFactory(jid, password)
+        # # Setup StreamManager
+        # StreamManager.__init__(self, factory)
+        #
         for handler in extra_handlers:
             handler.setHandlerParent(self)
 
         self._state = u'connecting'
         zr = getUtility(IZopeReactor)
-        zr.reactor.callFromThread(self.connect)
+        # zr.reactor.callFromThread(self.connect)
+        zr.reactor.callFromThread(self.startService)
 
-    def connect(self):
-        zr = getUtility(IZopeReactor)
-        self._connector = zr.reactor.connectTCP(self.host,
-                                                self.port,
-                                                self.factory)
+    # def connect(self):
+    #     zr = getUtility(IZopeReactor)
+    #     self._connector = zr.reactor.connectTCP(self.host,
+    #                                             self.port,
+    #                                             self.factory)
+
+    def _getConnection(self):
+        zc = getUtility(IZopeReactor)
+        return zc.reactor.connectTCP(self.host, self.port, self.factory)
+
 
     def disconnect(self):
         self.xmlstream.sendFooter()
@@ -103,19 +110,16 @@ class XMPPClient(StreamManager):
         return self._state
 
     def _authd(self, xs):
-        #Save the JID that we were assigned by the server, as the resource
-        # might differ from the JID we asked for.
-        self.jid = self.factory.authenticator.jid
-        StreamManager._authd(self, xs)
+        super(XMPPClient, self)._authd(xs)
         self._state = u'authenticated'
 
     def _connected(self, xs):
-        self._state = u'connected'
         super(XMPPClient, self)._connected(xs)
+        self._state = u'connected'
 
     def _disconnected(self, _):
-        self._state = u'disconnected'
         super(XMPPClient, self)._disconnected(_)
+        self._state = u'disconnected'
 
 
 class UserClient(XMPPClient):
@@ -124,6 +128,7 @@ class UserClient(XMPPClient):
         self.authcallback = authcallback
         self.vcard = VCardHandler()
         self.presence = PresenceClientProtocol()
+        jid = JID(jid.full().replace('\\40', '\\\\40'))
         super(UserClient, self).__init__(
             jid, password,
             extra_handlers=[self.vcard, self.presence],
@@ -132,6 +137,7 @@ class UserClient(XMPPClient):
 
     def initializationFailed(self, reason):
         """ """
+        self.stopService()
         log.warn("Initialization failed for %s. %s"
                  % (self.jid.userhost(), reason.printBriefTraceback()))
 
