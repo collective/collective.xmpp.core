@@ -12,23 +12,25 @@ Changelog
   [jcbrand]
 - Add control panel option to renew vCards of a selection of users.
   [jcbrand]
+- French translation
+  [thomasdesvenain]
 
 
 0.3 (2013-06-28)
 ----------------
 
 - Feature: Remove password from storage if jabber server returns not-authorized
-  in order to try to create the user again as this error comes up when the 
+  in order to try to create the user again as this error comes up when the
   password is still present but the jabber server doesn't have the user anymore
   [ichim-david]
-- Feature: Log response from the jabber server when trying to bind client and 
+- Feature: Log response from the jabber server when trying to bind client and
   it fails
   [ichim-david]
 - Bugfix: Could not get portrait data for users with custom profile pictures.
   [jcbrand]
 - Feature: Add a new control panel option to update all user's vCards.
   [jcbrand]
-- Bugfix: When pre-binding, fetch admin user's password from IXMPPSettings. 
+- Bugfix: When pre-binding, fetch admin user's password from IXMPPSettings.
   [jcbrand]
 
 
@@ -46,7 +48,7 @@ Changelog
 0.1 (2013-03-15)
 ----------------
 
-- Released. [jcbrand] 
+- Released. [jcbrand]
 
 
 0.1b8 (2013-03-09)
