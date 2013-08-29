@@ -446,7 +446,7 @@ ul.pubsubNode {
     margin-left:0.5em;
 }
 .pubsubItem .pubsubGeolocation .location {
-    background: transparent url(++resource++jarn.xmpp.core.images/location_icon.png) 0% 0% no-repeat;
+    background: transparent url(++resource++collective.xmpp.core.images/location_icon.png) 0% 0% no-repeat;
     padding-left: 18px;
     font-style: italic;
 }
