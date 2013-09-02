@@ -8,7 +8,6 @@ from collective.xmpp.core.protocols import ChatHandler
 from collective.xmpp.core.protocols import VCardHandler
 from twisted.words.protocols.jabber.jid import JID
 from wokkel import client
-from wokkel.subprotocols import StreamManager
 from wokkel.xmppim import PresenceClientProtocol
 from zope.component import getUtility
 from zope.event import notify
@@ -69,37 +68,16 @@ class XMPPClient(client.XMPPClient):
 
     def __init__(self, jid, password, extra_handlers=[],
                  host='localhost', port=5222):
-
         super(XMPPClient, self).__init__(jid, password, host, port)
-        # jid.resource = randomResource()
-        # self.jid = jid
-        # self.domain = jid.host
-        # self.host = host
-        # self.port = port
-        # self._state = None
-        # self._connector = None
-        # factory = client.HybridClientFactory(jid, password)
-        # # Setup StreamManager
-        # StreamManager.__init__(self, factory)
-        #
         for handler in extra_handlers:
             handler.setHandlerParent(self)
-
         self._state = u'connecting'
         zr = getUtility(IZopeReactor)
-        # zr.reactor.callFromThread(self.connect)
         zr.reactor.callFromThread(self.startService)
-
-    # def connect(self):
-    #     zr = getUtility(IZopeReactor)
-    #     self._connector = zr.reactor.connectTCP(self.host,
-    #                                             self.port,
-    #                                             self.factory)
 
     def _getConnection(self):
         zc = getUtility(IZopeReactor)
         return zc.reactor.connectTCP(self.host, self.port, self.factory)
-
 
     def disconnect(self):
         self.xmlstream.sendFooter()
