@@ -103,7 +103,8 @@ class XMPPClient(client.XMPPClient):
 
     def disconnect(self):
         self.xmlstream.sendFooter()
-        self._connector.disconnect()
+        if hasattr(self, '_connector'):
+            self._connector.disconnect()
 
     @property
     def state(self):
