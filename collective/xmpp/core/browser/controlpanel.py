@@ -25,7 +25,9 @@ from z3c.form.interfaces import NO_VALUE
 from zope.component import getUtility
 from zope.component import queryUtility
 from zope.component.hooks import getSite
+import logging
 
+log = logging.getLogger(__name__)
 UserAndGroupSelectionWidget_installed = True
 try:
     # We have installed UserAndGroupSelectionWidget with version greated
@@ -189,6 +191,8 @@ class XMPPUserSetupForm(form.Form):
         xmpp_users = getUtility(IXMPPUsers)
         mtool = getToolByName(portal, 'portal_membership')
         member_ids = member_ids or users.getAllMemberIds()
+        log.info('Total members are: %d' % len(member_ids))
+        i = 0
         for member_id in member_ids:
             member = mtool.getMemberById(member_id)
             fullname = member.getProperty('fullname').decode('utf-8')
@@ -211,6 +215,8 @@ class XMPPUserSetupForm(form.Form):
                 'pass': pass_storage.get(member_id)
             }
             member_dicts.append(udict)
+            i += 1
+            log.info('Fetched details for member %d, %s' % (i, fullname))
 
         @newzodbconnection(portal=portal)
         def resultReceived(result):

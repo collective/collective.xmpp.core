@@ -6,6 +6,8 @@ from collective.xmpp.core.interfaces import IZopeReactor
 from collective.xmpp.core.protocols import AdminHandler
 from collective.xmpp.core.protocols import ChatHandler
 from collective.xmpp.core.protocols import VCardHandler
+from collective.xmpp.core.utils.users import unescapeNode
+from collective.xmpp.core.utils.users import doubleEscapeNode
 from twisted.words.protocols.jabber.jid import JID
 from wokkel import client
 from wokkel.xmppim import PresenceClientProtocol
@@ -109,7 +111,7 @@ class UserClient(XMPPClient):
         self.presence = PresenceClientProtocol()
         # XXX: This is a hack. See https://github.com/ralphm/wokkel/issues/5
         # Not yet sure what the best way of dealing with this is.
-        jid = JID(jid.full().replace('\\40', '\\\\40'))
+        jid = JID(doubleEscapeNode(unescapeNode(jid.user))+jid.host)
         super(UserClient, self).__init__(
             jid, password,
             extra_handlers=[self.vcard, self.presence],

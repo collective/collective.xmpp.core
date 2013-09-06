@@ -28,6 +28,26 @@ def getAllMemberIds():
     return list(set([m['userid'] for m in acl_users.searchUsers()]))
 
 
+def doubleEscapeNode(node):
+    """ XXX: Still not sure why this is necessary and whether other special
+        chars also need to be double escaped.
+
+        https://github.com/ralphm/wokkel/issues/5
+    """
+    node.strip()
+    node = node.replace('\\', "\\5c")
+    node = node.replace(' ',  "\\20")
+    node = node.replace('\"', "\\22")
+    node = node.replace('\&', "\\26")
+    node = node.replace('\'', "\\27")
+    node = node.replace('\/', "\\2f")
+    node = node.replace(':',  "\\3a")
+    node = node.replace('<',  "\\3c")
+    node = node.replace('>',  "\\3e")
+    node = node.replace('@',  "\\\\40")
+    return node
+
+
 def escapeNode(node):
     """ Escape the node part (also called local part) of a JID.
         See: http://xmpp.org/extensions/xep-0106.html#escaping
