@@ -192,10 +192,7 @@ class XMPPCoreFixture(PloneSandboxLayer):
 
     def setUpZope(self, app, configurationContext):
         # Load ZCML
-        import Products.UserAndGroupSelectionWidget
         import collective.xmpp.core
-        xmlconfig.file('configure.zcml', Products.UserAndGroupSelectionWidget,
-                       context=configurationContext)
 
         # Normally on a client disconnect we unregister the AdminClient
         # utility. We can't do that here as we need to disconnect the
