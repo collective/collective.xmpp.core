@@ -153,7 +153,8 @@ def registerXMPPUsers(portal, member_ids):
 
         @newzodbconnection(portal=portal)
         def afterUserAdd(*args):
-            setVCard(member_dicts.pop(), member_jid, member_pass, registerUser)
+            if len(member_dicts):
+                setVCard(member_dicts.pop(), member_jid, member_pass, registerUser)
         d.addCallback(afterUserAdd)
         return d
 
