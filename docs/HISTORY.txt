@@ -5,6 +5,8 @@ Changelog
 0.4 (unreleased)
 ----------------
 
+- Set very common logs to debug
+  [thomasdesvenain]
 - Remove dependency on jarn.i18njs
   [jcbrand]
 - Bugfix. XMPP passwords weren't being deleted for users with escaped
