@@ -87,14 +87,14 @@ class XMPPLoader(BrowserView):
             rid, sid = self.prebind()
             bad_codes = ["401", "404"]
             if (rid and sid) and sid not in bad_codes:
-                log.info('Pre-binded %s' % self.jid.full())
+                log.debug('Pre-binded %s' % self.jid.full())
                 bosh_credentials = {
                     'BOSH_SERVICE': self.bosh,
                     'rid': int(rid),
                     'sid': sid,
                     'jid': self.jid.full(),
                 }
-                log.info('Succesfully prebinded %s' % self.jid)
+                log.debug('Succesfully prebinded %s' % self.jid)
             else:
                 bosh_credentials = {
                     'unable_to_bind': True,
