@@ -77,6 +77,9 @@ def registerXMPPUsers(portal, member_ids):
     # methods.
     for member_id in member_ids:
         member = mtool.getMemberById(member_id)
+        if member is None:
+            log.warn("Could not get user: %s" % member_id)
+            continue
         fullname = member.getProperty('fullname').decode('utf-8')
         user_jid = xmpp_users.getUserJID(member_id)
         portrait = mtool.getPersonalPortrait(member_id)
