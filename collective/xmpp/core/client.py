@@ -111,7 +111,8 @@ class UserClient(XMPPClient):
         self.presence = PresenceClientProtocol()
         # XXX: This is a hack. See https://github.com/ralphm/wokkel/issues/5
         # Not yet sure what the best way of dealing with this is.
-        jid = JID(doubleEscapeNode(unescapeNode(jid.user))+jid.host)
+        jid = JID(u'@'.join(
+            (doubleEscapeNode(unescapeNode(jid.user)), jid.host)))
         super(UserClient, self).__init__(
             jid, password,
             extra_handlers=[self.vcard, self.presence],
