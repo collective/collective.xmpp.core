@@ -2,8 +2,8 @@
 Changelog
 =========
 
-0.4 (unreleased)
-----------------
+0.4novcard (2014-02-19)
+-----------------------
 
 - Set very common logs to debug
   [thomasdesvenain]
