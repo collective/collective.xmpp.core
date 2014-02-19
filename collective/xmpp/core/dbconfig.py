@@ -48,10 +48,10 @@ def dbconfig(event):
         log.info('No product config found. Configuration will not be set')
         return
 
-    if Globals.DevelopmentMode:
-        log.info('Configuration settings for collective.xmpp.core are ignored '
-                 'because Zope is starting up in debug_mode')
-        return
+    # if Globals.DevelopmentMode:
+    #     log.info('Configuration settings for collective.xmpp.core are ignored '
+    #              'because Zope is starting up in debug_mode')
+    #     return
 
     db = Zope2.DB
     connection = db.open()
@@ -97,6 +97,6 @@ def dbconfig(event):
     settings.port = int(conf.get('port', 5222))
     settings.admin_jid = unicode(conf.get('admin_jid', u'admin@localhost'))
     settings.admin_password = unicode(conf.get('admin_password', u'secret'))
-    settings.auto_register_on_login = bool(int(conf.get('auto_register_on_login'), 1))
-    settings.auto_subscribe = bool(int(conf.get('auto_subscribe'), 0))
+    settings.auto_register_on_login = bool(int(conf.get('auto_register_on_login', 1)))
+    settings.auto_subscribe = bool(int(conf.get('auto_subscribe', 0)))
     transaction.commit()
