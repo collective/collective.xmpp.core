@@ -97,5 +97,6 @@ def dbconfig(event):
     settings.port = int(conf.get('port', 5222))
     settings.admin_jid = unicode(conf.get('admin_jid', u'admin@localhost'))
     settings.admin_password = unicode(conf.get('admin_password', u'secret'))
+    settings.auto_register_on_login = bool(int(conf.get('auto_register_on_login'), 1))
     settings.auto_subscribe = bool(int(conf.get('auto_subscribe'), 0))
     transaction.commit()
