@@ -119,7 +119,7 @@ class XMPPLoader(BrowserView):
                 if not self.request.get('retried'):
                     # Try one more time to bind users registered on login
                     bosh_credentials['bind_retry'] = True,
-                log.warning('Unable to pre-bind %s' % self.jid)
+                log.info('Unable to pre-bind %s' % self.jid)
 
         response = self.request.response
         response.setHeader('content-type', 'application/json')
