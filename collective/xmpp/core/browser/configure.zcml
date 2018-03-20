@@ -8,13 +8,6 @@
 
   <browser:view
     for="*"
-    name="xmpp-loader"
-    class=".loader.XMPPLoader"
-    permission="zope2.View"
-    />
-
-  <browser:view
-    for="*"
     name="xmpp-userinfo"
     class=".userinfo.XMPPUserInfo"
     permission="zope2.View"

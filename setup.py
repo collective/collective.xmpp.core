@@ -25,17 +25,9 @@ setup(name='collective.xmpp.core',
       namespace_packages=['collective', 'collective.xmpp'],
       include_package_data=True,
       zip_safe=False,
-      install_requires=[
-          'setuptools',
-          'BeautifulSoup',
-          'Twisted',
-          'wokkel>0.6.3',
-          'Products.UserAndGroupSelectionWidget',
-      ],
-      extras_require = {
-          'test': [
-                  'plone.app.testing',
-              ]
+      install_requires=['BeautifulSoup', 'Plone'],
+      extras_require={
+          'test': ['plone.app.testing']
       },
       entry_points="""
       [z3c.autoinclude.plugin]

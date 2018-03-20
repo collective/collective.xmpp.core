@@ -4,27 +4,17 @@ from Products.CMFCore.FSImage import FSImage
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from collective.xmpp.core import messageFactory as _
-from collective.xmpp.core.decorators import newzodbconnection
-from collective.xmpp.core.exceptions import AdminClientNotConnected
-from collective.xmpp.core.interfaces import IAdminClient
-from collective.xmpp.core.interfaces import IXMPPPasswordStorage
 from collective.xmpp.core.interfaces import IXMPPSettings
 from collective.xmpp.core.interfaces import IXMPPUserSetup
 from collective.xmpp.core.interfaces import IXMPPUsers
-from collective.xmpp.core.interfaces import IZopeReactor
-from collective.xmpp.core.utils import setup
 from collective.xmpp.core.utils import users
 from plone.app.registry.browser import controlpanel
 from plone.registry.interfaces import IRegistry
-from twisted.words.protocols.jabber.xmlstream import IQ
-from wokkel.disco import NS_DISCO_ITEMS
 from z3c.form import button
 from z3c.form import field
 from z3c.form import form
 from z3c.form.interfaces import NO_VALUE
 from zope.component import getUtility
-from zope.component import queryUtility
-from zope.component.hooks import getSite
 import logging
 
 log = logging.getLogger(__name__)
@@ -115,74 +105,14 @@ class XMPPUserSetupForm(form.Form):
         elif self.request.form.get('form.widgets.clear_all_passwords'):
             return self.clearAllPasswords()
 
-    def registerAll(self):
-        status = IStatusMessage(self.request)
-        member_ids = users.getAllMemberIds()
-        try:
-            setup.registerXMPPUsers(self.context, member_ids)
-        except AdminClientNotConnected:
-            status.add(
-                _(u"We are not yet connected to the XMPP "
-                  u"server. Either your settings are incorrect, or "
-                  u"you're trying to register users immediately after the "
-                  u"ZServer has been restarted. If your settings are correct, "
-                  u"then try again, it should work now. "), "warn")
-            return
-        status.add(_(
-            u"All users are being registered in the background. "
-            "This might take a few minutes and your site might become "
-            "unresponsive."), "info")
-
-    def deregisterAll(self):
-        portal = self.context
-        registry = getUtility(IRegistry)
-        settings = registry.forInterface(IXMPPSettings, check=False)
-        status = IStatusMessage(self.request)
-        client = queryUtility(IAdminClient)
-        if client is None:
-            status.add(UTILITY_NOT_FOUND_MESSAGE, "error")
-            return
-
-        @newzodbconnection(portal=portal)
-        def resultReceived(result):
-            items = [item.attributes for item in result.query.children]
-            if items[0].has_key('node'):
-                for item in reversed(items):
-                    iq = IQ(client.admin.xmlstream, 'get')
-                    iq['to'] = settings.xmpp_domain
-                    query = iq.addElement((NS_DISCO_ITEMS, 'query'))
-                    query['node'] = item['node']
-                    iq.send().addCallbacks(resultReceived)
-            else:
-                member_jids = [item['jid'] for item in items]
-                if settings.admin_jid in member_jids:
-                    member_jids.remove(settings.admin_jid)
-                member_ids = [item.split('@')[0] for item in member_jids]
-                if member_ids:
-                    portal = getSite()
-                    setup.deregisterXMPPUsers(portal, member_ids)
-            return result
-
-        d = client.admin.getRegisteredUsers()
-        d.addCallbacks(resultReceived)
-        status.add(_(u"The XMPP server is being instructed to deregister all "
-                     u"the users. This might take some minutes to complete."),
-                   "info")
-        return d
-
     def updateVCards(self, member_ids=[]):
         """ """
         portal = self.context
         registry = getUtility(IRegistry)
         settings = registry.forInterface(IXMPPSettings, check=False)
         status = IStatusMessage(self.request)
-        client = queryUtility(IAdminClient)
         portal_url = getToolByName(portal, 'portal_url')()
         member_dicts = []
-        pass_storage = getUtility(IXMPPPasswordStorage)
-        if client is None:
-            status.add(UTILITY_NOT_FOUND_MESSAGE, "error")
-            return
 
         # XXX: This is a hack. We get vcard data for all users in the site,
         # without yet knowing whether they are actually registered in the
@@ -212,49 +142,10 @@ class XMPPUserSetupForm(form.Form):
                 'image_type': portrait.content_type,
                 'raw_image': raw_image,
                 'jid_obj': user_jid,
-                'pass': pass_storage.get(member_id)
             }
             member_dicts.append(udict)
             i += 1
             log.info('Fetched details for member %d, %s' % (i, fullname))
-
-        @newzodbconnection(portal=portal)
-        def resultReceived(result):
-            items = [item.attributes for item in result.query.children]
-            if 'node' in items[0]:
-                for item in reversed(items):
-                    iq = IQ(client.admin.xmlstream, 'get')
-                    iq['to'] = settings.xmpp_domain
-                    query = iq.addElement((NS_DISCO_ITEMS, 'query'))
-                    query['node'] = item['node']
-                    iq.send().addCallbacks(resultReceived)
-            else:
-                member_jids = [item['jid'] for item in items]
-                if settings.admin_jid in member_jids:
-                    member_jids.remove(settings.admin_jid)
-                registered_member_dicts = \
-                    [d for d in member_dicts if d['jabberid'] in member_jids]
-
-                @newzodbconnection(portal=portal)
-                def updateVCard():
-                    mdict = registered_member_dicts.pop()
-                    setup.setVCard(
-                        mdict,
-                        mdict['jid_obj'],
-                        mdict['pass'],
-                        updateVCard)
-
-                if len(registered_member_dicts):
-                    zr = getUtility(IZopeReactor)
-                    zr.reactor.callInThread(updateVCard)
-            return
-
-        d = client.admin.getRegisteredUsers()
-        d.addCallbacks(resultReceived)
-        status.add(_(u"Each XMPP-registered user is having their vCard "
-                     u"updated. This might take some minutes to complete."),
-                   "info")
-        return d
 
     def getChosenMembers(self):
         """ The Products.UserAndGroupSelectionWidget can return users and
@@ -294,43 +185,6 @@ class XMPPUserSetupForm(form.Form):
         self.updateVCards(member_ids=self.getChosenMembers())
         return status.add(_(u"The selected users' vCards are being updated in "
                             u"the background."), "info")
-
-    def deregisterSelected(self):
-        status = IStatusMessage(self.request)
-        widget = self.widgets.get('users')
-        if widget.extract() == NO_VALUE:
-            status.add(_(u"You first need to choose the users to deregister"),
-                       "error")
-            return
-        setup.deregisterXMPPUsers(self.context, self.getChosenMembers())
-        return status.add(_(u"The selected users are being deregistered in "
-                            u"the background."), "info")
-
-    def registerSelected(self):
-        status = IStatusMessage(self.request)
-        widget = self.widgets.get('users')
-        if widget.extract() == NO_VALUE:
-            status.add(_(u"You first need to choose the users to register"),
-                       "error")
-            return
-        try:
-            setup.registerXMPPUsers(self.context, self.getChosenMembers())
-        except AdminClientNotConnected:
-            status.add(
-                _(u"We are not yet connected to the XMPP "
-                  u"server. Either your settings are incorrect, or "
-                  u"you're trying to register users immediately after the "
-                  u"ZServer has been restarted. If your settings are correct, "
-                  u"then try again, it should work now. "), "warn")
-            return
-        return status.add(_(u"The selected users are being registered "
-                            u"in the background."), "info")
-
-    def clearAllPasswords(self):
-        status = IStatusMessage(self.request)
-        pass_storage = getUtility(IXMPPPasswordStorage)
-        pass_storage.clear()
-        status.add(_(u"The password storage has been wiped."), "info")
 
 
 class XMPPUserSetupControlPanel(controlpanel.ControlPanelFormWrapper):

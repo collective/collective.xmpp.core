@@ -11,25 +11,19 @@
     title="collective.xmpp.core: Access XMPP"
     />
 
-  <include package="Products.UserAndGroupSelectionWidget" />
   <include package="plone.app.registry" />
-  <include package=".subscribers" />
   <include package=".browser" />
   <include package=".upgrades"/>
-
-  <utility factory=".client.DeferredXMPPClient" />
-  <utility factory=".settings.XMPPUsers" />
 
   <genericsetup:registerProfile
     name="default"
     title="collective.xmpp.core"
     directory="profiles/default"
-    description="Plone messaging"
+    description="Plone with XMPP integration"
     provides="Products.GenericSetup.interfaces.EXTENSION"
     />
 
   <subscriber for="zope.processlifetime.IProcessStarting"
-    handler=".dbconfig.dbconfig"
-    />
+    handler=".dbconfig.dbconfig" />
 
 </configure>

@@ -1,10 +1,7 @@
 from collective.xmpp.core import messageFactory as _
 from z3c.form import button
 from zope import schema
-from zope.component.interfaces import IObjectEvent
 from zope.interface import Interface
-from zope.interface import implements
-from zope.viewlet.interfaces import IViewletManager
 
 
 class IProductLayer(Interface):
@@ -58,32 +55,6 @@ class IXMPPUserSetup(Interface):
         required=False,
     )
 
-    register_all = button.Button(
-        title=_(u'label_register_all',
-                default=u"Register ALL Users"),
-        description=_(
-            u"help_register_all",
-            default=u"Click this button to register ALL "
-            "the users in the site on the XMPP "
-            "server. Already registered users will be "
-            "ignored. BE AWARE: if you register lots "
-            "of users and have auto-subscribe turned on, "
-            "your Plone server will be very busy with multiple "
-            "threads and may become unresponsive for some "
-            "minutes."),
-        required=False,
-    )
-
-    deregister_all = button.Button(
-        title=_(u'label_deregister_all',
-                default=u"Deregister ALL Users"),
-        description=_(
-            u"help_deregister_all",
-            default=u"Click this button to deregister ALL "
-            "the users in the site from the XMPP server."),
-        required=False,
-    )
-
     update_vcards = button.Button(
         title=_(u'label_update_vcards',
                 default=u"Update ALL Users' vCards"),
@@ -91,24 +62,6 @@ class IXMPPUserSetup(Interface):
             u"help_update_vcards",
             default=u"Click here to update the vCards of ALL "
             "the users in the site."),
-        required=False,
-    )
-
-
-
-    # XXX: Useful in certain circumstances, but dangerous and should probably
-    # not be available by default.
-    #
-    clear_all_passwords = button.Button(
-        title=_(u'label_clear_passwords',
-                default=u"Completely wipe password storage"),
-        description=_(
-            u"help_clear_passwords",
-            default=u"DON'T CLICK THIS UNLESS YOU KNOW WHAT "
-            u"YOU'RE DOING! This will remove ALL the "
-            u"entries in the XMPP password storage "
-            u"utility in Plone and should only be useful "
-            u"in very rare cases or while developing."),
         required=False,
     )
 
@@ -202,89 +155,6 @@ class IXMPPSettings(Interface):
     )
 
 
-class IZopeReactor(Interface):
-    """Initializes and provides the twisted reactor.
-    """
-
-
-class IDeferredXMPPClient(Interface):
-    """ Marker interface for the DeferredXMPPClient utility.
-    """
-
-
-class IReactorStarted(IObjectEvent):
-    """Reactor has been started.
-    """
-
-
-class ReactorStarted(object):
-    implements(IReactorStarted)
-
-    def __init__(self, obj):
-        self.object = obj
-
-
-class IReactorStoped(IObjectEvent):
-    """Reactor has been stoped.
-    """
-
-
-class ReactorStoped(object):
-    implements(IReactorStoped)
-
-    def __init__(self, obj):
-        self.object = obj
-
-
 class IXMPPUsers(Interface):
     """ Marker interface for the XMPP tool.
-    """
-
-
-class IXMPPPasswordStorage(Interface):
-    """ Marker interface for the xmmp user passwords
-    """
-
-
-class IPubSubable(Interface):
-    """Interface for objects that can be uniquely linked to pubsub nodes.
-    """
-
-
-class IPubSubStorage(Interface):
-    """Marker interface for the PubSub storage
-    """
-
-
-class IAdminClient(Interface):
-    """Marker interface for the twisted client.
-    """
-
-
-class IAdminClientConnected(IObjectEvent):
-    """Admin client has connected.
-    """
-
-
-class AdminClientConnected(object):
-    implements(IAdminClientConnected)
-
-    def __init__(self, obj):
-        self.object = obj
-
-
-class IAdminClientDisconnected(IObjectEvent):
-    """Admin client has connected.
-    """
-
-
-class AdminClientDisconnected(object):
-    implements(IAdminClientConnected)
-
-    def __init__(self, obj):
-        self.object = obj
-
-
-class IXMPPLoaderVM(IViewletManager):
-    """Viewlet manager for the loader viewlet.
     """
